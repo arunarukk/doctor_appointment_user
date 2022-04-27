@@ -1,24 +1,23 @@
 import 'dart:typed_data';
 
 import 'package:cupertino_radio_choice/cupertino_radio_choice.dart';
-import 'package:doctor_appointment/authentication_screen/sign_up.dart';
 import 'package:doctor_appointment/constant_value/constant_colors.dart';
 import 'package:doctor_appointment/get_controller/get_controller.dart';
-import 'package:doctor_appointment/resources/data_controller.dart';
+import 'package:doctor_appointment/models/Patients_model.dart';
+import 'package:doctor_appointment/resources/specialty_mathod.dart';
 import 'package:doctor_appointment/resources/storage_methods.dart';
-import 'package:doctor_appointment/user_screen/widget/appbar_wiget.dart';
 import 'package:doctor_appointment/user_screen/widget/doctor_list_widget/doctor_list_widget.dart';
 import 'package:doctor_appointment/utils/utility_method.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 
-class ProfileScreen extends StatefulWidget {
+class LoginProfileScreen extends StatefulWidget {
   @override
   MapScreenState createState() => MapScreenState();
 }
 
-class MapScreenState extends State<ProfileScreen>
+class MapScreenState extends State<LoginProfileScreen>
     with SingleTickerProviderStateMixin {
   bool _status = true;
   final FocusNode myFocusNode = FocusNode();
@@ -44,7 +43,7 @@ class MapScreenState extends State<ProfileScreen>
     try {
       Uint8List im = await pickImage(ImageSource.gallery);
       control.imageUpdate(im);
-      control.update(['photo']);
+      control.update(['photoNew']);
     } catch (e) {
       print('no image $e');
     }
@@ -78,13 +77,13 @@ class MapScreenState extends State<ProfileScreen>
           child: Container(
             //color: Colors.white,
             child: GetBuilder<StateController>(builder: (controller) {
-              if (controller.user != null) {
-                nameController.text = controller.user!.userName;
-                emailController.text = controller.user!.email;
-                mobileController.text = controller.user!.phoneNumber;
-                ageController.text = controller.user!.age.toString();
-                image = controller.user!.photoUrl;
-              }
+              // if (controller.user != null) {
+              //   nameController.text = controller.user!.userName;
+              //   emailController.text = controller.user!.email;
+              //   mobileController.text = controller.user!.phoneNumber;
+              //   ageController.text = controller.user!.age.toString();
+              //   image = controller.user!.photoUrl;
+              // }
 
               return ListView(
                 children: [
@@ -105,7 +104,7 @@ class MapScreenState extends State<ProfileScreen>
                                   children: <Widget>[
                                     GetBuilder<SignController>(
                                       init: SignController(),
-                                      id: 'photo',
+                                      id: 'photoNew',
                                       builder: (photo) {
                                         return Container(
                                             width: 200.0,
@@ -121,7 +120,7 @@ class MapScreenState extends State<ProfileScreen>
                                                       )
                                                     : DecorationImage(
                                                         image: NetworkImage(
-                                                            image!),
+                                                            'https://i.stack.imgur.com/l60Hf.png'),
                                                         fit: BoxFit.cover,
                                                       )));
                                       },
@@ -138,7 +137,7 @@ class MapScreenState extends State<ProfileScreen>
                                         InkWell(
                                           onTap: () {
                                             selectImage();
-                                            //DataController().getMembers();
+                                            // DataController().getMembers();
                                           },
                                           child: CircleAvatar(
                                             backgroundColor: kBlue,
@@ -185,16 +184,6 @@ class MapScreenState extends State<ProfileScreen>
                                           ),
                                         ],
                                       ),
-                                      Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.end,
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: <Widget>[
-                                          _status
-                                              ? _getEditIcon()
-                                              : Container(),
-                                        ],
-                                      )
                                     ],
                                   )),
                               Padding(
@@ -230,8 +219,6 @@ class MapScreenState extends State<ProfileScreen>
                                           decoration: const InputDecoration(
                                             hintText: "Name",
                                           ),
-                                          enabled: !_status,
-                                          autofocus: !_status,
                                         ),
                                       ),
                                     ],
@@ -268,7 +255,6 @@ class MapScreenState extends State<ProfileScreen>
                                           controller: emailController,
                                           decoration: const InputDecoration(
                                               hintText: "aaaa@gmail.com"),
-                                          enabled: !_status,
                                         ),
                                       ),
                                     ],
@@ -305,7 +291,6 @@ class MapScreenState extends State<ProfileScreen>
                                           controller: mobileController,
                                           decoration: const InputDecoration(
                                               hintText: "888888888"),
-                                          enabled: !_status,
                                         ),
                                       ),
                                     ],
@@ -356,7 +341,6 @@ class MapScreenState extends State<ProfileScreen>
                                             controller: ageController,
                                             // decoration: const InputDecoration(
                                             //     hintText: "555555"),
-                                            enabled: !_status,
                                           ),
                                         ),
                                         flex: 2,
@@ -365,7 +349,7 @@ class MapScreenState extends State<ProfileScreen>
                                       //   child: TextField(
                                       //     // decoration: const InputDecoration(
                                       //     //     hintText: "kerala"),
-                                      //     enabled: !_status,
+                                      //
                                       //   ),
                                       //   flex: 2,
                                       // ),
@@ -382,47 +366,7 @@ class MapScreenState extends State<ProfileScreen>
                                     onChange: onGenderSelected,
                                     initialKeyValue: _selectedGender),
                               ),
-                              // Padding(
-                              //     padding: EdgeInsets.only(
-                              //         left: 25.0, right: 25.0, top: 25.0),
-                              //     child: Row(
-                              //       mainAxisSize: MainAxisSize.max,
-                              //       children: <Widget>[
-                              //         Column(
-                              //           mainAxisAlignment:
-                              //               MainAxisAlignment.start,
-                              //           mainAxisSize: MainAxisSize.min,
-                              //           children: <Widget>[
-                              //             Text(
-                              //               'About',
-                              //               style: TextStyle(
-                              //                   fontSize: 16.0,
-                              //                   fontWeight:
-                              //                       FontWeight.bold),
-                              //             ),
-                              //           ],
-                              //         ),
-                              //       ],
-                              //     )),
-                              // Padding(
-                              //     padding: EdgeInsets.only(
-                              //         left: 25.0, right: 25.0, top: 2.0),
-                              //     child: Row(
-                              //       mainAxisSize: MainAxisSize.max,
-                              //       children: <Widget>[
-                              //         Flexible(
-                              //           child: TextField(
-                              //             controller: aboutController,
-                              //             maxLines: 3,
-                              //             // decoration: const InputDecoration(
-
-                              //             //         ),
-                              //             enabled: !_status,
-                              //           ),
-                              //         ),
-                              //       ],
-                              // )),
-                              !_status ? _getActionButtons() : Container(),
+                              _getActionButtons(),
                             ],
                           ),
                         ),
@@ -473,24 +417,21 @@ class MapScreenState extends State<ProfileScreen>
                       borderRadius: BorderRadius.circular(20.0)),
                 ),
                 onPressed: () async {
-                  String imageUrl;
-                  if (control.image != null) {
-                    imageUrl = await StorageMethods().uploadImageToStorage(
-                        'profilePics', control.image!, false);
-                  } else {
-                    imageUrl = image!;
-                  }
-                  print(image.toString());
-                  authC.updateUser(
-                      age: ageController.text,
+                  print(currentUser.uid);
+                  String imageUrl = await StorageMethods().uploadImageToStorage(
+                      'profilePics', control.image!, false);
+
+                  authC.addOtpSignUser(Patients(
+                      userName: nameController.text,
+                      uid: currentUser.uid,
+                      photoUrl: imageUrl,
                       email: emailController.text,
                       phoneNumber: mobileController.text,
-                      userName: nameController.text,
-                      photoUrl: imageUrl,
-                      gender: _selectedGender);
+                      age: ageController.text,
+                      gender: _selectedGender));
 
                   setState(() {
-                    _status = true;
+                    // _status = true;
                     FocusScope.of(context).requestFocus(FocusNode());
                   });
                 },

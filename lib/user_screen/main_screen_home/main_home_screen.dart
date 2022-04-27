@@ -1,15 +1,29 @@
+import 'package:doctor_appointment/get_controller/get_controller.dart';
 import 'package:doctor_appointment/user_screen/screen_appoinment/appointment_screen.dart';
 import 'package:doctor_appointment/user_screen/screen_home/home_screen.dart';
 import 'package:doctor_appointment/user_screen/screen_more/more_screen.dart';
 import 'package:doctor_appointment/user_screen/screen_profile/profile_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import '../widget/bottom_navigation.dart';
 
-class MainHomeScreen extends StatelessWidget {
+class MainHomeScreen extends StatefulWidget {
   MainHomeScreen({Key? key}) : super(key: key);
 
   static ValueNotifier<int> selectedIndexNotifier = ValueNotifier(0);
+
+  @override
+  State<MainHomeScreen> createState() => _MainHomeScreenState();
+}
+
+class _MainHomeScreenState extends State<MainHomeScreen> {
+  @override
+  void initState() {
+    addData();
+    // TODO: implement initState
+    super.initState();
+  }
 
   final List<Widget> _pages = [
     HomeScreen(),
@@ -17,6 +31,12 @@ class MainHomeScreen extends StatelessWidget {
     ProfileScreen(),
     MoreScreen(),
   ];
+
+  addData() async {
+    final statecontrol = Get.put(StateController());
+    await statecontrol.refreshUser();
+    statecontrol.update();
+  }
 
   @override
   Widget build(BuildContext context) {

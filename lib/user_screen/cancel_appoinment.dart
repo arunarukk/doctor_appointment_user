@@ -1,17 +1,39 @@
 import 'package:doctor_appointment/constant_value/constant_colors.dart';
 import 'package:doctor_appointment/constant_value/constant_size.dart';
+import 'package:doctor_appointment/resources/data_controller.dart';
 import 'package:doctor_appointment/user_screen/widget/Appoinment/make_appoinment.dart';
+import 'package:doctor_appointment/user_screen/widget/doctor_list_widget/doctor_list_widget.dart';
+import 'package:doctor_appointment/user_screen/widget/rating_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 
 class CancelAppoinment extends StatelessWidget {
-  const CancelAppoinment({
-    Key? key,
-  }) : super(key: key);
+  final data;
+  final appoID;
+  final isUpComing;
+  const CancelAppoinment({Key? key, this.data, this.appoID, this.isUpComing})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     // final args = ModalRoute.of(context)!.settings.arguments as Doctor;
     final size = MediaQuery.of(context).size.height;
+
+    final String docPhoto = data.doctorDetails.photoUrl;
+    // print(docPhoto);
+    final String docName = data.doctorDetails.userName;
+    final String docSpeciality = data.doctorDetails.speciality['name'];
+    final DateTime appoDate = data.appoDetails.date;
+    final String time = data.appoDetails.time;
+    final String about = data.doctorDetails.about;
+    final date = DateFormat('dd/MM/yyyy').format(appoDate);
+    final String docID = data.appoDetails.doctorId;
+    final String schedID = data.appoDetails.scheduleID;
+    final String experience = data.doctorDetails.experience;
+
+    datacontrol.getRatingAndReview(doctorID: docID);
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -44,8 +66,8 @@ class CancelAppoinment extends StatelessWidget {
                     color: kGrey,
                     image: DecorationImage(
                       fit: BoxFit.cover,
-                      image: AssetImage(
-                        'assets/log_illu/Doctor-color-800px.png',
+                      image: NetworkImage(
+                        docPhoto,
                       ),
                     ),
                   ),
@@ -122,7 +144,7 @@ class CancelAppoinment extends StatelessWidget {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Text(
-                                    '3',
+                                    experience,
                                     style: TextStyle(fontSize: 16),
                                   ),
                                   const SizedBox(
@@ -141,70 +163,84 @@ class CancelAppoinment extends StatelessWidget {
                           thickness: 1,
                           color: kGrey,
                         ),
-                        Container(
-                          width: size * .14,
-                          height: size * .07,
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(50),
-                              border: Border.all(color: kBlue, width: 1)),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Text('Patients',
-                                  style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold)),
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
+                        GetBuilder<DataController>(
+                          init: DataController(),
+                          id: 'rating',
+                          builder: (patients) {
+                            return Container(
+                              width: size * .14,
+                              height: size * .07,
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(50),
+                                  border: Border.all(color: kBlue, width: 1)),
+                              child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
-                                  Text(
-                                    '333',
-                                    style: TextStyle(fontSize: 16),
-                                  ),
-                                  const SizedBox(
-                                    width: 4,
-                                  ),
-                                  Text(
-                                    'Ps',
-                                    style: TextStyle(fontSize: 16),
+                                  Text('Patients',
+                                      style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold)),
+                                  Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        patients.totalPatient.toString(),
+                                        style: TextStyle(fontSize: 16),
+                                      ),
+                                      const SizedBox(
+                                        width: 4,
+                                      ),
+                                      Text(
+                                        'Ps',
+                                        style: TextStyle(fontSize: 16),
+                                      )
+                                    ],
                                   )
                                 ],
-                              )
-                            ],
-                          ),
+                              ),
+                            );
+                          },
                         ),
                         const VerticalDivider(
                           thickness: 1,
                           color: kGrey,
                         ),
-                        Container(
-                          width: size * .14,
-                          height: size * .07,
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(50),
-                              border: Border.all(color: kBlue, width: 1)),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Text('Rating',
-                                  style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold)),
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
+                        GetBuilder<DataController>(
+                          init: DataController(),
+                          id: 'rating',
+                          builder: (rating) {
+                            return Container(
+                              width: size * .13,
+                              height: size * .07,
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(50),
+                                  border: Border.all(color: kBlue, width: 1)),
+                              child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
-                                  Text(
-                                    '4.3',
-                                    style: TextStyle(fontSize: 16),
-                                  ),
+                                  Text('Rating',
+                                      style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold)),
+                                  Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        rating.totalRating.toStringAsFixed(1),
+                                        style: TextStyle(fontSize: 16),
+                                      ),
+                                    ],
+                                  )
                                 ],
-                              )
-                            ],
-                          ),
+                              ),
+                            );
+                          },
                         ),
                       ],
                     ),
@@ -212,28 +248,79 @@ class CancelAppoinment extends StatelessWidget {
                   const SizedBox(
                     height: 24,
                   ),
-                  Hero(
-                    tag: Text('Dr name'),
-                    child: Material(
-                      color: Colors.transparent,
-                      child: Text(
-                        'Dr name',
-                        style: Theme.of(context).textTheme.headline5,
+                  Row(
+                    // crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Hero(
+                        tag: Text('Dr name'),
+                        child: Material(
+                          color: Colors.transparent,
+                          child: Text(
+                            'Dr ${docName.capitalize}',
+                            style: Theme.of(context).textTheme.headline5,
+                          ),
+                        ),
                       ),
+                      const SizedBox(
+                        width: 8,
+                      ),
+                      Container(
+                        height: size * .03,
+                        width: size * .12,
+                        decoration: BoxDecoration(
+                            // color: Colors.blueAccent,
+                            borderRadius: BorderRadius.circular(50),
+                            border: Border.all(color: kRed, width: 1.2)),
+                        child: Center(
+                          child: Text(
+                            docSpeciality.toUpperCase(),
+                            style: TextStyle(fontSize: 12),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  kHeight10,
+                  Container(
+                    width: size * 1,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Container(
+                          height: size * .04,
+                          width: size * .12,
+                          decoration: BoxDecoration(
+                              // color: Colors.blueAccent,
+                              borderRadius: BorderRadius.circular(50),
+                              border: Border.all(color: kBlue, width: 1.2)),
+                          child: Center(
+                            child: Text(
+                              DateFormat('dd.MM.yyyy').format(appoDate),
+                              style: TextStyle(fontSize: 12),
+                            ),
+                          ),
+                        ),
+                        Container(
+                          height: size * .04,
+                          width: size * .12,
+                          decoration: BoxDecoration(
+                              // color: Colors.blueAccent,
+                              borderRadius: BorderRadius.circular(50),
+                              border: Border.all(color: kBlue, width: 1.2)),
+                          child: Center(
+                            child: Text(
+                              time,
+                              style: TextStyle(fontSize: 12),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                  const SizedBox(
-                    height: 8,
-                  ),
-                  Text(
-                    'ortho • WIMS ',
-                    style: Theme.of(context).textTheme.headline6,
                   ),
                   const SizedBox(
                     height: 16,
                   ),
-                  Text(
-                      'Dr name •  is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries ',
+                  Text(about,
                       overflow: TextOverflow.ellipsis,
                       maxLines: 5,
                       style: TextStyle(fontSize: 13)),
@@ -263,12 +350,30 @@ class CancelAppoinment extends StatelessWidget {
                       //   width: 16,
                       // ),
                       InkWell(
-                        onTap: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => MakeAppoinment())),
+                        onTap: () {
+                          // print(appoID);
+                          // print(time);
+                          // print(date);
+                          // print(docID);
+                          // print(schedID);
+                          if (isUpComing == true) {
+                            // authC.cancelAppoin(
+                            //   appoID: appoID,
+                            //   time: time,
+                            //   date: appoDate,
+                            //   docID: docID,
+                            //   scheduleID: schedID,
+                            // );
+                            // Navigator.pop(context);
+                            print('cancel');
+                          } else {
+                            openRatingDialog(context, appoID);
+                            // datacontrol.getRatingAndReview(doctorID: docID);
+                            print('rate');
+                          }
+                        },
                         child: Container(
-                          height: 40,
+                          height: size * .06,
                           width: MediaQuery.of(context).size.width - 104,
                           decoration: BoxDecoration(
                             gradient: const LinearGradient(
@@ -282,7 +387,9 @@ class CancelAppoinment extends StatelessWidget {
                           ),
                           child: Center(
                             child: Text(
-                              'Cancel Appoinment',
+                              isUpComing == true
+                                  ? 'Cancel Appoinment'
+                                  : 'Rate Doctor',
                               style: Theme.of(context)
                                   .textTheme
                                   .headline6!
@@ -303,5 +410,17 @@ class CancelAppoinment extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  openRatingDialog(BuildContext context, String docID) {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return Dialog(
+            child: RatingWidget(
+              docID: docID,
+            ),
+          );
+        });
   }
 }

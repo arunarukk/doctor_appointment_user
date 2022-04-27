@@ -7,6 +7,7 @@ class Patients {
   final String userName;
   final String phoneNumber;
   final String age;
+  final String gender;
 
   const Patients({
     required this.userName,
@@ -15,6 +16,7 @@ class Patients {
     required this.email,
     required this.phoneNumber,
     required this.age,
+    required this.gender,
   });
 
   // static Patients fromSnap(DocumentSnapshot snap) {
@@ -37,18 +39,20 @@ class Patients {
         "photoUrl": photoUrl,
         "phoneNumber": phoneNumber,
         "age": age,
+        "gender": gender,
       };
 
   static Patients fromSnapshot(DocumentSnapshot snapshot) {
     var snap = snapshot.data() as Map<String, dynamic>;
 
     return Patients(
-      userName: snap['userName'],
-      uid: snap['uid'],
-      photoUrl: snap['photoUrl'],
-      email: snap['email'],
-      phoneNumber: snap['phoneNumber'],
-      age: snap['age'],
+      userName: snap['userName'] ?? '',
+      uid: snap['uid'] ?? '',
+      photoUrl: snap['photoUrl'] ?? '',
+      email: snap['email'] ?? '',
+      phoneNumber: snap['phoneNumber'] ?? '',
+      age: snap['age'] ?? '',
+      gender: snap['gender'] ?? '',
     );
   }
 }

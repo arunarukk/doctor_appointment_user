@@ -1,10 +1,38 @@
+import 'package:doctor_appointment/authentication_screen/otp_auth_screen.dart';
+import 'package:doctor_appointment/authentication_screen/otp_verification_screen.dart';
 import 'package:doctor_appointment/authentication_screen/sign_up.dart';
+import 'package:doctor_appointment/constant_value/constant_colors.dart';
+import 'package:doctor_appointment/resources/auth_method.dart';
+import 'package:doctor_appointment/utils/utility_method.dart';
 import 'package:flutter/material.dart';
 
 import '../user_screen/main_screen_home/main_home_screen.dart';
 
 class LogInScreen extends StatelessWidget {
-  const LogInScreen({Key? key}) : super(key: key);
+  LogInScreen({Key? key}) : super(key: key);
+
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
+  void logInPatient(BuildContext ctx) async {
+    // control.loading(true);
+    print(_emailController.text);
+    print('patient login');
+    String result = await AuthMethods().logInUser(
+      email: _emailController.text,
+      password: _passwordController.text,
+    );
+
+    if (result == 'Success') {
+      Navigator.of(ctx).pushReplacement(
+          MaterialPageRoute(builder: (ctx) => MainHomeScreen()));
+      showSnackBar(result, kGreen, ctx);
+      print("----------------$result");
+    } else {
+      showSnackBar(result, kRed, ctx);
+    }
+    // control.loading(false);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +46,7 @@ class LogInScreen extends StatelessWidget {
                 end: Alignment.bottomRight,
                 colors: [
               Color.fromARGB(255, 0, 162, 255),
-              Color.fromARGB(255, 60, 39, 176)
+              Color.fromARGB(255, 51, 19, 231)
             ])),
         child: SingleChildScrollView(
           child: Stack(
@@ -70,6 +98,7 @@ class LogInScreen extends StatelessWidget {
                           padding: const EdgeInsets.only(
                               left: 50.0, right: 50, top: 20),
                           child: TextFormField(
+                            controller: _emailController,
                             decoration: InputDecoration(
                               fillColor: Color.fromARGB(255, 48, 150, 223),
                               //filled: true,
@@ -97,6 +126,7 @@ class LogInScreen extends StatelessWidget {
                           padding: const EdgeInsets.only(
                               left: 50.0, right: 50, top: 20, bottom: 20),
                           child: TextFormField(
+                            controller: _passwordController,
                             decoration: InputDecoration(
                                 fillColor: Colors.white,
                                 //filled: true,
@@ -147,10 +177,11 @@ class LogInScreen extends StatelessWidget {
                         // ),
                         ElevatedButton(
                           onPressed: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => MainHomeScreen()));
+                            logInPatient(context);
+                            // Navigator.push(
+                            //     context,
+                            //     MaterialPageRoute(
+                            //         builder: (context) => MainHomeScreen()));
                           },
                           child: Text(
                             'Login',
@@ -162,6 +193,19 @@ class LogInScreen extends StatelessWidget {
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(50))),
                         ),
+                        InkWell(
+                            onTap: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          PhoneAuthentication()));
+                            },
+                            child: Text(
+                              "Don't have an account? ",
+                              style: TextStyle(color: kBlack),
+                            )),
+
                         SizedBox(
                           height: 50,
                         ),

@@ -1,9 +1,16 @@
 import 'package:doctor_appointment/authentication_screen/log_in.dart';
 import 'package:doctor_appointment/constant_value/constant_colors.dart';
+import 'package:doctor_appointment/get_controller/get_controller.dart';
+import 'package:doctor_appointment/resources/auth_method.dart';
+import 'package:doctor_appointment/resources/data_controller.dart';
 import 'package:doctor_appointment/user_screen/members_screen.dart';
 import 'package:doctor_appointment/user_screen/screen_profile/profile_screen.dart';
 import 'package:doctor_appointment/user_screen/widget/appbar_wiget.dart';
+import 'package:doctor_appointment/user_screen/widget/doctor_list_widget/doctor_list_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+
+import '../widget/rating_widget.dart';
 
 class MoreScreen extends StatefulWidget {
   // static final String path = "lib/src/pages/settings/settings1.dart";
@@ -25,6 +32,7 @@ class _SettingsOnePageState extends State<MoreScreen> {
     return _dark ? Brightness.dark : Brightness.light;
   }
 
+  DateTimeRange? dateRange;
   @override
   Widget build(BuildContext context) {
     return Theme(
@@ -45,33 +53,38 @@ class _SettingsOnePageState extends State<MoreScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Card(
-                    elevation: 8.0,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.0)),
-                    color: kBlue,
-                    child: ListTile(
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => ProfileScreen()));
-                      },
-                      title: Text(
-                        "Name",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                      leading: CircleAvatar(
-                          backgroundImage: AssetImage(
-                              'assets/log_illu/Doctor-color-800px.png')),
-                      trailing: Icon(
-                        Icons.edit,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
+                      elevation: 8.0,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0)),
+                      color: kBlue,
+                      child: GetBuilder<StateController>(builder: (controller) {
+                        return controller.user == null
+                            ? CircularProgressIndicator()
+                            : ListTile(
+                                onTap: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              ProfileScreen()));
+                                },
+                                title: Text(
+                                  controller.user!.userName,
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                                leading: CircleAvatar(
+                                  backgroundImage:
+                                      NetworkImage(controller.user!.photoUrl),
+                                ),
+                                trailing: Icon(
+                                  Icons.edit,
+                                  color: Colors.white,
+                                ),
+                              );
+                      })),
                   const SizedBox(height: 10.0),
                   // Card(
                   //   elevation: 4.0,
@@ -146,26 +159,28 @@ class _SettingsOnePageState extends State<MoreScreen> {
                     // value: false,
                     title: Text("About"),
                     //onChanged: null,
+
+                    onTap: () {
+                      datacontrol.filterDateRange();
+                    },
                   ),
                   ListTile(
+                    onTap: () {
+                      // datacontrol.getUpcomingApp();
+                    },
                     //activeColor: Colors.purple,
                     contentPadding: const EdgeInsets.all(0),
                     // value: true,
                     title: Text("Privacy Policy"),
                     // onChanged: (val) {},
                   ),
-                  // SwitchListTile(
-                  //   activeColor: Colors.purple,
-                  //   contentPadding: const EdgeInsets.all(0),
-                  //   value: true,
-                  //   title: Text("Received App Updates"),
-                  //   onChanged: null,
-                  // ),
+
                   ListTile(
                     contentPadding: const EdgeInsets.all(0),
                     title: Text('Logout'),
                     trailing: Icon(Icons.logout_outlined),
                     onTap: () {
+                      authC.signOut();
                       Navigator.push(
                           context,
                           MaterialPageRoute(

@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:doctor_appointment/authentication_screen/log_in.dart';
 import 'package:doctor_appointment/constant_value/constant_colors.dart';
+import 'package:doctor_appointment/get_controller/get_controller.dart';
 import 'package:doctor_appointment/resources/auth_method.dart';
 import 'package:doctor_appointment/utils/utility_method.dart';
 import 'package:flutter/material.dart';
@@ -40,17 +41,17 @@ class SignUpScreen extends StatelessWidget {
 
   void signUpPatient(BuildContext ctx) async {
     control.loading(true);
-    if (control._image == null) {
+    if (control.image == null) {
       print('image is null');
-      return ;
+      return;
     }
     if (_formKey.currentState!.validate()) {
       String result = await AuthMethods().signUpPatient(
         email: _emailController.text,
         password: _password.text,
-        userName: _userNameController.text,
+        userName: _userNameController.text.toLowerCase(),
         phoneNumber: _phoneNumber.text,
-        file: control._image!,
+        file: control.image!,
       );
       control.loading(false);
       if (result != 'Success') {
@@ -77,7 +78,7 @@ class SignUpScreen extends StatelessWidget {
               end: Alignment.bottomRight,
               colors: [
                 Color.fromARGB(255, 0, 162, 255),
-                Color.fromARGB(255, 60, 39, 176)
+                Color.fromARGB(255, 51, 18, 239)
               ]),
         ),
         child: Stack(
@@ -174,10 +175,10 @@ class SignUpScreen extends StatelessWidget {
                     children: [
                       GetBuilder<SignController>(
                         builder: ((controller) {
-                          return control._image != null
+                          return control.image != null
                               ? CircleAvatar(
                                   radius: 64,
-                                  backgroundImage: MemoryImage(control._image!),
+                                  backgroundImage: MemoryImage(control.image!),
                                   backgroundColor: Colors.red,
                                 )
                               : const CircleAvatar(
@@ -498,19 +499,5 @@ class SignUpScreen extends StatelessWidget {
         ),
       ),
     );
-  }
-}
-
-class SignController extends GetxController {
-  Uint8List? _image;
-  bool? isLoading;
-  void imageUpdate(Uint8List img) {
-    _image = img;
-    update();
-  }
-
-  void loading(bool load) {
-    isLoading = load;
-    update();
   }
 }
