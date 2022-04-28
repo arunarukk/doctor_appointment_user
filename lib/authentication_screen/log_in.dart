@@ -1,5 +1,4 @@
 import 'package:doctor_appointment/authentication_screen/otp_auth_screen.dart';
-import 'package:doctor_appointment/authentication_screen/otp_verification_screen.dart';
 import 'package:doctor_appointment/authentication_screen/sign_up.dart';
 import 'package:doctor_appointment/constant_value/constant_colors.dart';
 import 'package:doctor_appointment/resources/auth_method.dart';

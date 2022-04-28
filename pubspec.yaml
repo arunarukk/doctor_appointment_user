@@ -48,6 +48,7 @@ dependencies:
   syncfusion_flutter_datepicker: ^20.1.50
   firebase_messaging: ^11.2.14
   flutter_local_notifications: ^9.4.1
+  url_launcher: ^6.1.0
   
   
 

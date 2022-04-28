@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:doctor_appointment/main.dart';
 import 'package:doctor_appointment/models/Patients_model.dart';
 import 'package:doctor_appointment/models/appointment_model.dart';
 import 'package:doctor_appointment/models/member_model.dart';
@@ -8,8 +9,11 @@ import 'package:doctor_appointment/models/schedule.dart';
 import 'package:doctor_appointment/resources/specialty_mathod.dart';
 import 'package:doctor_appointment/resources/storage_methods.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
+
+enum User1 { doctor, patient }
 
 class AuthMethods {
   // final FirebaseAuth auth = FirebaseAuth.instanceFor(app: app);
@@ -41,6 +45,13 @@ class AuthMethods {
     return docSnap;
   }
 
+  getFcmToken(String uid, String userType) async {
+    final userData =
+        await FirebaseFirestore.instance.collection(userType).doc(uid).get();
+    final fcmToken = userData.data()!['fcmToken'];
+    return fcmToken;
+  }
+
   Future<void> updateUser({
     required String email,
     // required String password,
@@ -58,7 +69,7 @@ class AuthMethods {
 
       // String photoUrl = await StorageMethods()
       //     .uploadImageToStorage('profilePics', file, false);
-
+      final fcmToken = await FirebaseMessaging.instance.getToken();
       currentUser.then((value) async {
         Patients patients = Patients(
           userName: userName,
@@ -68,6 +79,7 @@ class AuthMethods {
           phoneNumber: phoneNumber,
           age: age,
           gender: gender,
+          fcmToken: fcmToken!,
         );
         await _fireStore
             .collection('patients')
@@ -101,6 +113,7 @@ class AuthMethods {
     required String phoneNumber,
     required Uint8List file,
   }) async {
+    String? token = await FirebaseMessaging.instance.getToken();
     String result = 'Something went wrong';
     try {
       if (email.isNotEmpty ||
@@ -122,13 +135,15 @@ class AuthMethods {
         // add patients to database
 
         Patients patients = Patients(
-            userName: userName,
-            uid: cred.user!.uid,
-            photoUrl: photoUrl,
-            email: email,
-            phoneNumber: phoneNumber,
-            age: '',
-            gender: '');
+          userName: userName,
+          uid: cred.user!.uid,
+          photoUrl: photoUrl,
+          email: email,
+          phoneNumber: phoneNumber,
+          age: '',
+          gender: '',
+          fcmToken: token!,
+        );
 
         _fireStore
             .collection('patients')
@@ -269,7 +284,9 @@ class AuthMethods {
     );
 
     // =============== adding to the patient list===========================
-
+    final docFcm = await getFcmToken(doctorId, "doctors");
+    notifyC.sendPushMessage(
+        "you have a new appointment", "${name + " " + time}", docFcm);
     await _fireStore
         .collection('appointment')
         .doc(bookingId)

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Patients {
@@ -8,6 +10,7 @@ class Patients {
   final String phoneNumber;
   final String age;
   final String gender;
+  final String fcmToken;
 
   const Patients({
     required this.userName,
@@ -17,6 +20,7 @@ class Patients {
     required this.phoneNumber,
     required this.age,
     required this.gender,
+    required this.fcmToken,
   });
 
   // static Patients fromSnap(DocumentSnapshot snap) {
@@ -32,27 +36,35 @@ class Patients {
   //   );
   // }
 
-  Map<String, dynamic> toJson() => {
-        "userName": userName,
-        "uid": uid,
-        "email": email,
-        "photoUrl": photoUrl,
-        "phoneNumber": phoneNumber,
-        "age": age,
-        "gender": gender,
-      };
+  Map<String, dynamic> toJson() {
+    return {
+      'email': email,
+      'uid': uid,
+      'photoUrl': photoUrl,
+      'userName': userName,
+      'phoneNumber': phoneNumber,
+      'age': age,
+      'gender': gender,
+      'fcmToken': fcmToken,
+    };
+  }
 
   static Patients fromSnapshot(DocumentSnapshot snapshot) {
     var snap = snapshot.data() as Map<String, dynamic>;
-
     return Patients(
-      userName: snap['userName'] ?? '',
+      email: snap['email'] ?? '',
       uid: snap['uid'] ?? '',
       photoUrl: snap['photoUrl'] ?? '',
-      email: snap['email'] ?? '',
+      userName: snap['userName'] ?? '',
       phoneNumber: snap['phoneNumber'] ?? '',
       age: snap['age'] ?? '',
       gender: snap['gender'] ?? '',
+      fcmToken: snap['fcmToken'] ?? '',
     );
   }
+
+  String toMap() => json.encode(toJson());
+
+  factory Patients.fromJson(String source) =>
+      Patients.fromJson(json.decode(source));
 }

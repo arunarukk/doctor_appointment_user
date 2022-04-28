@@ -8,6 +8,7 @@ import 'package:doctor_appointment/resources/specialty_mathod.dart';
 import 'package:doctor_appointment/resources/storage_methods.dart';
 import 'package:doctor_appointment/user_screen/widget/doctor_list_widget/doctor_list_widget.dart';
 import 'package:doctor_appointment/utils/utility_method.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
@@ -19,7 +20,7 @@ class LoginProfileScreen extends StatefulWidget {
 
 class MapScreenState extends State<LoginProfileScreen>
     with SingleTickerProviderStateMixin {
-  bool _status = true;
+ // bool _status = true;
   final FocusNode myFocusNode = FocusNode();
 
   final TextEditingController nameController = TextEditingController();
@@ -417,6 +418,7 @@ class MapScreenState extends State<LoginProfileScreen>
                       borderRadius: BorderRadius.circular(20.0)),
                 ),
                 onPressed: () async {
+                String? token=await  FirebaseMessaging.instance.getToken();
                   print(currentUser.uid);
                   String imageUrl = await StorageMethods().uploadImageToStorage(
                       'profilePics', control.image!, false);
@@ -428,7 +430,8 @@ class MapScreenState extends State<LoginProfileScreen>
                       email: emailController.text,
                       phoneNumber: mobileController.text,
                       age: ageController.text,
-                      gender: _selectedGender));
+                      gender: _selectedGender,
+                      fcmToken:token! ));
 
                   setState(() {
                     // _status = true;
@@ -457,7 +460,7 @@ class MapScreenState extends State<LoginProfileScreen>
                 ),
                 onPressed: () {
                   setState(() {
-                    _status = true;
+                    //_status = true;
                     FocusScope.of(context).requestFocus(FocusNode());
                   });
                 },
@@ -483,7 +486,7 @@ class MapScreenState extends State<LoginProfileScreen>
       ),
       onTap: () {
         setState(() {
-          _status = false;
+         // _status = false;
         });
       },
     );

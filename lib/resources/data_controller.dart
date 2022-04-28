@@ -210,7 +210,7 @@ class DataController extends GetxController {
       if (now.millisecondsSinceEpoch >= date.millisecondsSinceEpoch) {
         // print('------1111 ${date.millisecondsSinceEpoch}');
         // print(week.millisecondsSinceEpoch);
-        // print(item);
+        print(item);
         past.add(item);
       }
     }

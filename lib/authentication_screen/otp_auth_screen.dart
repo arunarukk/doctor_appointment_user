@@ -89,10 +89,12 @@ class _PhoneAuthenticationState extends State<PhoneAuthentication> {
     await auth.signInWithCredential(credential).then((value) {
       {
         User currentUser = auth.currentUser!;
-        if (currentUser.email == null) {}
+        if (currentUser.email == null) {
+          print("current user emty otp sign");
+          Navigator.pushReplacement(context,
+              MaterialPageRoute(builder: (context) => LoginProfileScreen()));
+        }
         print("you are logged in successfully");
-        Navigator.pushReplacement(context,
-            MaterialPageRoute(builder: (context) => LoginProfileScreen()));
         // Navigator.pushAndRemoveUntil(
         //   context,
         //   MaterialPageRoute(

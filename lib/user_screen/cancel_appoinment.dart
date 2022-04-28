@@ -7,6 +7,7 @@ import 'package:doctor_appointment/user_screen/widget/rating_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class CancelAppoinment extends StatelessWidget {
   final data;
@@ -23,6 +24,7 @@ class CancelAppoinment extends StatelessWidget {
     final String docPhoto = data.doctorDetails.photoUrl;
     // print(docPhoto);
     final String docName = data.doctorDetails.userName;
+    final String docPhone = data.doctorDetails.phoneNumber;
     final String docSpeciality = data.doctorDetails.speciality['name'];
     final DateTime appoDate = data.appoDetails.date;
     final String time = data.appoDetails.time;
@@ -280,7 +282,7 @@ class CancelAppoinment extends StatelessWidget {
                       ),
                     ],
                   ),
-                  kHeight10,
+                  kHeight20,
                   Container(
                     width: size * 1,
                     child: Row(
@@ -334,21 +336,23 @@ class CancelAppoinment extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      // Container(
-                      //   height: 40,
-                      //   width: 40,
-                      //   decoration: BoxDecoration(
-                      //     borderRadius: BorderRadius.circular(10),
-                      //     color: kBlue,
-                      //   ),
-                      //   child: Icon(
-                      //     Icons.chat_outlined,
-                      //     color: kWhite,
-                      //   ),
-                      // ),
-                      // const SizedBox(
-                      //   width: 16,
-                      // ),
+                      InkWell(
+                        onTap: () {
+                          launchUrl(Uri(scheme: 'tel', path: docPhone));
+                        },
+                        child: Container(
+                          height: size * .06,
+                          width: size * .06,
+                          decoration: BoxDecoration(
+                            color: kGreen,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Icon(
+                            Icons.call,
+                            color: kWhite,
+                          ),
+                        ),
+                      ),
                       InkWell(
                         onTap: () {
                           // print(appoID);
