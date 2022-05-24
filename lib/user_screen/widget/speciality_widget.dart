@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:doctor_appointment/constant_value/constant_colors.dart';
 import 'package:doctor_appointment/constant_value/constant_size.dart';
 import 'package:doctor_appointment/resources/specialty_mathod.dart';
+import 'package:doctor_appointment/user_screen/skeleton_screens/skeleton_speciality.dart';
 import 'package:doctor_appointment/user_screen/widget/speciality_list_doctor_widget.dart';
 import 'package:flutter/material.dart';
 
@@ -33,11 +34,11 @@ class SpecialityWidget extends StatelessWidget {
                   future: getSpeciality(),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
-                      // print('waiting');
+                      return SkeletonSpeciality();
                     }
                     if (snapshot.data == null) {
                       return Center(
-                        child: CircularProgressIndicator(),
+                        child: Text('No Data'),
                       );
                     }
 

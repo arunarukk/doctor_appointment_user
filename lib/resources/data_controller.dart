@@ -1,10 +1,19 @@
+import 'dart:typed_data';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:doctor_appointment/models/appointment_model.dart';
 import 'package:doctor_appointment/models/doc_appointment.dart';
 import 'package:doctor_appointment/models/doctor_model.dart';
+import 'package:doctor_appointment/resources/storage_methods.dart';
+import 'package:doctor_appointment/user_screen/widget/doctor_list_widget/doctor_list_widget.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:uuid/uuid.dart';
+
+import '../main.dart';
+import '../models/member_model.dart';
+import '../models/schedule.dart';
 
 final datacontrol = Get.put(DataController());
 
@@ -23,7 +32,8 @@ class DataController extends GetxController {
 
   String? selectedEndDate;
 
-  Future queryData(String queryString) async {
+  Future<QuerySnapshot<Map<String, dynamic>>?> queryData(
+      String queryString) async {
     try {
       // List<QuerySnapshot<Map<String, dynamic>>>? queryList;
 
@@ -35,7 +45,8 @@ class DataController extends GetxController {
 
       //print(data.toString());
       snapshot = data;
-      update();
+      update(['search']);
+      return snapshot;
       //print(data);
     } catch (e) {
       print('queryData error $e');
@@ -149,6 +160,7 @@ class DataController extends GetxController {
         .collection('appointment')
         .where('patientId', isEqualTo: currentUser.uid)
         .get();
+    //print(appointments.docs);
 
     for (var item in appointments.docs) {
       final date = (item.data()['date'] as Timestamp).toDate();
@@ -156,7 +168,7 @@ class DataController extends GetxController {
       if (now.millisecondsSinceEpoch <= date.millisecondsSinceEpoch) {
         // print('------1111 ${date.millisecondsSinceEpoch}');
         // print(week.millisecondsSinceEpoch);
-        // print(item);
+        //print(item);
         upComing.add(item);
       }
     }
@@ -171,7 +183,7 @@ class DataController extends GetxController {
           .collection('doctors')
           .where('uid', isEqualTo: elu.doctorId)
           .get();
-
+      //print(docDetails.docs);
       for (var value in docDetails.docs) {
         docAppoList.add(DoctorAppointment(
             doctorDetails: Doctor.fromSnapshot(value), appoDetails: elu));
@@ -179,7 +191,7 @@ class DataController extends GetxController {
       }
     }
     appoDocDetails.addAll(docAppoList);
-    update();
+    // update(['appointment']);
     // print('-----3333 ${docAppoList}');
     return docAppoList;
   }
@@ -291,22 +303,23 @@ class DataController extends GetxController {
     // print(data['doctorId']);
 
     await _fireStore.collection('appointment').doc(docID).update(Appointment(
-          date: (data!['date'] as Timestamp).toDate(),
-          time: data['time'],
-          patientId: data['patientId'],
-          doctorId: data['doctorId'],
-          bookingId: data['bookingId'],
-          gender: data['gender'],
-          name: data['name'],
-          phoneNumber: data['phoneNumber'],
-          age: data['age'],
-          problem: data['problem'],
-          payment: data['payment'],
-          photoUrl: data['photoUrl'],
-          scheduleID: data['scheduleID'],
-          rating: rating,
-          review: review,
-        ).toMap());
+            date: (data!['date'] as Timestamp).toDate(),
+            time: data['time'],
+            patientId: data['patientId'],
+            doctorId: data['doctorId'],
+            bookingId: data['bookingId'],
+            gender: data['gender'],
+            name: data['name'],
+            phoneNumber: data['phoneNumber'],
+            age: data['age'],
+            problem: data['problem'],
+            payment: data['payment'],
+            photoUrl: data['photoUrl'],
+            scheduleID: data['scheduleID'],
+            rating: rating,
+            review: review,
+            status: '')
+        .toMap());
   }
 
   getRatingAndReview({required String doctorID}) async {
@@ -384,4 +397,43 @@ class DataController extends GetxController {
     //update();
     return await filterDateRange();
   }
+
+  // -------------------- add members---------------------------------
+
+  addMembers({
+    required String userName,
+    required String phoneNumber,
+    required Uint8List photoUrl,
+    required String age,
+    required String gender,
+  }) async {
+    final String memberId = Uuid().v1();
+    User currentUser = _auth.currentUser!;
+
+    String imageUrl = await StorageMethods()
+        .uploadImageToStorage('memberProfile', photoUrl, false, memberId);
+
+    Members members = Members(
+      uid: currentUser.uid,
+      photoUrl: imageUrl,
+      userName: userName,
+      phoneNumber: phoneNumber,
+      age: age,
+      gender: gender,
+    );
+
+    await _fireStore.collection('members').doc(memberId).set(
+          members.toMap(),
+        );
+    update(['member']);
+  }
+
+  deleteMember(String memId) async {
+    User currentUser = _auth.currentUser!;
+    final memberDetails =
+        await _fireStore.collection('members').doc(memId).delete();
+    update(['member']);
+  }
+
+  
 }

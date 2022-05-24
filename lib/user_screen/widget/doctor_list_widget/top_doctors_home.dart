@@ -1,9 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:doctor_appointment/constant_value/constant_colors.dart';
-import 'package:doctor_appointment/constant_value/constant_size.dart';
 import 'package:doctor_appointment/resources/auth_method.dart';
+import 'package:doctor_appointment/user_screen/skeleton_screens/skeleton_top_doctors.dart';
 import 'package:doctor_appointment/user_screen/widget/doctor_profile.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class TopDoctors extends StatelessWidget {
   TopDoctors({Key? key}) : super(key: key);
@@ -23,12 +24,10 @@ class TopDoctors extends StatelessWidget {
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   //  print('waiting');
-                  return Center(
-                    child: CircularProgressIndicator(),
-                  );
+                  return SkeletonTopDoctors();
                 }
                 if (snapshot.data == null) {
-                  return Center(
+                  return const Center(
                     child: Text('sorry!'),
                   );
                 }
@@ -48,7 +47,8 @@ class TopDoctors extends StatelessWidget {
                           .toString()
                           .toUpperCase();
                     }
-
+                    final name = allvalue[index]['userName'];
+                    // print(name.capitalize);
                     return Card(
                       //color: kBlue,
                       shape: RoundedRectangleBorder(
@@ -84,14 +84,14 @@ class TopDoctors extends StatelessWidget {
                               ),
                               //kWidth20,
                               SizedBox(
-                                height: size * .05 - 1,
+                                height: size * .057,
                                 child: Column(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceAround,
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
                                     Text(
-                                      'Dr ${allvalue[index]['userName']}',
+                                      'Dr ${name.toString().capitalize}',
                                       style: TextStyle(
                                           color: kBlue,
                                           fontWeight: FontWeight.bold),

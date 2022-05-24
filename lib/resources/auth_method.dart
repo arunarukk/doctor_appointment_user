@@ -4,7 +4,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:doctor_appointment/main.dart';
 import 'package:doctor_appointment/models/Patients_model.dart';
 import 'package:doctor_appointment/models/appointment_model.dart';
-import 'package:doctor_appointment/models/member_model.dart';
 import 'package:doctor_appointment/models/schedule.dart';
 import 'package:doctor_appointment/resources/specialty_mathod.dart';
 import 'package:doctor_appointment/resources/storage_methods.dart';
@@ -12,6 +11,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
+
+import '../get_controller/get_controller.dart';
 
 enum User1 { doctor, patient }
 
@@ -86,6 +87,7 @@ class AuthMethods {
             .doc(value.uid)
             .update(patients.toJson());
         test = value;
+        statecontrol.update(['profile']);
         // print(test);
       });
       print(test);
@@ -129,8 +131,8 @@ class AuthMethods {
 
         print(cred.user!.uid);
 
-        String photoUrl = await StorageMethods()
-            .uploadImageToStorage('profilePics', file, false);
+        String photoUrl = await StorageMethods().uploadImageToStorage(
+            'profilePics', file, false, _auth.currentUser!.uid);
 
         // add patients to database
 
@@ -160,6 +162,65 @@ class AuthMethods {
     }
     return result;
   }
+
+//=====================sign up with phone number ============
+
+  otpSingUp({
+    required String email,
+    required String uid,
+    required String userName,
+    required String phoneNumber,
+    required Uint8List file,
+  }) async {
+    String result = 'Something went wrong';
+    try {
+      if (email.isNotEmpty || userName.isNotEmpty || phoneNumber.isNotEmpty) {
+        // print(cred.user!.uid);
+
+        String photoUrl = await StorageMethods()
+            .uploadImageToStorage('profilePics', file, false, uid);
+
+        // add doctor to database
+
+        // Doctor doctor = Doctor(
+        //   userName: userName,
+        //   uid: uid,
+        //   photoUrl: photoUrl,
+        //   email: email,
+        //   phoneNumber: phoneNumber,
+        //   speciality: {},
+        //   about: '',
+        //   experience: '',
+        //   rating: 0,
+        //   patients: 0,
+        // );
+
+        final fcmToken = await FirebaseMessaging.instance.getToken();
+
+        Patients patients = Patients(
+          userName: userName,
+          uid: uid,
+          photoUrl: photoUrl,
+          email: email,
+          phoneNumber: phoneNumber,
+          age: '',
+          gender: '',
+          fcmToken: fcmToken!,
+        );
+
+        _fireStore.collection('patients').doc(uid).set(patients.toJson());
+        result = 'Success';
+      }
+    } on FirebaseAuthException catch (err) {
+      if (err.code == 'invalid-phone number') {
+        result = 'The phone number is badly formatted.';
+      }
+    } catch (err) {
+      result = err.toString();
+    }
+    return result;
+  }
+
   // logging in user
 
   Future<String> logInUser({
@@ -240,13 +301,13 @@ class AuthMethods {
     }
   }
 
-  // signOut user==============================================================
+  // ===================== signOut user =================================
 
   Future<void> signOut() async {
     await _auth.signOut();
   }
 
-  //booking appointment===========================
+  // ===================== booking appointment ==========================
 
   bookAppoint({
     required name,
@@ -281,6 +342,7 @@ class AuthMethods {
       scheduleID: dateID,
       rating: 0.0,
       review: '',
+      status: '',
     );
 
     // =============== adding to the patient list===========================
@@ -319,7 +381,15 @@ class AuthMethods {
           threePm: time == '3:00 PM' ? false : appoTimeData!['threePm'],
           twelvePm: time == '12:00 PM' ? false : appoTimeData!['twelvePm'],
           twoPm: time == '2:00 PM' ? false : appoTimeData!['twoPm'],
-        ));
+        ),
+        time: time);
+    await _fireStore
+        .collection('doctors')
+        .doc(doctorId)
+        .collection('schedule')
+        .doc(dateID)
+        .collection('time')
+        .add({'time': time});
   }
 
   // ================= update doctor schedule===================================
@@ -327,7 +397,8 @@ class AuthMethods {
   updateDoctorSchedule(
       {required String doctorId,
       required String documentId,
-      required Schedule schedule}) async {
+      required Schedule schedule,
+      required String time}) async {
     await _fireStore
         .collection('doctors')
         .doc(doctorId)
@@ -344,7 +415,9 @@ class AuthMethods {
     required DateTime date,
     required String docID,
     required String scheduleID,
+    required String name,
   }) async {
+    //User currentUser = _auth.currentUser!;
     final dateData = await _fireStore
         .collection('doctors')
         .doc(docID)
@@ -356,6 +429,7 @@ class AuthMethods {
     final appoTimeData = dateData.data();
 
     updateDoctorSchedule(
+        time: time,
         doctorId: docID,
         documentId: scheduleID,
         schedule: Schedule(
@@ -372,41 +446,33 @@ class AuthMethods {
           twoPm: time == '2:00 PM' ? true : appoTimeData!['twoPm'],
         ));
 
-    await _fireStore.collection('appointment').doc(appoID).delete();
-  }
+    await _fireStore
+        .collection('appointment')
+        .doc(appoID)
+        .update({'status': 'canceled'});
 
-  // -------------------- add members---------------------------------
+    final dateTime = await _fireStore
+        .collection('doctors')
+        .doc(docID)
+        .collection('schedule')
+        .doc(scheduleID)
+        .collection('time')
+        .where('time', isEqualTo: time)
+        .get();
 
-  addMembers({
-    required String userName,
-    required String phoneNumber,
-    required Uint8List photoUrl,
-    required String age,
-    required String gender,
-  }) async {
-    final String memberId = Uuid().v1();
-    User currentUser = _auth.currentUser!;
+    final timeId = dateTime.docs.first.id;
 
-    String imageUrl = await StorageMethods()
-        .uploadImageToStorage('memberProfile', photoUrl, false);
+    await _fireStore
+        .collection('doctors')
+        .doc(docID)
+        .collection('schedule')
+        .doc(scheduleID)
+        .collection('time')
+        .doc(timeId)
+        .delete();
+    final docFcm = await getFcmToken(docID, "doctors");
+    notifyC.sendPushMessage("Appointment canceled", name + " " + time, docFcm);
 
-    Members members = Members(
-      uid: currentUser.uid,
-      photoUrl: imageUrl,
-      userName: userName,
-      phoneNumber: phoneNumber,
-      age: age,
-      gender: gender,
-    );
-
-    await _fireStore.collection('members').doc(memberId).set(
-          members.toMap(),
-        );
-  }
-
-  deleteMember(String memId) async {
-    User currentUser = _auth.currentUser!;
-    final memberDetails =
-        await _fireStore.collection('members').doc(memId).delete();
+    print(timeId);
   }
 }

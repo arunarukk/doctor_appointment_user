@@ -18,6 +18,7 @@ class DoctorDetailScreen extends StatelessWidget {
     final size = MediaQuery.of(context).size.height;
 
     datacontrol.getRatingAndReview(doctorID: data['uid']);
+    final name = data['userName'];
 
     return Scaffold(
       appBar: AppBar(
@@ -44,55 +45,59 @@ class DoctorDetailScreen extends StatelessWidget {
               tag: 'assets/log_illu/Doctor-color-800px.png',
               child: Material(
                 type: MaterialType.transparency,
-                child: Container(
-                  alignment: Alignment.topCenter,
-                  height: MediaQuery.of(context).size.height * 0.45,
-                  decoration: BoxDecoration(
-                    color: kGrey,
-                    image: DecorationImage(
-                      fit: BoxFit.cover,
-                      image: NetworkImage(
-                        data['photoUrl'],
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 8, right: 8),
+                  child: Container(
+                    alignment: Alignment.topCenter,
+                    height: MediaQuery.of(context).size.height * 0.45,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20),
+                      color: kGrey,
+                      image: DecorationImage(
+                        fit: BoxFit.cover,
+                        image: NetworkImage(
+                          data['photoUrl'],
+                        ),
                       ),
                     ),
-                  ),
-                  child: SafeArea(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 30,
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          // GestureDetector(
-                          //   onTap: () {
-                          //     Navigator.pop(context);
-                          //   },
-                          //   child: Container(
-                          //     height: 24,
-                          //     width: 24,
-                          //     decoration: const BoxDecoration(
-                          //       image: DecorationImage(
-                          //         image: Svg('assets/svg/icon-back.svg'),
-                          //       ),
-                          //     ),
-                          //   ),
-                          // ),
-                          // GestureDetector(
-                          //   onTap: () {
-                          //     Navigator.pop(context);
-                          //   },
-                          //   child: Container(
-                          //     height: 24,
-                          //     width: 24,
-                          //     decoration: const BoxDecoration(
-                          //       image: DecorationImage(
-                          //         image: Svg('assets/svg/icon-bookmark.svg'),
-                          //       ),
-                          //     ),
-                          //   ),
-                          // )
-                        ],
+                    child: SafeArea(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 30,
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            // GestureDetector(
+                            //   onTap: () {
+                            //     Navigator.pop(context);
+                            //   },
+                            //   child: Container(
+                            //     height: 24,
+                            //     width: 24,
+                            //     decoration: const BoxDecoration(
+                            //       image: DecorationImage(
+                            //         image: Svg('assets/svg/icon-back.svg'),
+                            //       ),
+                            //     ),
+                            //   ),
+                            // ),
+                            // GestureDetector(
+                            //   onTap: () {
+                            //     Navigator.pop(context);
+                            //   },
+                            //   child: Container(
+                            //     height: 24,
+                            //     width: 24,
+                            //     decoration: const BoxDecoration(
+                            //       image: DecorationImage(
+                            //         image: Svg('assets/svg/icon-bookmark.svg'),
+                            //       ),
+                            //     ),
+                            //   ),
+                            // )
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -198,6 +203,10 @@ class DoctorDetailScreen extends StatelessWidget {
                           init: DataController(),
                           id: 'rating',
                           builder: (rating) {
+                            if (rating.totalRating.isNaN) {
+                              print(rating.totalRating);
+                            }
+
                             return Container(
                               width: size * .13,
                               height: size * .07,
@@ -218,7 +227,10 @@ class DoctorDetailScreen extends StatelessWidget {
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       Text(
-                                        rating.totalRating.toString(),
+                                        rating.totalRating.isNaN
+                                            ? '0'
+                                            : rating.totalRating
+                                                .toStringAsFixed(1),
                                         style: TextStyle(fontSize: 16),
                                       ),
                                     ],
@@ -234,33 +246,38 @@ class DoctorDetailScreen extends StatelessWidget {
                   const SizedBox(
                     height: 24,
                   ),
-                  Row(
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Hero(
                         tag: Text('Dr name'),
                         child: Material(
                           color: Colors.transparent,
                           child: Text(
-                            'Dr ${data['userName']}',
+                            'Dr ${name.toString().capitalize}',
                             style: Theme.of(context).textTheme.headline5,
                           ),
                         ),
                       ),
-                      kWidth10,
-                      Container(
-                        height: size * .03,
-                        width: size * .12,
-                        decoration: BoxDecoration(
-                            // color: Colors.blueAccent,
-                            borderRadius: BorderRadius.circular(50),
-                            border: Border.all(color: kRed, width: 1.2)),
-                        child: Center(
-                          child: Text(
-                            data['speciality']['name'].toString().toUpperCase(),
-                            style: TextStyle(fontSize: 12),
-                          ),
-                        ),
-                      ),
+                      kHeight10,
+                      data['speciality']['name'] == null
+                          ? Container()
+                          : Container(
+                              height: size * .03,
+                              width: size * .12,
+                              decoration: BoxDecoration(
+                                  // color: Colors.blueAccent,
+                                  borderRadius: BorderRadius.circular(50),
+                                  border: Border.all(color: kRed, width: 1.2)),
+                              child: Center(
+                                child: Text(
+                                  data['speciality']['name']
+                                      .toString()
+                                      .toUpperCase(),
+                                  style: TextStyle(fontSize: 12),
+                                ),
+                              ),
+                            ),
                     ],
                   ),
 
@@ -314,7 +331,7 @@ class DoctorDetailScreen extends StatelessWidget {
                                     Color.fromARGB(255, 35, 134, 247),
                                   ],
                                 ),
-                                borderRadius: BorderRadius.circular(20),
+                                borderRadius: BorderRadius.circular(50),
                                 color: kBlue,
                               ),
                               child: Center(

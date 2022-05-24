@@ -7,7 +7,6 @@ import 'package:doctor_appointment/get_controller/get_controller.dart';
 import 'package:doctor_appointment/resources/data_controller.dart';
 import 'package:doctor_appointment/user_screen/widget/doctor_list_widget/doctor_list_widget.dart';
 import 'package:doctor_appointment/utils/utility_method.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
@@ -420,7 +419,7 @@ class MapScreenState extends State<AddMembers>
                                             BorderRadius.circular(20.0)),
                                   ),
                                   onPressed: () {
-                                    authC.addMembers(
+                                    datacontrol.addMembers(
                                         userName: nameController.text,
                                         phoneNumber: phoneController.text,
                                         photoUrl: control.memiImage!,
@@ -452,7 +451,7 @@ class MapScreenState extends State<AddMembers>
                                         ),
                                         onPressed: () {
                                           print(widget.uid);
-                                          authC.deleteMember(widget.uid);
+                                          datacontrol.deleteMember(widget.uid);
                                           Navigator.pop(context);
                                         },
                                       )

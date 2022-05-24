@@ -1,10 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:doctor_appointment/constant_value/constant_colors.dart';
 import 'package:doctor_appointment/resources/auth_method.dart';
+import 'package:doctor_appointment/user_screen/skeleton_screens/skeleton_doctorlist.dart';
 import 'package:doctor_appointment/user_screen/widget/doctor_profile.dart';
 import 'package:flutter/material.dart';
-
-import '../../../constant_value/constant_size.dart';
 
 final authC = AuthMethods();
 
@@ -40,11 +39,11 @@ class DoctorList extends StatelessWidget {
           future: authC.getdoctorDetails(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              print('waiting');
-              return Center(child: CircularProgressIndicator());
-            } else if (snapshot.data == null) {
+              // print('waiting');
+              return SkeletonDoctorList();
+            } else if (snapshot.data!.isEmpty) {
               return Center(
-                child: Text('sorry doctor\'s available now'),
+                child: Text('Sorry no doctor\'s available now'),
               );
             }
 
@@ -115,10 +114,11 @@ class DoctorList extends StatelessWidget {
                                     allvalue[index]['speciality']['name']
                                         .toString()
                                         .toUpperCase(),
-                                    style: TextStyle(
-                                        color: kWhite,
-                                        fontSize: 10,
-                                        fontWeight: FontWeight.bold),
+                                    style: const TextStyle(
+                                      color: kWhite,
+                                      fontSize: 10,
+                                      // fontWeight: FontWeight.bold,
+                                    ),
                                   ),
                                 ],
                               ),

@@ -49,6 +49,9 @@ dependencies:
   firebase_messaging: ^11.2.14
   flutter_local_notifications: ^9.4.1
   url_launcher: ^6.1.0
+  sizer: ^2.0.15
+  skeletons: ^0.0.3
+  connectivity_plus: ^2.3.0
   
   
 
@@ -84,6 +87,10 @@ flutter:
     - assets/razorpay.png
     - assets/doctor_home.png
     - assets/lukman.jpeg
+    - assets/log_illu/login_screen.png
+    - assets/atmchip.png
+    - assets/no appointment.png
+    - assets/error.gif
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
   # For details regarding adding assets from package dependencies, see

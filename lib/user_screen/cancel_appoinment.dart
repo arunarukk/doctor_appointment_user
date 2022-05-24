@@ -1,9 +1,10 @@
 import 'package:doctor_appointment/constant_value/constant_colors.dart';
 import 'package:doctor_appointment/constant_value/constant_size.dart';
+import 'package:doctor_appointment/get_controller/get_controller.dart';
 import 'package:doctor_appointment/resources/data_controller.dart';
-import 'package:doctor_appointment/user_screen/widget/Appoinment/make_appoinment.dart';
 import 'package:doctor_appointment/user_screen/widget/doctor_list_widget/doctor_list_widget.dart';
 import 'package:doctor_appointment/user_screen/widget/rating_widget.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -33,6 +34,8 @@ class CancelAppoinment extends StatelessWidget {
     final String docID = data.appoDetails.doctorId;
     final String schedID = data.appoDetails.scheduleID;
     final String experience = data.doctorDetails.experience;
+    final String patientName = data.appoDetails.name;
+    final String isCanceled = data.appoDetails.status;
 
     datacontrol.getRatingAndReview(doctorID: docID);
 
@@ -61,55 +64,59 @@ class CancelAppoinment extends StatelessWidget {
               tag: 'assets/log_illu/Doctor-color-800px.png',
               child: Material(
                 type: MaterialType.transparency,
-                child: Container(
-                  alignment: Alignment.topCenter,
-                  height: MediaQuery.of(context).size.height * 0.45,
-                  decoration: BoxDecoration(
-                    color: kGrey,
-                    image: DecorationImage(
-                      fit: BoxFit.cover,
-                      image: NetworkImage(
-                        docPhoto,
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 8, right: 8),
+                  child: Container(
+                    alignment: Alignment.topCenter,
+                    height: MediaQuery.of(context).size.height * 0.45,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20),
+                      color: kGrey,
+                      image: DecorationImage(
+                        fit: BoxFit.cover,
+                        image: NetworkImage(
+                          docPhoto,
+                        ),
                       ),
                     ),
-                  ),
-                  child: SafeArea(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 30,
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          // GestureDetector(
-                          //   onTap: () {
-                          //     Navigator.pop(context);
-                          //   },
-                          //   child: Container(
-                          //     height: 24,
-                          //     width: 24,
-                          //     decoration: const BoxDecoration(
-                          //       image: DecorationImage(
-                          //         image: Svg('assets/svg/icon-back.svg'),
-                          //       ),
-                          //     ),
-                          //   ),
-                          // ),
-                          // GestureDetector(
-                          //   onTap: () {
-                          //     Navigator.pop(context);
-                          //   },
-                          //   child: Container(
-                          //     height: 24,
-                          //     width: 24,
-                          //     decoration: const BoxDecoration(
-                          //       image: DecorationImage(
-                          //         image: Svg('assets/svg/icon-bookmark.svg'),
-                          //       ),
-                          //     ),
-                          //   ),
-                          // )
-                        ],
+                    child: SafeArea(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 30,
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            // GestureDetector(
+                            //   onTap: () {
+                            //     Navigator.pop(context);
+                            //   },
+                            //   child: Container(
+                            //     height: 24,
+                            //     width: 24,
+                            //     decoration: const BoxDecoration(
+                            //       image: DecorationImage(
+                            //         image: Svg('assets/svg/icon-back.svg'),
+                            //       ),
+                            //     ),
+                            //   ),
+                            // ),
+                            // GestureDetector(
+                            //   onTap: () {
+                            //     Navigator.pop(context);
+                            //   },
+                            //   child: Container(
+                            //     height: 24,
+                            //     width: 24,
+                            //     decoration: const BoxDecoration(
+                            //       image: DecorationImage(
+                            //         image: Svg('assets/svg/icon-bookmark.svg'),
+                            //       ),
+                            //     ),
+                            //   ),
+                            // )
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -360,40 +367,54 @@ class CancelAppoinment extends StatelessWidget {
                           // print(date);
                           // print(docID);
                           // print(schedID);
-                          if (isUpComing == true) {
-                            // authC.cancelAppoin(
-                            //   appoID: appoID,
-                            //   time: time,
-                            //   date: appoDate,
-                            //   docID: docID,
-                            //   scheduleID: schedID,
-                            // );
-                            // Navigator.pop(context);
-                            print('cancel');
-                          } else {
-                            openRatingDialog(context, appoID);
-                            // datacontrol.getRatingAndReview(doctorID: docID);
-                            print('rate');
+
+                          if (isCanceled != 'canceled') {
+                            if (isUpComing == true) {
+                              authC.cancelAppoin(
+                                appoID: appoID,
+                                time: time,
+                                date: appoDate,
+                                docID: docID,
+                                scheduleID: schedID,
+                                name: patientName,
+                              );
+                              datacontrol.update(['appointment']);
+                              Navigator.pop(context);
+                              //print('cancel');
+                            } else {
+                              openRatingDialog(context, appoID);
+                              // datacontrol.getRatingAndReview(doctorID: docID);
+                              // print('rate');
+                            }
                           }
                         },
                         child: Container(
                           height: size * .06,
                           width: MediaQuery.of(context).size.width - 104,
                           decoration: BoxDecoration(
-                            gradient: const LinearGradient(
-                              colors: [
-                                Color.fromARGB(255, 18, 67, 214),
-                                Color.fromARGB(255, 35, 134, 247),
-                              ],
-                            ),
+                            gradient: isCanceled == 'canceled'
+                                ? LinearGradient(
+                                    colors: [
+                                      Color.fromARGB(255, 236, 4, 4),
+                                      Color.fromARGB(255, 246, 84, 84),
+                                    ],
+                                  )
+                                : LinearGradient(
+                                    colors: [
+                                      Color.fromARGB(255, 18, 67, 214),
+                                      Color.fromARGB(255, 35, 134, 247),
+                                    ],
+                                  ),
                             borderRadius: BorderRadius.circular(20),
                             color: kBlue,
                           ),
                           child: Center(
                             child: Text(
-                              isUpComing == true
-                                  ? 'Cancel Appoinment'
-                                  : 'Rate Doctor',
+                              isCanceled == 'canceled'
+                                  ? 'Canceled'
+                                  : isUpComing == true
+                                      ? 'Cancel Appoinment'
+                                      : 'Rate Doctor',
                               style: Theme.of(context)
                                   .textTheme
                                   .headline6!

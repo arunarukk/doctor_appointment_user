@@ -1,9 +1,11 @@
 import 'package:doctor_appointment/authentication_screen/otp_auth_screen.dart';
 import 'package:doctor_appointment/authentication_screen/sign_up.dart';
 import 'package:doctor_appointment/constant_value/constant_colors.dart';
+import 'package:doctor_appointment/get_controller/get_controller.dart';
 import 'package:doctor_appointment/resources/auth_method.dart';
 import 'package:doctor_appointment/utils/utility_method.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import '../user_screen/main_screen_home/main_home_screen.dart';
 
@@ -14,9 +16,10 @@ class LogInScreen extends StatelessWidget {
   final TextEditingController _passwordController = TextEditingController();
 
   void logInPatient(BuildContext ctx) async {
-    // control.loading(true);
-    print(_emailController.text);
-    print('patient login');
+    signControl.loading(true);
+    signControl.update(['login']);
+    // print(_emailController.text);
+    // print('patient login');
     String result = await AuthMethods().logInUser(
       email: _emailController.text,
       password: _passwordController.text,
@@ -30,11 +33,18 @@ class LogInScreen extends StatelessWidget {
     } else {
       showSnackBar(result, kRed, ctx);
     }
-    // control.loading(false);
+    await Future.delayed(Duration(seconds: 2));
+
+    signControl.loading(false);
+
+    signControl.update(['login']);
   }
 
   @override
   Widget build(BuildContext context) {
+    signControl.loadL = false;
+    //signControl.loading(false);
+    final size = MediaQuery.of(context).size.height;
     return Scaffold(
       body: Container(
         width: double.infinity,
@@ -53,7 +63,7 @@ class LogInScreen extends StatelessWidget {
               Container(
                 height: 450,
                 width: double.infinity,
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   color: Colors.white,
                   boxShadow: [
                     BoxShadow(
@@ -77,19 +87,14 @@ class LogInScreen extends StatelessWidget {
               Column(
                 children: [
                   Padding(
-                    padding: const EdgeInsets.only(top: 30.0, bottom: 50),
+                    padding: const EdgeInsets.only(top: 100.0, bottom: 60),
                     child: SizedBox(
                       child: Image.asset(
-                          'assets/log_illu/People-Search-color-800px.png'),
+                        'assets/log_illu/login_screen.png',
+                        width: size * .36,
+                      ),
                     ),
                   ),
-                  // Text(
-                  //   'Log-In',
-                  //   style: TextStyle(
-                  //       fontSize: 20,
-                  //       color: Colors.white,
-                  //       fontWeight: FontWeight.bold),
-                  // ),
                   Form(
                     child: Column(
                       children: [
@@ -98,7 +103,8 @@ class LogInScreen extends StatelessWidget {
                               left: 50.0, right: 50, top: 20),
                           child: TextFormField(
                             controller: _emailController,
-                            decoration: InputDecoration(
+                            style: TextStyle(color: kWhite),
+                            decoration: const InputDecoration(
                               fillColor: Color.fromARGB(255, 48, 150, 223),
                               //filled: true,
                               focusedBorder: UnderlineInputBorder(
@@ -112,10 +118,11 @@ class LogInScreen extends StatelessWidget {
 
                               prefixIcon: Padding(
                                 padding: EdgeInsets.only(
-                                    top: 0), // add padding to adjust icon
+                                    top: 15), // add padding to adjust icon
                                 child: Icon(
                                   Icons.email_outlined,
                                   color: Colors.white,
+                                  size: 20,
                                 ),
                               ),
                             ),
@@ -124,33 +131,61 @@ class LogInScreen extends StatelessWidget {
                         Padding(
                           padding: const EdgeInsets.only(
                               left: 50.0, right: 50, top: 20, bottom: 20),
-                          child: TextFormField(
-                            controller: _passwordController,
-                            decoration: InputDecoration(
-                                fillColor: Colors.white,
-                                //filled: true,
-                                focusedBorder: UnderlineInputBorder(
-                                  borderSide: BorderSide(color: Colors.white),
-                                ),
-                                labelStyle: TextStyle(color: Colors.white),
-                                labelText: 'Password',
-                                enabledBorder: UnderlineInputBorder(
-                                  borderSide: BorderSide(color: Colors.white),
-                                ),
-                                prefixIcon: Padding(
-                                  padding: EdgeInsets.only(
-                                      top: 0), // add padding to adjust icon
-                                  child: Icon(
-                                    Icons.lock_outline,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                                suffixIcon: IconButton(
-                                    onPressed: () {},
-                                    icon: Icon(
-                                      Icons.remove_red_eye_rounded,
-                                      color: Colors.white,
-                                    ))),
+                          child: GetBuilder<StateController>(
+                            init: StateController(),
+                            id: 'visiblity',
+                            builder: (visible) {
+                              return TextFormField(
+                                obscureText: visible.passwordVisible,
+                                controller: _passwordController,
+                                style: TextStyle(color: kWhite),
+                                decoration: InputDecoration(
+                                    fillColor: Colors.white,
+                                    //filled: true,
+                                    focusedBorder: const UnderlineInputBorder(
+                                      borderSide:
+                                          BorderSide(color: Colors.white),
+                                    ),
+                                    labelStyle:
+                                        const TextStyle(color: Colors.white),
+                                    labelText: 'Password',
+                                    enabledBorder: const UnderlineInputBorder(
+                                      borderSide:
+                                          BorderSide(color: Colors.white),
+                                    ),
+                                    prefixIcon: const Padding(
+                                      padding: EdgeInsets.only(
+                                          top:
+                                              15), // add padding to adjust icon
+                                      child: Icon(
+                                        Icons.lock_outline,
+                                        color: Colors.white,
+                                        size: 20,
+                                      ),
+                                    ),
+                                    suffixIcon: IconButton(
+                                        onPressed: () {
+                                          if (visible.passwordVisible == true) {
+                                            visible.passwordVisible = false;
+                                          } else {
+                                            visible.passwordVisible = true;
+                                          }
+
+                                          visible.update(['visiblity']);
+                                        },
+                                        icon: Padding(
+                                          padding:
+                                              const EdgeInsets.only(top: 15.0),
+                                          child: Icon(
+                                            visible.passwordVisible == true
+                                                ? Icons.remove_red_eye_rounded
+                                                : Icons.remove_red_eye_outlined,
+                                            color: Colors.white,
+                                            size: 18,
+                                          ),
+                                        ))),
+                              );
+                            },
                           ),
                         ),
                         // InkWell(
@@ -177,51 +212,76 @@ class LogInScreen extends StatelessWidget {
                         ElevatedButton(
                           onPressed: () {
                             logInPatient(context);
-                            // Navigator.push(
-                            //     context,
-                            //     MaterialPageRoute(
-                            //         builder: (context) => MainHomeScreen()));
                           },
-                          child: Text(
-                            'Login',
-                            style: TextStyle(color: Colors.white, fontSize: 18),
-                          ),
+                          child: GetBuilder<SignController>(
+                              init: SignController(),
+                              id: 'login',
+                              builder: (login) {
+                                return login.isLoading == true
+                                    ? Center(
+                                        child: CircularProgressIndicator(
+                                          color: kWhite,
+                                        ),
+                                      )
+                                    : Text(
+                                        'Login',
+                                        style: TextStyle(
+                                            color: Colors.white, fontSize: 18),
+                                      );
+                              }),
                           style: ElevatedButton.styleFrom(
-                              primary: Color.fromARGB(255, 241, 187, 38),
+                              primary: const Color.fromARGB(255, 241, 187, 38),
                               fixedSize: const Size(300, 50),
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(50))),
                         ),
-                        InkWell(
-                            onTap: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          PhoneAuthentication()));
-                            },
-                            child: Text(
-                              "Don't have an account? ",
-                              style: TextStyle(color: kBlack),
-                            )),
 
-                        SizedBox(
-                          height: 50,
+                        Padding(
+                          padding: const EdgeInsets.only(top: 8.0),
+                          child: Text(
+                            'OR',
+                            style: TextStyle(color: kWhite),
+                          ),
                         ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text("Don't have an account? "),
-                            InkWell(
-                                onTap: () {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              SignUpScreen()));
-                                },
-                                child: Text('Register')),
-                          ],
+                        Padding(
+                          padding: const EdgeInsets.only(top: 8.0),
+                          child: InkWell(
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            PhoneAuthentication()));
+                              },
+                              child: Text(
+                                "Login with phone",
+                                style: TextStyle(color: kWhite),
+                              )),
+                        ),
+
+                        Padding(
+                          padding: const EdgeInsets.only(top: 40.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Text(
+                                "Don't have an account? ",
+                                style: TextStyle(color: kWhite),
+                              ),
+                              InkWell(
+                                  onTap: () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                SignUpScreen()));
+                                  },
+                                  child: const Text(
+                                    'Register!',
+                                    style: TextStyle(color: kWhite),
+                                  )),
+                            ],
+                          ),
                         ),
                       ],
                     ),

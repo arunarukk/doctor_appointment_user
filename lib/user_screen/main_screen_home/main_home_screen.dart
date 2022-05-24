@@ -20,7 +20,7 @@ class MainHomeScreen extends StatefulWidget {
 class _MainHomeScreenState extends State<MainHomeScreen> {
   @override
   void initState() {
-    addData();
+   
     // TODO: implement initState
     super.initState();
   }
@@ -32,11 +32,7 @@ class _MainHomeScreenState extends State<MainHomeScreen> {
     MoreScreen(),
   ];
 
-  addData() async {
-    final statecontrol = Get.put(StateController());
-    await statecontrol.refreshUser();
-    statecontrol.update();
-  }
+  
 
   @override
   Widget build(BuildContext context) {

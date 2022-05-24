@@ -1,8 +1,10 @@
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:doctor_appointment/constant_value/constant_size.dart';
 import 'package:doctor_appointment/get_controller/get_controller.dart';
 import 'package:doctor_appointment/main.dart';
 import 'package:doctor_appointment/resources/data_controller.dart';
 import 'package:doctor_appointment/user_screen/widget/appbar_wiget.dart';
+import 'package:doctor_appointment/user_screen/widget/connection_lost.dart';
 import 'package:doctor_appointment/user_screen/widget/doctor_list_widget/top_doctors_home.dart';
 import 'package:doctor_appointment/user_screen/widget/main_title_widget.dart';
 import 'package:doctor_appointment/user_screen/widget/search_bar/search_bar_widget.dart';
@@ -27,11 +29,20 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     notifyC.storeToken();
     // notifyC.sayHi();
+    addData();
     super.initState();
+  }
+
+  addData() async {
+    final statecontrol = Get.put(StateController());
+    await statecontrol.refreshUser();
+    statecontrol.update();
   }
 
   @override
   Widget build(BuildContext context) {
+    //  print('-----------${FirebaseAuth.instance.currentUser}');
+    // Connectivity().onConnectivityChanged;
     final size = MediaQuery.of(context).size.height;
     return Scaffold(
       appBar: PreferredSize(
@@ -40,254 +51,283 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           preferredSize: Size.fromHeight(60)),
       body: SingleChildScrollView(
-        child: Column(
-          children: [
-            SizedBox(
-              height: 8,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                SizedBox(width: size * 0.04),
-                GetBuilder<StateController>(
-                  builder: (controller) {
-                    return controller.user == null
-                        ? Text(
-                            'Hola',
-                            style: TextStyle(
-                              fontSize: 30,
-                              fontWeight: FontWeight.bold,
-                              color: kBlue,
-                            ),
-                          )
-                        : Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              Text(
-                                'Hi, ',
-                                style: TextStyle(
-                                  fontSize: 30,
-                                  fontWeight: FontWeight.bold,
-                                  color: kBlue,
-                                ),
-                              ),
-                              Text(
-                                ' ${controller.user!.userName.capitalize}',
-                                style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                  color: kBlue,
-                                ),
-                              )
-                            ],
-                          );
-                  },
-                )
-              ],
-            ),
-            //kHeight30,
-            Container(
-              //color: Colors.amber,
-              height: size * .26,
-              width: size * 2,
-              child: Stack(
-                alignment: Alignment.bottomCenter,
-                // clipBehavior: Clip.hardEdge,
-                children: [
-                  Positioned(
-                    bottom: 5,
-                    child: Card(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15.0),
-                      ),
-                      color: Color.fromARGB(157, 119, 158, 255),
-                      child: Container(
-                        height: 100,
-                        width: 270,
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    bottom: 15,
-                    child: Card(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15.0),
-                      ),
-                      color: Color.fromARGB(157, 119, 158, 255),
-                      child: Container(
-                        height: 100,
-                        width: 300,
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    bottom: 25,
-                    child: Container(
-                      height: 160,
-                      width: 330,
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(15.0),
-                          gradient: LinearGradient(
-                              colors: [Color(0xff5B7FFF), Color(0xff00229C)])),
-                      child: Row(
-                        children: [
-                          kWidth20,
-                          Column(
-                            children: [
-                              kHeight30,
-                              Text(
-                                'Need a Doctor ?',
-                                style: TextStyle(
-                                    fontSize: 16, color: Colors.white),
-                              ),
-                              kHeight20,
-                              Text(
-                                'World’s Best Doctor’s\nare to answer your\nquestions',
-                                style: TextStyle(
-                                    fontSize: 13, color: Colors.white),
-                              ),
-                            ],
-                          )
-                        ],
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                      right: 70,
-                      bottom: 25,
-                      child: Container(
-                        height: 180,
-                        child: Image.asset('assets/doctor_home.png'),
-                      ))
-                ],
-              ),
-            ),
-
-            Stack(
-              children: [
-                Column(
+        child: StreamBuilder(
+            stream: Connectivity().onConnectivityChanged,
+            builder: (context, AsyncSnapshot<ConnectivityResult> snapshot) {
+              // if (snapshot.data == null) {
+              //   Connectivity().onConnectivityChanged;
+              //   return Text('null');
+              // }
+              //print('connenction ${snapshot}');
+              if (snapshot.connectionState == ConnectionState.waiting ||
+                  snapshot.data != null &&
+                      snapshot.hasData &&
+                      snapshot.data != ConnectivityResult.none) {
+                return Column(
                   children: [
-                    SearchBar(),
-                    SpecialityWidget(
-                      title: 'Speciality',
+                    SizedBox(
+                      height: 8,
                     ),
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        const MainTitle(title: 'Top Doctors'),
-                        Padding(
-                          padding: const EdgeInsets.only(right: 8.0),
-                          child: InkWell(
-                            onTap: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => DoctorList()));
-                            },
-                            child: Text(
-                              'See all',
-                              style: TextStyle(color: kBlue),
-                            ),
-                          ),
+                        SizedBox(width: size * 0.04),
+                        GetBuilder<StateController>(
+                          builder: (controller) {
+                            return controller.user == null
+                                ? Text(
+                                    'Hola',
+                                    style: TextStyle(
+                                      fontSize: 30,
+                                      fontWeight: FontWeight.bold,
+                                      color: kBlue,
+                                    ),
+                                  )
+                                : Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                    children: [
+                                      Text(
+                                        'Hi, ',
+                                        style: TextStyle(
+                                          fontSize: 30,
+                                          fontWeight: FontWeight.bold,
+                                          color: kBlue,
+                                        ),
+                                      ),
+                                      Text(
+                                        ' ${controller.user!.userName.capitalize}',
+                                        style: TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold,
+                                          color: kBlue,
+                                        ),
+                                      )
+                                    ],
+                                  );
+                          },
                         )
                       ],
                     ),
-                    TopDoctors(),
-                  ],
-                ),
-                GetBuilder<DataController>(
-                  init: DataController(),
-                  builder: (control) {
-                    if (control.querySelec == true) {
-                      return Positioned(
-                        top: 70,
-                        left: 45,
-                        child: Container(
-                          height: size * .5,
-                          width: size * .38,
-                          color: Color.fromARGB(100, 255, 255, 255),
-                          child: control.snapshot == null
-                              ? Center(
-                                  child: Text('sorry'),
-                                )
-                              : ListView.separated(
-                                  itemBuilder: (context, index) {
-                                    String name = control.snapshot!.docs[index]
-                                        ['userName'];
-
-                                    String photoUrl = control
-                                        .snapshot!.docs[index]['photoUrl'];
-
-                                    return Card(
-                                      color: kWhite,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(15.0),
+                    //kHeight30,
+                    Container(
+                      //color: Colors.amber,
+                      height: size * .26,
+                      width: size * 2,
+                      child: Stack(
+                        alignment: Alignment.bottomCenter,
+                        // clipBehavior: Clip.hardEdge,
+                        children: [
+                          Positioned(
+                            bottom: 5,
+                            child: Card(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(15.0),
+                              ),
+                              color: Color.fromARGB(157, 119, 158, 255),
+                              child: Container(
+                                height: 100,
+                                width: 270,
+                              ),
+                            ),
+                          ),
+                          Positioned(
+                            bottom: 15,
+                            child: Card(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(15.0),
+                              ),
+                              color: Color.fromARGB(157, 119, 158, 255),
+                              child: Container(
+                                height: 100,
+                                width: 300,
+                              ),
+                            ),
+                          ),
+                          Positioned(
+                            bottom: 25,
+                            child: Container(
+                              height: 160,
+                              width: 330,
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(15.0),
+                                  gradient: LinearGradient(colors: [
+                                    Color(0xff5B7FFF),
+                                    Color(0xff00229C)
+                                  ])),
+                              child: Row(
+                                children: [
+                                  kWidth20,
+                                  Column(
+                                    children: [
+                                      kHeight30,
+                                      Text(
+                                        'Need a Doctor ?',
+                                        style: TextStyle(
+                                            fontSize: 16, color: Colors.white),
                                       ),
-                                      child: SizedBox(
-                                        height: size * .1,
-                                        width: double.infinity,
-                                        child: InkWell(
-                                          onTap: (() {
-                                            //print(doctor!.email);
-                                            // Navigator.push(
-                                            //     context,
-                                            //     MaterialPageRoute(
-                                            //         builder: (context) =>
-                                            //             PatientAppointmentScreen()));
-                                          }),
-                                          child: Row(
-                                            children: [
-                                              ClipRRect(
-                                                borderRadius: const BorderRadius
-                                                        .horizontal(
-                                                    left: Radius.circular(15)),
-                                                child: SizedBox(
-                                                  child: FittedBox(
-                                                      fit: BoxFit.cover,
-                                                      child: Image.network(
-                                                          photoUrl)),
-                                                  height: size * 1,
-                                                  width: size * .13,
-                                                ),
-                                              ),
-                                              kWidth20,
-                                              Column(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
+                                      kHeight20,
+                                      Text(
+                                        'World’s Best Doctor’s\nare to answer your\nquestions',
+                                        style: TextStyle(
+                                            fontSize: 13, color: Colors.white),
+                                      ),
+                                    ],
+                                  )
+                                ],
+                              ),
+                            ),
+                          ),
+                          Positioned(
+                              right: 70,
+                              bottom: 25,
+                              child: Container(
+                                height: 180,
+                                child: Image.asset('assets/doctor_home.png'),
+                              ))
+                        ],
+                      ),
+                    ),
+
+                    Stack(
+                      children: [
+                        Column(
+                          children: [
+                            SearchBar(),
+                            SpecialityWidget(
+                              title: 'Speciality',
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                const MainTitle(title: 'Top Doctors'),
+                                Padding(
+                                  padding: const EdgeInsets.only(right: 8.0),
+                                  child: InkWell(
+                                    onTap: () {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  DoctorList()));
+                                    },
+                                    child: Text(
+                                      'See all',
+                                      style: TextStyle(color: kBlue),
+                                    ),
+                                  ),
+                                )
+                              ],
+                            ),
+                            TopDoctors(),
+                          ],
+                        ),
+                        GetBuilder<DataController>(
+                          init: DataController(),
+                          id: 'search',
+                          builder: (search) {
+                            if (search.querySelec == true) {
+                              if (search.snapshot!.docs.isEmpty) {
+                                return Positioned(
+                                    top: 80,
+                                    left: size * .2,
+                                    child: Text(
+                                      'No data found!',
+                                      style: TextStyle(color: kRed),
+                                    ));
+                              }
+                              return Positioned(
+                                top: 70,
+                                left: 45,
+                                child: Container(
+                                  height: size * .5,
+                                  width: size * .38,
+                                  color: Color.fromARGB(100, 255, 255, 255),
+                                  child: ListView.separated(
+                                      itemBuilder: (context, index) {
+                                        String name = search
+                                            .snapshot!.docs[index]['userName'];
+
+                                        String photoUrl = search
+                                            .snapshot!.docs[index]['photoUrl'];
+
+                                        return Card(
+                                          color: kWhite,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(15.0),
+                                          ),
+                                          child: SizedBox(
+                                            height: size * .1,
+                                            width: double.infinity,
+                                            child: InkWell(
+                                              onTap: (() {
+                                                //print(doctor!.email);
+                                                // Navigator.push(
+                                                //     context,
+                                                //     MaterialPageRoute(
+                                                //         builder: (context) =>
+                                                //             PatientAppointmentScreen()));
+                                              }),
+                                              child: Row(
                                                 children: [
-                                                  SizedBox(
-                                                      width: size * .19,
-                                                      child: Text(
-                                                          'Dr ${name.capitalize}')),
+                                                  ClipRRect(
+                                                    borderRadius:
+                                                        const BorderRadius
+                                                                .horizontal(
+                                                            left:
+                                                                Radius.circular(
+                                                                    15)),
+                                                    child: SizedBox(
+                                                      child: FittedBox(
+                                                          fit: BoxFit.cover,
+                                                          child: Image.network(
+                                                              photoUrl)),
+                                                      height: size * 1,
+                                                      width: size * .13,
+                                                    ),
+                                                  ),
+                                                  kWidth20,
+                                                  Column(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .center,
+                                                    children: [
+                                                      SizedBox(
+                                                          width: size * .19,
+                                                          child: Text(
+                                                              'Dr ${name.capitalize}')),
+                                                    ],
+                                                  ),
                                                 ],
                                               ),
-                                            ],
+                                            ),
                                           ),
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                  separatorBuilder: (context, index) {
-                                    return Divider(
-                                      height: 0,
-                                    );
-                                  },
-                                  itemCount: control.snapshot == null
-                                      ? 0
-                                      : control.snapshot!.docs.length),
+                                        );
+                                      },
+                                      separatorBuilder: (context, index) {
+                                        return Divider(
+                                          height: 0,
+                                        );
+                                      },
+                                      itemCount: search.snapshot == null
+                                          ? 0
+                                          : search.snapshot!.docs.length),
+                                ),
+                              );
+                            } else {
+                              return Container();
+                            }
+                          },
                         ),
-                      );
-                    } else {
-                      return Container();
-                    }
-                  },
-                ),
-              ],
-            ),
-          ],
-        ),
+                      ],
+                    ),
+                  ],
+                );
+              } else {
+                return ConnectionLost();
+              }
+            }),
       ),
     );
   }
