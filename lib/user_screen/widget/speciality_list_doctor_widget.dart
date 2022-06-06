@@ -6,6 +6,7 @@ import 'package:doctor_appointment/user_screen/widget/appbar_wiget.dart';
 import 'package:doctor_appointment/user_screen/widget/doctor_list_widget/doctor_list_widget.dart';
 import 'package:doctor_appointment/user_screen/widget/doctor_profile.dart';
 import 'package:flutter/material.dart';
+import 'package:sizer/sizer.dart';
 
 class SpecialityWiseDoctor extends StatelessWidget {
   final dataId;
@@ -16,7 +17,7 @@ class SpecialityWiseDoctor extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size.height;
+   
     print(dataId);
     return Scaffold(
       appBar: AppBar(
@@ -56,7 +57,7 @@ class SpecialityWiseDoctor extends StatelessWidget {
                       crossAxisCount: 3,
                       crossAxisSpacing: 4.0,
                       mainAxisSpacing: 4.0,
-                      mainAxisExtent: size * .21,
+                      mainAxisExtent: 21.h,
                     ),
                     controller: scrollController,
                     padding:
@@ -97,8 +98,8 @@ class SpecialityWiseDoctor extends StatelessWidget {
                                         fit: BoxFit.cover,
                                         child: Image.network(
                                             allvalue[index]['photoUrl'])),
-                                    height: size * .16,
-                                    width: size * 1,
+                                    height: 16.h,
+                                    width: 100.h,
                                   ),
                                 ),
                                 kWidth20,

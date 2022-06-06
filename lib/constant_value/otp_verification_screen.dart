@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:otp_text_field/otp_field.dart';
 import 'package:otp_text_field/style.dart';
+import 'package:sizer/sizer.dart';
 
 class VerifyPhone extends StatefulWidget {
   VerifyPhone({Key? key}) : super(key: key);
@@ -16,6 +17,7 @@ class _VerifyPhoneState extends State<VerifyPhone> {
 
   @override
   Widget build(BuildContext context) {
+    print('hello');
     return Scaffold(
       body: Center(
         child: Column(
@@ -24,7 +26,7 @@ class _VerifyPhoneState extends State<VerifyPhone> {
             authC.codeSent
                 ? OTPTextField(
                     length: 6,
-                    width: MediaQuery.of(context).size.width,
+                    width: 100.w,
                     fieldWidth: 30,
                     style: TextStyle(fontSize: 20),
                     textFieldAlignment: MainAxisAlignment.spaceAround,

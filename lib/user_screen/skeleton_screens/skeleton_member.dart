@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sizer/sizer.dart';
 import 'package:skeletons/skeletons.dart';
 
 class SkeletonMember extends StatelessWidget {
@@ -6,7 +7,7 @@ class SkeletonMember extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size.height;
+   
     return ListView.builder(
       physics: NeverScrollableScrollPhysics(),
       itemCount: 8,
@@ -21,8 +22,8 @@ class SkeletonMember extends StatelessWidget {
                 SkeletonAvatar(
                   style: SkeletonAvatarStyle(
                       shape: BoxShape.rectangle,
-                      width: size * .13,
-                      height: size * .13,
+                      width: 13.h,
+                      height: 13.h,
                       borderRadius:
                           BorderRadius.horizontal(left: Radius.circular(10))),
                 ),
@@ -40,8 +41,8 @@ class SkeletonMember extends StatelessWidget {
                               randomLength: true,
                               height: 15,
                               borderRadius: BorderRadius.circular(8),
-                              minLength: size / 9,
-                              maxLength: size / 8,
+                              minLength: 8.h,
+                              maxLength: 9.h,
                             )),
                       ),
                       // SkeletonParagraph(

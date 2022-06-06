@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sizer/sizer.dart';
 import 'package:skeletons/skeletons.dart';
 
 class SkeletonDoctorList extends StatelessWidget {
@@ -6,13 +7,13 @@ class SkeletonDoctorList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size.height;
+   
     return GridView.builder(
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 3,
           crossAxisSpacing: 4.0,
           mainAxisSpacing: 4.0,
-          mainAxisExtent: size * .21,
+          mainAxisExtent: 21.h,
         ),
         //controller: scrollController,
         padding: const EdgeInsets.only(left: 20, right: 20, top: 10),
@@ -25,8 +26,8 @@ class SkeletonDoctorList extends StatelessWidget {
                 SkeletonAvatar(
                   style: SkeletonAvatarStyle(
                       shape: BoxShape.rectangle,
-                      width: size * .16,
-                      height: size * .14,
+                      width: 16.h,
+                      height: 14.h,
                       borderRadius:
                           BorderRadius.vertical(top: Radius.circular(10))),
                 ),
@@ -38,8 +39,8 @@ class SkeletonDoctorList extends StatelessWidget {
                         randomLength: true,
                         height: 8,
                         borderRadius: BorderRadius.circular(8),
-                        minLength: size / 10,
-                        maxLength: size / 9,
+                        minLength: 9.h,
+                        maxLength: 10.h,
                       )),
                 ),
               ],

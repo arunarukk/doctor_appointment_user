@@ -5,6 +5,7 @@ import 'package:doctor_appointment/resources/specialty_mathod.dart';
 import 'package:doctor_appointment/user_screen/skeleton_screens/skeleton_speciality.dart';
 import 'package:doctor_appointment/user_screen/widget/speciality_list_doctor_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:sizer/sizer.dart';
 
 class SpecialityWidget extends StatelessWidget {
   SpecialityWidget({Key? key, required this.title}) : super(key: key);
@@ -12,10 +13,9 @@ class SpecialityWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size.height;
     return Container(
       //color: kBlue,
-      height: size * .28,
+      height: 28.h,
       width: double.infinity,
       child: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -29,7 +29,7 @@ class SpecialityWidget extends StatelessWidget {
             ),
             kHeight10,
             LimitedBox(
-              maxHeight: size * .21,
+              maxHeight: 21.h,
               child: FutureBuilder<List<QueryDocumentSnapshot<Object?>>>(
                   future: getSpeciality(),
                   builder: (context, snapshot) {
@@ -65,8 +65,8 @@ class SpecialityWidget extends StatelessWidget {
                                 )
                               ],
                             ),
-                            height: size * .13,
-                            width: size * .14,
+                            height: 13.h,
+                            width: 14.h,
                             child: InkWell(
                               child: Column(
                                 //crossAxisAlignment: CrossAxisAlignment.center,
@@ -80,13 +80,13 @@ class SpecialityWidget extends StatelessWidget {
                                           fit: BoxFit.cover,
                                           child: Image.network(
                                               allvalue[index]['photoUrl'])),
-                                      height: size * .14,
-                                      width: size * 1,
+                                      height: 14.h,
+                                      width: 100.h,
                                     ),
                                   ),
                                   //kWidth20,
                                   SizedBox(
-                                    height: size * .04,
+                                    height: 4.h,
                                     child: Column(
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
@@ -121,6 +121,7 @@ class SpecialityWidget extends StatelessWidget {
                                 // print(newInt);
                                 // getListWise(allvalue[index]['did']);
                                 // print(allvalue[index]['name']);
+                                FocusManager.instance.primaryFocus?.unfocus();
                                 Navigator.push(
                                     context,
                                     MaterialPageRoute(

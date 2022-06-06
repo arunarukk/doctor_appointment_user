@@ -6,6 +6,7 @@ import 'package:doctor_appointment/resources/auth_method.dart';
 import 'package:doctor_appointment/utils/utility_method.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:sizer/sizer.dart';
 
 import '../user_screen/main_screen_home/main_home_screen.dart';
 
@@ -14,6 +15,8 @@ class LogInScreen extends StatelessWidget {
 
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+
+  
 
   void logInPatient(BuildContext ctx) async {
     signControl.loading(true);
@@ -44,7 +47,7 @@ class LogInScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     signControl.loadL = false;
     //signControl.loading(false);
-    final size = MediaQuery.of(context).size.height;
+   
     return Scaffold(
       body: Container(
         width: double.infinity,
@@ -91,7 +94,7 @@ class LogInScreen extends StatelessWidget {
                     child: SizedBox(
                       child: Image.asset(
                         'assets/log_illu/login_screen.png',
-                        width: size * .36,
+                        width: 36.h,
                       ),
                     ),
                   ),

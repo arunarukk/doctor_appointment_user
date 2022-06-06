@@ -8,6 +8,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:sizer/sizer.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class CancelAppoinment extends StatelessWidget {
@@ -20,7 +21,6 @@ class CancelAppoinment extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // final args = ModalRoute.of(context)!.settings.arguments as Doctor;
-    final size = MediaQuery.of(context).size.height;
 
     final String docPhoto = data.doctorDetails.photoUrl;
     // print(docPhoto);
@@ -68,7 +68,7 @@ class CancelAppoinment extends StatelessWidget {
                   padding: const EdgeInsets.only(left: 8, right: 8),
                   child: Container(
                     alignment: Alignment.topCenter,
-                    height: MediaQuery.of(context).size.height * 0.45,
+                    height: 45.h,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(20),
                       color: kGrey,
@@ -125,7 +125,7 @@ class CancelAppoinment extends StatelessWidget {
             ),
             Container(
               padding: const EdgeInsets.all(16),
-              height: MediaQuery.of(context).size.height * 0.5,
+              height: 50.h,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -134,8 +134,8 @@ class CancelAppoinment extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Container(
-                          width: size * .14,
-                          height: size * .07,
+                          width: 14.h,
+                          height: 7.h,
                           decoration: BoxDecoration(
                               // color: Colors.blueAccent,
                               borderRadius: BorderRadius.circular(50),
@@ -177,8 +177,8 @@ class CancelAppoinment extends StatelessWidget {
                           id: 'rating',
                           builder: (patients) {
                             return Container(
-                              width: size * .14,
-                              height: size * .07,
+                              width: 14.h,
+                              height: 7.h,
                               decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(50),
                                   border: Border.all(color: kBlue, width: 1)),
@@ -222,8 +222,8 @@ class CancelAppoinment extends StatelessWidget {
                           id: 'rating',
                           builder: (rating) {
                             return Container(
-                              width: size * .13,
-                              height: size * .07,
+                              width: 13.h,
+                              height: 7.h,
                               decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(50),
                                   border: Border.all(color: kBlue, width: 1)),
@@ -241,7 +241,10 @@ class CancelAppoinment extends StatelessWidget {
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       Text(
-                                        rating.totalRating.toStringAsFixed(1),
+                                        rating.totalRating.isNaN
+                                            ? '0'
+                                            : rating.totalRating
+                                                .toStringAsFixed(1),
                                         style: TextStyle(fontSize: 16),
                                       ),
                                     ],
@@ -274,8 +277,8 @@ class CancelAppoinment extends StatelessWidget {
                         width: 8,
                       ),
                       Container(
-                        height: size * .03,
-                        width: size * .12,
+                        height: 3.h,
+                        width: 12.h,
                         decoration: BoxDecoration(
                             // color: Colors.blueAccent,
                             borderRadius: BorderRadius.circular(50),
@@ -291,13 +294,13 @@ class CancelAppoinment extends StatelessWidget {
                   ),
                   kHeight20,
                   Container(
-                    width: size * 1,
+                    width: 100.h,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         Container(
-                          height: size * .04,
-                          width: size * .12,
+                          height: 4.h,
+                          width: 12.h,
                           decoration: BoxDecoration(
                               // color: Colors.blueAccent,
                               borderRadius: BorderRadius.circular(50),
@@ -310,8 +313,8 @@ class CancelAppoinment extends StatelessWidget {
                           ),
                         ),
                         Container(
-                          height: size * .04,
-                          width: size * .12,
+                          height: 4.h,
+                          width: 12.h,
                           decoration: BoxDecoration(
                               // color: Colors.blueAccent,
                               borderRadius: BorderRadius.circular(50),
@@ -348,8 +351,8 @@ class CancelAppoinment extends StatelessWidget {
                           launchUrl(Uri(scheme: 'tel', path: docPhone));
                         },
                         child: Container(
-                          height: size * .06,
-                          width: size * .06,
+                          height: 6.h,
+                          width: 6.h,
                           decoration: BoxDecoration(
                             color: kGreen,
                             borderRadius: BorderRadius.circular(12),
@@ -389,8 +392,8 @@ class CancelAppoinment extends StatelessWidget {
                           }
                         },
                         child: Container(
-                          height: size * .06,
-                          width: MediaQuery.of(context).size.width - 104,
+                          height: 6.h,
+                          width: 35.h,
                           decoration: BoxDecoration(
                             gradient: isCanceled == 'canceled'
                                 ? LinearGradient(

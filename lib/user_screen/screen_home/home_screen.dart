@@ -2,15 +2,20 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:doctor_appointment/constant_value/constant_size.dart';
 import 'package:doctor_appointment/get_controller/get_controller.dart';
 import 'package:doctor_appointment/main.dart';
+import 'package:doctor_appointment/models/Patients_model.dart';
 import 'package:doctor_appointment/resources/data_controller.dart';
 import 'package:doctor_appointment/user_screen/widget/appbar_wiget.dart';
 import 'package:doctor_appointment/user_screen/widget/connection_lost.dart';
 import 'package:doctor_appointment/user_screen/widget/doctor_list_widget/top_doctors_home.dart';
+import 'package:doctor_appointment/user_screen/widget/doctor_profile.dart';
 import 'package:doctor_appointment/user_screen/widget/main_title_widget.dart';
 import 'package:doctor_appointment/user_screen/widget/search_bar/search_bar_widget.dart';
 import 'package:doctor_appointment/user_screen/widget/speciality_widget.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:sizer/sizer.dart';
+import 'package:skeletons/skeletons.dart';
 
 import '../../constant_value/constant_colors.dart';
 import '../widget/doctor_list_widget/doctor_list_widget.dart';
@@ -43,7 +48,10 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     //  print('-----------${FirebaseAuth.instance.currentUser}');
     // Connectivity().onConnectivityChanged;
-    final size = MediaQuery.of(context).size.height;
+    // control.querySelec == false;
+
+    datacontrol.querySelection(false);
+
     return Scaffold(
       appBar: PreferredSize(
           child: AppBarWidget(
@@ -71,19 +79,65 @@ class _HomeScreenState extends State<HomeScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        SizedBox(width: size * 0.04),
+                        SizedBox(width: 4.h),
                         GetBuilder<StateController>(
                           builder: (controller) {
-                            return controller.user == null
-                                ? Text(
-                                    'Hola',
-                                    style: TextStyle(
-                                      fontSize: 30,
-                                      fontWeight: FontWeight.bold,
-                                      color: kBlue,
-                                    ),
-                                  )
-                                : Row(
+                            return StreamBuilder<Patients>(
+                                stream: controller.getUserProfileDetails(),
+                                builder: (context, snapshot) {
+                                  if (snapshot.connectionState ==
+                                      ConnectionState.waiting) {
+                                    return SkeletonItem(
+                                        child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.end,
+                                      children: [
+                                        SkeletonParagraph(
+                                          style: SkeletonParagraphStyle(
+                                              lines: 1,
+                                              spacing: 25,
+                                              lineStyle: SkeletonLineStyle(
+                                                randomLength: true,
+                                                height: 35,
+                                                borderRadius:
+                                                    BorderRadius.vertical(),
+                                                minLength: 9.w,
+                                                maxLength: 10.w,
+                                              )),
+                                        ),
+                                        SkeletonParagraph(
+                                          style: SkeletonParagraphStyle(
+                                              lines: 1,
+                                              spacing: 25,
+                                              lineStyle: SkeletonLineStyle(
+                                                randomLength: true,
+                                                height: 20,
+                                                borderRadius:
+                                                    BorderRadius.vertical(),
+                                                minLength: 34.w,
+                                                maxLength: 35.w,
+                                              )),
+                                        ),
+                                      ],
+                                    ));
+                                    // CupertinoActivityIndicator(
+                                    //   color: kBlue,
+                                    // );
+                                  }
+                                  if (snapshot.data == null ||
+                                      snapshot.data!.userName.isEmpty) {
+                                    return Text(
+                                      'Hola',
+                                      style: TextStyle(
+                                        fontSize: 30,
+                                        fontWeight: FontWeight.bold,
+                                        color: kBlue,
+                                      ),
+                                    );
+                                  }
+
+                                  return Row(
                                     mainAxisAlignment: MainAxisAlignment.end,
                                     crossAxisAlignment: CrossAxisAlignment.end,
                                     children: [
@@ -96,7 +150,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         ),
                                       ),
                                       Text(
-                                        ' ${controller.user!.userName.capitalize}',
+                                        ' ${snapshot.data!.userName.capitalize}',
                                         style: TextStyle(
                                           fontSize: 20,
                                           fontWeight: FontWeight.bold,
@@ -105,6 +159,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       )
                                     ],
                                   );
+                                });
                           },
                         )
                       ],
@@ -112,8 +167,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     //kHeight30,
                     Container(
                       //color: Colors.amber,
-                      height: size * .26,
-                      width: size * 2,
+                      height: 26.h,
+                      width: 200.h,
                       child: Stack(
                         alignment: Alignment.bottomCenter,
                         // clipBehavior: Clip.hardEdge,
@@ -126,8 +181,8 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                               color: Color.fromARGB(157, 119, 158, 255),
                               child: Container(
-                                height: 100,
-                                width: 270,
+                                height: 20.h,
+                                width: 70.w,
                               ),
                             ),
                           ),
@@ -139,16 +194,16 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                               color: Color.fromARGB(157, 119, 158, 255),
                               child: Container(
-                                height: 100,
-                                width: 300,
+                                height: 20.h,
+                                width: 78.w,
                               ),
                             ),
                           ),
                           Positioned(
                             bottom: 25,
                             child: Container(
-                              height: 160,
-                              width: 330,
+                              height: 21.h,
+                              width: 83.w,
                               decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(15.0),
                                   gradient: LinearGradient(colors: [
@@ -182,7 +237,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               right: 70,
                               bottom: 25,
                               child: Container(
-                                height: 180,
+                                height: 22.9.h,
                                 child: Image.asset('assets/doctor_home.png'),
                               ))
                         ],
@@ -205,6 +260,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                   padding: const EdgeInsets.only(right: 8.0),
                                   child: InkWell(
                                     onTap: () {
+                                      FocusManager.instance.primaryFocus
+                                          ?.unfocus();
                                       Navigator.push(
                                           context,
                                           MaterialPageRoute(
@@ -227,79 +284,91 @@ class _HomeScreenState extends State<HomeScreen> {
                           id: 'search',
                           builder: (search) {
                             if (search.querySelec == true) {
-                              if (search.snapshot!.docs.isEmpty) {
+                              if (search.snapshot.isEmpty) {
                                 return Positioned(
                                     top: 80,
-                                    left: size * .2,
+                                    left: 20.h,
                                     child: Text(
                                       'No data found!',
                                       style: TextStyle(color: kRed),
                                     ));
                               }
+                              //print(search.snapshot!.docs.['userName']);
                               return Positioned(
                                 top: 70,
-                                left: 45,
+                                left: 0,
                                 child: Container(
-                                  height: size * .5,
-                                  width: size * .38,
+                                  height: 50.h,
+                                  width: 100.w,
                                   color: Color.fromARGB(100, 255, 255, 255),
                                   child: ListView.separated(
                                       itemBuilder: (context, index) {
-                                        String name = search
-                                            .snapshot!.docs[index]['userName'];
+                                        // print(search.snapshot);
+                                        String name =
+                                            search.snapshot[index]['userName'];
 
-                                        String photoUrl = search
-                                            .snapshot!.docs[index]['photoUrl'];
+                                        String photoUrl =
+                                            search.snapshot[index]['photoUrl'];
 
-                                        return Card(
-                                          color: kWhite,
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(15.0),
-                                          ),
-                                          child: SizedBox(
-                                            height: size * .1,
-                                            width: double.infinity,
-                                            child: InkWell(
-                                              onTap: (() {
-                                                //print(doctor!.email);
-                                                // Navigator.push(
-                                                //     context,
-                                                //     MaterialPageRoute(
-                                                //         builder: (context) =>
-                                                //             PatientAppointmentScreen()));
-                                              }),
-                                              child: Row(
-                                                children: [
-                                                  ClipRRect(
-                                                    borderRadius:
-                                                        const BorderRadius
-                                                                .horizontal(
-                                                            left:
-                                                                Radius.circular(
-                                                                    15)),
-                                                    child: SizedBox(
-                                                      child: FittedBox(
-                                                          fit: BoxFit.cover,
-                                                          child: Image.network(
-                                                              photoUrl)),
-                                                      height: size * 1,
-                                                      width: size * .13,
+                                        return Padding(
+                                          padding: const EdgeInsets.only(
+                                              left: 30.0, right: 30),
+                                          child: Card(
+                                            color: kWhite,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(15.0),
+                                            ),
+                                            child: SizedBox(
+                                              height: 10.h,
+                                              child: InkWell(
+                                                onTap: (() {
+                                                  //print(doctor!.email);
+                                                  Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              DoctorDetailScreen(
+                                                                data: search
+                                                                        .snapshot[
+                                                                    index],
+                                                              )));
+                                                  // FocusScope.of(context)
+                                                  //     .requestFocus(FocusNode());
+                                                }),
+                                                child: Row(
+                                                  children: [
+                                                    ClipRRect(
+                                                      borderRadius:
+                                                          const BorderRadius
+                                                                  .horizontal(
+                                                              left: Radius
+                                                                  .circular(
+                                                                      15)),
+                                                      child: SizedBox(
+                                                        child: FittedBox(
+                                                            fit: BoxFit.cover,
+                                                            child:
+                                                                Image.network(
+                                                                    photoUrl)),
+                                                        height: 100.h,
+                                                        width: 13.h,
+                                                      ),
                                                     ),
-                                                  ),
-                                                  kWidth20,
-                                                  Column(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .center,
-                                                    children: [
-                                                      SizedBox(
-                                                          width: size * .19,
-                                                          child: Text(
-                                                              'Dr ${name.capitalize}')),
-                                                    ],
-                                                  ),
-                                                ],
+                                                    kWidth20,
+                                                    Column(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .center,
+                                                      children: [
+                                                        SizedBox(
+                                                            width: 19.h,
+                                                            child: Text(
+                                                                'Dr ${name.capitalize}')),
+                                                      ],
+                                                    ),
+                                                  ],
+                                                ),
                                               ),
                                             ),
                                           ),
@@ -310,9 +379,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                           height: 0,
                                         );
                                       },
-                                      itemCount: search.snapshot == null
+                                      itemCount: search.snapshot.isEmpty
                                           ? 0
-                                          : search.snapshot!.docs.length),
+                                          : search.snapshot.length),
                                 ),
                               );
                             } else {

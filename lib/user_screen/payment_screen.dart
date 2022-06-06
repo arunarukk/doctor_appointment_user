@@ -39,6 +39,7 @@ class PaymentScreen extends StatelessWidget {
   void openPayment({
     required dynamic phoneNumber,
     required dynamic email,
+    required BuildContext context,
   }) {
     var options = {
       'key': 'rzp_test_1s4VSprSSqwOwT',
@@ -56,6 +57,7 @@ class PaymentScreen extends StatelessWidget {
 
     try {
       razorpay.open(options);
+      showSnackBar('Appoinment booked successfully', kGreen, context);
     } catch (e) {
       print(e.toString());
     }
@@ -347,11 +349,10 @@ class PaymentScreen extends StatelessWidget {
                             final email =
                                 await patient.then((value) => value.email);
                             openPayment(
-                              email: email,
-                              phoneNumber: phoneNum,
-                            );
-                            showSnackBar('Appoinment booked successfully',
-                                kGreen, context);
+                                email: email,
+                                phoneNumber: phoneNum,
+                                context: context);
+
                             Navigator.pop(context);
                           },
                           child: Container(

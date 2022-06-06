@@ -5,20 +5,20 @@ import 'package:doctor_appointment/user_screen/skeleton_screens/skeleton_top_doc
 import 'package:doctor_appointment/user_screen/widget/doctor_profile.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:sizer/sizer.dart';
 
 class TopDoctors extends StatelessWidget {
   TopDoctors({Key? key}) : super(key: key);
   final authC = AuthMethods();
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size.height;
     return SizedBox(
-      height: size * .25,
+      height: 25.h,
       width: double.infinity,
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: LimitedBox(
-          maxHeight: size * .14,
+          maxHeight: 14.h,
           child: FutureBuilder<List<QueryDocumentSnapshot<Object?>>>(
               future: authC.getdoctorDetails(),
               builder: (context, snapshot) {
@@ -48,17 +48,18 @@ class TopDoctors extends StatelessWidget {
                           .toUpperCase();
                     }
                     final name = allvalue[index]['userName'];
-                    // print(name.capitalize);
+                    //print(allvalue[index]['qualifications']);
                     return Card(
                       //color: kBlue,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(15.0),
                       ),
                       child: SizedBox(
-                        height: size * .16,
-                        width: size * .16,
+                        height: 16.h,
+                        width: 16.h,
                         child: InkWell(
                           onTap: () {
+                            FocusManager.instance.primaryFocus?.unfocus();
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
@@ -78,13 +79,13 @@ class TopDoctors extends StatelessWidget {
                                       fit: BoxFit.cover,
                                       child: Image.network(
                                           allvalue[index]['photoUrl'])),
-                                  height: size * .16,
-                                  width: size * 1,
+                                  height: 16.h,
+                                  width: 100.h,
                                 ),
                               ),
                               //kWidth20,
                               SizedBox(
-                                height: size * .057,
+                                height: 5.7.h,
                                 child: Column(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceAround,
@@ -98,7 +99,7 @@ class TopDoctors extends StatelessWidget {
                                     ),
                                     Container(
                                       height: .4,
-                                      width: size * .13,
+                                      width: 13.h,
                                       color: kBlue,
                                     ),
                                     Text(

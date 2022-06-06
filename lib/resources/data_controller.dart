@@ -21,7 +21,7 @@ class DataController extends GetxController {
   final FirebaseFirestore _fireStore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
   bool? querySelec;
-  QuerySnapshot<Map<String, dynamic>>? snapshot;
+  List<QueryDocumentSnapshot<Map<String, dynamic>>> snapshot = [];
 
   List<DoctorAppointment> appoDocDetails = <DoctorAppointment>[].obs;
 
@@ -31,21 +31,28 @@ class DataController extends GetxController {
   String? selectedStartDate;
 
   String? selectedEndDate;
-
-  Future<QuerySnapshot<Map<String, dynamic>>?> queryData(
-      String queryString) async {
+  QueryDocumentSnapshot<Map<String, dynamic>>? snapshotQuery;
+  //Future<QuerySnapshot<Map<String, dynamic>>?>
+  queryData(String queryString) async {
     try {
       // List<QuerySnapshot<Map<String, dynamic>>>? queryList;
 
-      final data = await _fireStore
-          .collection('doctors')
-          .where('userName', isGreaterThanOrEqualTo: queryString)
-          .where('userName', isLessThanOrEqualTo: '$queryString\uf7ff')
-          .get();
+      final data = await _fireStore.collection('doctors').get();
+      snapshot = [];
+      for (var item in data.docs) {
+        if (item
+            .data()['userName']
+            .toString()
+            .toLowerCase()
+            .contains(queryString.toLowerCase())) {
+          print('qury $queryString');
+          // print('1111 ${item.data()['userName']}');
 
-      //print(data.toString());
-      snapshot = data;
+          snapshot.add(item);
+        }
+      }
       update(['search']);
+
       return snapshot;
       //print(data);
     } catch (e) {
@@ -55,7 +62,8 @@ class DataController extends GetxController {
 
   querySelection(bool value) {
     querySelec = value;
-    update();
+    // update(['search']);
+    // update();
   }
 
   //  appointment details ============================
@@ -285,7 +293,7 @@ class DataController extends GetxController {
       required double rating}) async {
     final appointment =
         await _fireStore.collection('appointment').doc(docID).get();
-    print(appointment.data());
+    //print(appointment.data());
 
     final data = appointment.data();
 
@@ -320,6 +328,7 @@ class DataController extends GetxController {
             review: review,
             status: '')
         .toMap());
+    update(['rating']);
   }
 
   getRatingAndReview({required String doctorID}) async {
@@ -358,6 +367,7 @@ class DataController extends GetxController {
         }
       }
       totRating = totRating + element.data()['rating'];
+     
     });
 
     totalPatient = appointment.docs.length;
@@ -406,9 +416,12 @@ class DataController extends GetxController {
     required Uint8List photoUrl,
     required String age,
     required String gender,
+    required String title,
   }) async {
     final String memberId = Uuid().v1();
     User currentUser = _auth.currentUser!;
+
+    print(title);
 
     String imageUrl = await StorageMethods()
         .uploadImageToStorage('memberProfile', photoUrl, false, memberId);
@@ -428,12 +441,33 @@ class DataController extends GetxController {
     update(['member']);
   }
 
+  updateMember(
+      {required String userName,
+      required String phoneNumber,
+      required String photoUrl,
+      required String age,
+      required String gender,
+      required String title,
+      required String memId}) async {
+    User currentUser = _auth.currentUser!;
+
+    Members members = Members(
+      uid: currentUser.uid,
+      photoUrl: photoUrl,
+      userName: userName,
+      phoneNumber: phoneNumber,
+      age: age,
+      gender: gender,
+    );
+
+    await _fireStore.collection('members').doc(memId).update(members.toMap());
+    update(['member']);
+  }
+
   deleteMember(String memId) async {
     User currentUser = _auth.currentUser!;
     final memberDetails =
         await _fireStore.collection('members').doc(memId).delete();
     update(['member']);
   }
-
-  
 }

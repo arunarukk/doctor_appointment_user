@@ -11,6 +11,7 @@ class Doctor {
   final String experience;
   final double rating;
   final int patients;
+  final String qualifications;
 
   const Doctor({
     required this.userName,
@@ -23,6 +24,7 @@ class Doctor {
     required this.experience,
     required this.rating,
     required this.patients,
+    required this.qualifications,
   });
 
   // static Doctor fromSnap(DocumentSnapshot snap) {
@@ -49,21 +51,24 @@ class Doctor {
         "experience": experience,
         "rating": rating,
         "patients": patients,
+        "qualifications": qualifications,
       };
 
   static Doctor fromSnapshot(DocumentSnapshot snapshot) {
     var snap = snapshot.data() as Map<String, dynamic>;
 
     return Doctor(
-        userName: snap['userName'],
-        uid: snap['uid'],
-        photoUrl: snap['photoUrl'],
-        email: snap['email'],
-        phoneNumber: snap['phoneNumber'],
-        speciality: snap['speciality'],
-        about: snap['about'],
-        experience: snap["experience"],
-        rating: double.parse(snap['rating'].toString()),
-        patients: snap['patients']);
+      userName: snap['userName'],
+      uid: snap['uid'],
+      photoUrl: snap['photoUrl'],
+      email: snap['email'],
+      phoneNumber: snap['phoneNumber'],
+      speciality: snap['speciality'],
+      about: snap['about'],
+      experience: snap["experience"],
+      rating: double.parse(snap['rating'].toString()),
+      patients: snap['patients'],
+      qualifications: snap['qualifications'],
+    );
   }
 }

@@ -69,7 +69,6 @@ class MapScreenState extends State<ProfileScreen>
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size.height;
     AuthMethods().getUserDetails();
     return Scaffold(
         appBar: AppBar(
@@ -752,7 +751,7 @@ class MapScreenState extends State<ProfileScreen>
                         userName: nameController.text,
                         photoUrl: imageUrl,
                         gender: statecontrol.selectedGender);
-
+                    showSnackBar('Updated Successfully', kGreen, context);
                     setState(() {
                       _status = true;
                       FocusScope.of(context).requestFocus(FocusNode());

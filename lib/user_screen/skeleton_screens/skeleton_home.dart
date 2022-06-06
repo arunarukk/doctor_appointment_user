@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sizer/sizer.dart';
 import 'package:skeletons/skeletons.dart';
 
 class SkeletonHome extends StatelessWidget {
@@ -6,7 +7,6 @@ class SkeletonHome extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size.height;
     return ListView.builder(
       physics: NeverScrollableScrollPhysics(),
       itemCount: 8,
@@ -21,8 +21,8 @@ class SkeletonHome extends StatelessWidget {
                 SkeletonAvatar(
                   style: SkeletonAvatarStyle(
                       shape: BoxShape.rectangle,
-                      width: size * .14,
-                      height: size * .16,
+                      width: 14.h,
+                      height: 16.h,
                       borderRadius:
                           BorderRadius.horizontal(left: Radius.circular(10))),
                 ),
@@ -40,8 +40,8 @@ class SkeletonHome extends StatelessWidget {
                               randomLength: true,
                               height: 10,
                               borderRadius: BorderRadius.circular(8),
-                              minLength: size / 9,
-                              maxLength: size / 8,
+                              minLength: 8.h,
+                              maxLength: 9.h,
                             )),
                       ),
                       SkeletonParagraph(
@@ -52,8 +52,8 @@ class SkeletonHome extends StatelessWidget {
                               randomLength: true,
                               height: 15,
                               borderRadius: BorderRadius.circular(8),
-                              minLength: size / 10,
-                              maxLength: size / 9,
+                              minLength: 9.h,
+                              maxLength: 10.h,
                             )),
                       ),
                       SizedBox(
@@ -67,8 +67,8 @@ class SkeletonHome extends StatelessWidget {
                               randomLength: true,
                               height: 10,
                               borderRadius: BorderRadius.circular(8),
-                              minLength: size / 11,
-                              maxLength: size / 10,
+                              minLength: 10.h,
+                              maxLength: 11.h,
                             )),
                       ),
                       Row(
@@ -82,8 +82,8 @@ class SkeletonHome extends StatelessWidget {
                                   randomLength: true,
                                   height: 22,
                                   borderRadius: BorderRadius.circular(8),
-                                  minLength: size / 7,
-                                  maxLength: size / 6,
+                                  minLength: 12.h,
+                                  maxLength: 13.h,
                                 )),
                           ),
                           SkeletonParagraph(
@@ -94,8 +94,8 @@ class SkeletonHome extends StatelessWidget {
                                   randomLength: true,
                                   height: 22,
                                   borderRadius: BorderRadius.circular(8),
-                                  minLength: size / 12,
-                                  maxLength: size / 11,
+                                  minLength: 11.h,
+                                  maxLength: 12.h,
                                 )),
                           ),
                         ],

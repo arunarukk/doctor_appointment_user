@@ -4,15 +4,19 @@ import 'package:doctor_appointment/resources/data_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+ final TextEditingController searchController = TextEditingController();
+
 class SearchBar extends StatelessWidget {
   SearchBar({Key? key}) : super(key: key);
 
-  final TextEditingController searchController = TextEditingController();
+ 
 
   QuerySnapshot? snapshot;
 
   @override
   Widget build(BuildContext context) {
+    searchController.clear();
+   
     return Padding(
         padding: const EdgeInsets.only(
           top: 10.0,
@@ -23,6 +27,7 @@ class SearchBar extends StatelessWidget {
         child: GetBuilder<DataController>(
           init: DataController(),
           builder: (dataControl) {
+          //  FocusScope.of(context).requestFocus(FocusNode());
             return TextField(
               controller: searchController,
               decoration: InputDecoration(
@@ -42,15 +47,17 @@ class SearchBar extends StatelessWidget {
                 ),
               ),
               onChanged: (newvalue) async {
-                await Future.delayed(Duration(seconds: 2));
+                // await Future.delayed(Duration(seconds: 1));
                 if (newvalue.isEmpty || newvalue == null) {
                   dataControl.querySelection(false);
                 } else {
                   dataControl.querySelection(true);
                 }
+
                 // print(dataControl.querySelec);
                 // print(newvalue);
                 dataControl.queryData(newvalue);
+                dataControl.update(['search']);
               },
             );
           },

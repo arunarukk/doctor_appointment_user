@@ -11,6 +11,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../resources/storage_methods.dart';
+
 class AddMembers extends StatefulWidget {
   final String title;
   final data;
@@ -30,6 +32,8 @@ class MapScreenState extends State<AddMembers>
   TextEditingController nameController = TextEditingController();
   TextEditingController ageController = TextEditingController();
   TextEditingController phoneController = TextEditingController();
+
+  final _formKey = GlobalKey<FormState>();
 
   final control = Get.put(SignController());
 
@@ -59,6 +63,9 @@ class MapScreenState extends State<AddMembers>
 
   @override
   Widget build(BuildContext context) {
+    if (control.memiImage != null) {
+      control.memiImage = null;
+    }
     if (widget.data != null) {
       nameController.text = widget.data['userName'];
       ageController.text = widget.data['age'];
@@ -86,383 +93,458 @@ class MapScreenState extends State<AddMembers>
             color: Colors.white,
             child: ListView(
               children: <Widget>[
-                Column(
-                  children: <Widget>[
-                    Container(
-                      height: 250.0,
-                      color: Colors.white,
-                      child: Column(
-                        children: <Widget>[
-                          Padding(
-                            padding: const EdgeInsets.only(top: 20.0),
-                            child:
-                                Stack(fit: StackFit.loose, children: <Widget>[
-                              GetBuilder<SignController>(
-                                init: SignController(),
-                                builder: (controller) {
-                                  return Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: <Widget>[
-                                      controller.memiImage == null
-                                          ? Container(
-                                              width: 140.0,
-                                              height: 140.0,
-                                              decoration: BoxDecoration(
-                                                  shape: BoxShape.circle,
-                                                  image: widget.data == null
-                                                      ? DecorationImage(
-                                                          image: NetworkImage(
-                                                              'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png'),
-                                                          fit: BoxFit.cover,
-                                                        )
-                                                      : DecorationImage(
-                                                          image: NetworkImage(
-                                                              widget.data[
-                                                                  'photoUrl']),
-                                                          fit: BoxFit.cover,
-                                                        )))
-                                          : Container(
-                                              width: 140.0,
-                                              height: 140.0,
-                                              decoration: BoxDecoration(
-                                                shape: BoxShape.circle,
-                                                image: DecorationImage(
-                                                  image: MemoryImage(
-                                                      control.memiImage!),
-                                                  fit: BoxFit.cover,
-                                                ),
-                                              )),
-                                    ],
-                                  );
-                                },
-                              ),
-                              Padding(
-                                  padding: const EdgeInsets.only(
-                                      top: 90.0, right: 100.0),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: <Widget>[
-                                      InkWell(
-                                        onTap: () {
-                                          selectImage();
-                                        },
-                                        child: CircleAvatar(
-                                          backgroundColor: kBlue,
-                                          radius: 25.0,
-                                          child: const Icon(
-                                            Icons.camera_alt,
-                                            color: Colors.white,
-                                          ),
-                                        ),
-                                      )
-                                    ],
-                                  )),
-                            ]),
-                          )
-                        ],
-                      ),
-                    ),
-                    Container(
-                      color: const Color(0xffFFFFFF),
-                      child: Padding(
-                        padding: const EdgeInsets.only(bottom: 25.0),
+                Form(
+                  key: _formKey,
+                  child: Column(
+                    children: <Widget>[
+                      Container(
+                        height: 250.0,
+                        color: Colors.white,
                         child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.start,
                           children: <Widget>[
                             Padding(
-                                padding: const EdgeInsets.only(
-                                    left: 25.0, right: 25.0, top: 25.0),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  mainAxisSize: MainAxisSize.max,
-                                  children: <Widget>[
-                                    Column(
+                              padding: const EdgeInsets.only(top: 20.0),
+                              child:
+                                  Stack(fit: StackFit.loose, children: <Widget>[
+                                GetBuilder<SignController>(
+                                  init: SignController(),
+                                  builder: (controller) {
+                                    return Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
                                       mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: const <Widget>[
-                                        Text(
-                                          'Parsonal Information',
-                                          style: TextStyle(
-                                              fontSize: 18.0,
-                                              fontWeight: FontWeight.bold),
-                                        ),
+                                          MainAxisAlignment.center,
+                                      children: <Widget>[
+                                        controller.memiImage == null
+                                            ? Container(
+                                                width: 140.0,
+                                                height: 140.0,
+                                                decoration: BoxDecoration(
+                                                    shape: BoxShape.circle,
+                                                    image: widget.data == null
+                                                        ? DecorationImage(
+                                                            image: NetworkImage(
+                                                                'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png'),
+                                                            fit: BoxFit.cover,
+                                                          )
+                                                        : DecorationImage(
+                                                            image: NetworkImage(
+                                                                widget.data[
+                                                                    'photoUrl']),
+                                                            fit: BoxFit.cover,
+                                                          )))
+                                            : Container(
+                                                width: 140.0,
+                                                height: 140.0,
+                                                decoration: BoxDecoration(
+                                                  shape: BoxShape.circle,
+                                                  image: DecorationImage(
+                                                    image: MemoryImage(
+                                                        control.memiImage!),
+                                                    fit: BoxFit.cover,
+                                                  ),
+                                                )),
                                       ],
-                                    ),
-                                    // Column(
-                                    //   mainAxisAlignment: MainAxisAlignment.end,
-                                    //   mainAxisSize: MainAxisSize.min,
-                                    //   children: <Widget>[
-                                    //     _status ? _getEditIcon() : Container(),
-                                    //   ],
-                                    // )
-                                  ],
-                                )),
-                            Padding(
-                                padding: const EdgeInsets.only(
-                                    left: 25.0, right: 25.0, top: 25.0),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.max,
-                                  children: <Widget>[
-                                    Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: const <Widget>[
-                                        Text(
-                                          'Name',
-                                          style: TextStyle(
-                                              fontSize: 16.0,
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                )),
-                            Padding(
-                                padding: const EdgeInsets.only(
-                                    left: 25.0, right: 25.0, top: 2.0),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.max,
-                                  children: <Widget>[
-                                    Flexible(
-                                      child: TextField(
-                                        controller: nameController,
-                                        decoration: InputDecoration(
-                                          hintText: "Enter Your Name",
-                                        ),
-                                        // enabled: !_status,
-                                        // autofocus: !_status,
-                                      ),
-                                    ),
-                                  ],
-                                )),
-                            // Padding(
-                            //     padding: const EdgeInsets.only(
-                            //         left: 25.0, right: 25.0, top: 25.0),
-                            //     child: Row(
-                            //       mainAxisSize: MainAxisSize.max,
-                            //       children: <Widget>[
-                            //         Column(
-                            //           mainAxisAlignment:
-                            //               MainAxisAlignment.start,
-                            //           mainAxisSize: MainAxisSize.min,
-                            //           children: const <Widget>[
-                            //             Text(
-                            //               'Email ID',
-                            //               style: TextStyle(
-                            //                   fontSize: 16.0,
-                            //                   fontWeight: FontWeight.bold),
-                            //             ),
-                            //           ],
-                            //         ),
-                            //       ],
-                            //     )),
-                            // Padding(
-                            //     padding: const EdgeInsets.only(
-                            //         left: 25.0, right: 25.0, top: 2.0),
-                            //     child: Row(
-                            //       mainAxisSize: MainAxisSize.max,
-                            //       children: const <Widget>[
-                            //         Flexible(
-                            //           child: TextField(
-                            //             decoration: InputDecoration(
-                            //                 hintText: "Enter Email ID"),
-                            //             //enabled: !_status,
-                            //           ),
-                            //         ),
-                            //       ],
-                            //     )),
-                            Padding(
-                                padding: const EdgeInsets.only(
-                                    left: 25.0, right: 25.0, top: 25.0),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.max,
-                                  children: <Widget>[
-                                    Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: const <Widget>[
-                                        Text(
-                                          'Mobile',
-                                          style: TextStyle(
-                                              fontSize: 16.0,
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                )),
-                            Padding(
-                                padding: const EdgeInsets.only(
-                                    left: 25.0, right: 25.0, top: 2.0),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.max,
-                                  children: <Widget>[
-                                    Flexible(
-                                      child: TextField(
-                                        controller: phoneController,
-                                        decoration: InputDecoration(
-                                            hintText: "Enter Mobile Number"),
-                                        //enabled: !_status,
-                                      ),
-                                    ),
-                                  ],
-                                )),
-                            Padding(
-                                padding: const EdgeInsets.only(
-                                    left: 25.0, right: 25.0, top: 25.0),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.max,
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: <Widget>[
-                                    Expanded(
-                                      child: Container(
-                                        child: const Text(
-                                          'Age',
-                                          style: const TextStyle(
-                                              fontSize: 16.0,
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                      ),
-                                      flex: 2,
-                                    ),
-                                    // Expanded(
-                                    //   child: Container(
-                                    //     child: const Text(
-                                    //       'State',
-                                    //       style: const TextStyle(
-                                    //           fontSize: 16.0,
-                                    //           fontWeight: FontWeight.bold),
-                                    //     ),
-                                    //   ),
-                                    //   flex: 2,
-                                    // ),
-                                  ],
-                                )),
-                            Padding(
-                                padding: const EdgeInsets.only(
-                                    left: 25.0, right: 25.0, top: 2.0),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.max,
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: <Widget>[
-                                    Flexible(
-                                      child: Padding(
-                                        padding: EdgeInsets.only(right: 10.0),
-                                        child: TextField(
-                                          controller: ageController,
-                                          decoration:
-                                              InputDecoration(hintText: "age"),
-                                          //enabled: !_status,
-                                        ),
-                                      ),
-                                      flex: 2,
-                                    ),
-                                    // Flexible(
-                                    //   child: TextField(
-                                    //     decoration: InputDecoration(
-                                    //         hintText: "Enter State"),
-                                    //     //enabled: !_status,
-                                    //   ),
-                                    //   flex: 2,
-                                    // ),
-                                  ],
-                                )),
-
-                            kHeight10,
-                            Padding(
-                              padding: const EdgeInsets.only(
-                                  left: 25.0, right: 25.0, top: 2.0),
-                              child: const Text('Select Gender',
-                                  style: TextStyle(
-                                    color: kBlack,
-                                    fontSize: 16.0,
-                                  )),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(
-                                  left: 25.0, right: 25.0, top: 10.0),
-                              child: CupertinoRadioChoice(
-                                  choices: genderMap,
-                                  onChange: onGenderSelected,
-                                  initialKeyValue: _selectedGender),
-                            ),
-                            kHeight10,
-                            // !_status ? _getActionButtons() : Container(),
-                            kHeight20,
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                ElevatedButton(
-                                  child: const SizedBox(
-                                    height: 40,
-                                    width: 120,
-                                    child: Center(
-                                      child: Text(
-                                        "Add",
-                                        style: TextStyle(
-                                          color: kWhite,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  style: ElevatedButton.styleFrom(
-                                    primary: kBlue,
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(20.0)),
-                                  ),
-                                  onPressed: () {
-                                    datacontrol.addMembers(
-                                        userName: nameController.text,
-                                        phoneNumber: phoneController.text,
-                                        photoUrl: control.memiImage!,
-                                        age: ageController.text,
-                                        gender: _selectedGender);
-                                    Navigator.pop(context);
+                                    );
                                   },
                                 ),
-                                kWidth10,
-                                widget.data != null
-                                    ? ElevatedButton(
-                                        child: const SizedBox(
-                                          height: 40,
-                                          width: 120,
-                                          child: Center(
-                                            child: Text(
-                                              "Delete",
-                                              style: TextStyle(
-                                                color: kWhite,
-                                              ),
+                                Padding(
+                                    padding: const EdgeInsets.only(
+                                        top: 90.0, right: 100.0),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: <Widget>[
+                                        InkWell(
+                                          onTap: () {
+                                            selectImage();
+                                          },
+                                          child: CircleAvatar(
+                                            backgroundColor: kBlue,
+                                            radius: 25.0,
+                                            child: const Icon(
+                                              Icons.camera_alt,
+                                              color: Colors.white,
                                             ),
                                           ),
-                                        ),
-                                        style: ElevatedButton.styleFrom(
-                                          primary: kRed,
-                                          shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(20.0)),
-                                        ),
-                                        onPressed: () {
-                                          print(widget.uid);
-                                          datacontrol.deleteMember(widget.uid);
-                                          Navigator.pop(context);
-                                        },
-                                      )
-                                    : SizedBox(),
-                              ],
-                            ),
+                                        )
+                                      ],
+                                    )),
+                              ]),
+                            )
                           ],
                         ),
                       ),
-                    )
-                  ],
+                      Container(
+                        color: const Color(0xffFFFFFF),
+                        child: Padding(
+                          padding: const EdgeInsets.only(bottom: 25.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: <Widget>[
+                              Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 25.0, right: 25.0, top: 25.0),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    mainAxisSize: MainAxisSize.max,
+                                    children: <Widget>[
+                                      Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: const <Widget>[
+                                          Text(
+                                            'Parsonal Information',
+                                            style: TextStyle(
+                                                fontSize: 18.0,
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                        ],
+                                      ),
+                                      // Column(
+                                      //   mainAxisAlignment: MainAxisAlignment.end,
+                                      //   mainAxisSize: MainAxisSize.min,
+                                      //   children: <Widget>[
+                                      //     _status ? _getEditIcon() : Container(),
+                                      //   ],
+                                      // )
+                                    ],
+                                  )),
+                              Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 25.0, right: 25.0, top: 25.0),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.max,
+                                    children: <Widget>[
+                                      Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: const <Widget>[
+                                          Text(
+                                            'Name',
+                                            style: TextStyle(
+                                                fontSize: 16.0,
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  )),
+                              Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 25.0, right: 25.0, top: 2.0),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.max,
+                                    children: <Widget>[
+                                      Flexible(
+                                        child: TextFormField(
+                                          controller: nameController,
+                                          decoration: InputDecoration(
+                                            hintText: "Enter Your Name",
+                                          ),
+                                          validator: (value) {
+                                            if (value == null ||
+                                                value.isEmpty) {
+                                              return 'Please enter name';
+                                            }
+                                            return null;
+                                          },
+                                          // enabled: !_status,
+                                          // autofocus: !_status,
+                                        ),
+                                      ),
+                                    ],
+                                  )),
+                              // Padding(
+                              //     padding: const EdgeInsets.only(
+                              //         left: 25.0, right: 25.0, top: 25.0),
+                              //     child: Row(
+                              //       mainAxisSize: MainAxisSize.max,
+                              //       children: <Widget>[
+                              //         Column(
+                              //           mainAxisAlignment:
+                              //               MainAxisAlignment.start,
+                              //           mainAxisSize: MainAxisSize.min,
+                              //           children: const <Widget>[
+                              //             Text(
+                              //               'Email ID',
+                              //               style: TextStyle(
+                              //                   fontSize: 16.0,
+                              //                   fontWeight: FontWeight.bold),
+                              //             ),
+                              //           ],
+                              //         ),
+                              //       ],
+                              //     )),
+                              // Padding(
+                              //     padding: const EdgeInsets.only(
+                              //         left: 25.0, right: 25.0, top: 2.0),
+                              //     child: Row(
+                              //       mainAxisSize: MainAxisSize.max,
+                              //       children: const <Widget>[
+                              //         Flexible(
+                              //           child: TextFormField(
+                              //             decoration: InputDecoration(
+                              //                 hintText: "Enter Email ID"),
+                              //             //enabled: !_status,
+                              //           ),
+                              //         ),
+                              //       ],
+                              //     )),
+                              Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 25.0, right: 25.0, top: 25.0),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.max,
+                                    children: <Widget>[
+                                      Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: const <Widget>[
+                                          Text(
+                                            'Mobile',
+                                            style: TextStyle(
+                                                fontSize: 16.0,
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  )),
+                              Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 25.0, right: 25.0, top: 2.0),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.max,
+                                    children: <Widget>[
+                                      Flexible(
+                                        child: TextFormField(
+                                          controller: phoneController,
+                                          decoration: InputDecoration(
+                                              hintText: "Enter Mobile Number"),
+                                          //enabled: !_status,
+                                          validator: (value) {
+                                            String pattern =
+                                                r'(^(?:[+0]9)?[0-9]{10}$)';
+                                            RegExp regExp = RegExp(pattern);
+                                            if (value == null ||
+                                                value.isEmpty) {
+                                              return 'Please enter phone number';
+                                            } else if (!regExp
+                                                .hasMatch(value)) {
+                                              return 'Please enter valid phone number';
+                                            }
+                                            return null;
+                                          },
+                                        ),
+                                      ),
+                                    ],
+                                  )),
+                              Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 25.0, right: 25.0, top: 25.0),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.max,
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: <Widget>[
+                                      Expanded(
+                                        child: Container(
+                                          child: const Text(
+                                            'Age',
+                                            style: const TextStyle(
+                                                fontSize: 16.0,
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                        ),
+                                        flex: 2,
+                                      ),
+                                      // Expanded(
+                                      //   child: Container(
+                                      //     child: const Text(
+                                      //       'State',
+                                      //       style: const TextStyle(
+                                      //           fontSize: 16.0,
+                                      //           fontWeight: FontWeight.bold),
+                                      //     ),
+                                      //   ),
+                                      //   flex: 2,
+                                      // ),
+                                    ],
+                                  )),
+                              Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 25.0, right: 25.0, top: 2.0),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.max,
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: <Widget>[
+                                      Flexible(
+                                        child: Padding(
+                                          padding: EdgeInsets.only(right: 10.0),
+                                          child: TextFormField(
+                                            controller: ageController,
+                                            decoration: InputDecoration(
+                                                hintText: "age"),
+                                            //enabled: !_status,
+                                            validator: (value) {
+                                              if (value == null ||
+                                                  value.isEmpty) {
+                                                return 'Please enter Age';
+                                              }
+                                              return null;
+                                            },
+                                          ),
+                                        ),
+                                        flex: 2,
+                                      ),
+                                      // Flexible(
+                                      //   child: TextFormField(
+                                      //     decoration: InputDecoration(
+                                      //         hintText: "Enter State"),
+                                      //     //enabled: !_status,
+                                      //   ),
+                                      //   flex: 2,
+                                      // ),
+                                    ],
+                                  )),
+
+                              kHeight10,
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                    left: 25.0, right: 25.0, top: 2.0),
+                                child: const Text('Select Gender',
+                                    style: TextStyle(
+                                      color: kBlack,
+                                      fontSize: 16.0,
+                                    )),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                    left: 25.0, right: 25.0, top: 10.0),
+                                child: CupertinoRadioChoice(
+                                    choices: genderMap,
+                                    onChange: onGenderSelected,
+                                    initialKeyValue: _selectedGender),
+                              ),
+                              kHeight10,
+                              // !_status ? _getActionButtons() : Container(),
+                              kHeight20,
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  ElevatedButton(
+                                    child: SizedBox(
+                                      height: 40,
+                                      width: 120,
+                                      child: Center(
+                                        child: Text(
+                                          widget.data == null
+                                              ? "Add"
+                                              : 'Update',
+                                          style: TextStyle(
+                                            color: kWhite,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    style: ElevatedButton.styleFrom(
+                                      primary: kBlue,
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(20.0)),
+                                    ),
+                                    onPressed: () async {
+                                      print(widget.uid);
+                                      if (_formKey.currentState!.validate()) {
+                                        if (widget.data == null) {
+                                          if (control.memiImage == null) {
+                                            showSnackBar('Image required!',
+                                                kRed, context);
+                                            return;
+                                          }
+
+                                          datacontrol.addMembers(
+                                            userName: nameController.text,
+                                            phoneNumber: phoneController.text,
+                                            photoUrl: control.memiImage!,
+                                            age: ageController.text,
+                                            gender: _selectedGender,
+                                            title: widget.title,
+                                          );
+                                          showSnackBar(
+                                              'Member added successfully',
+                                              kGreen,
+                                              context);
+                                          Navigator.pop(context);
+                                        } else {
+                                          String photoUrl =
+                                              widget.data['photoUrl'];
+                                          if (control.memiImage != null) {
+                                            photoUrl = await StorageMethods()
+                                                .uploadImageToStorage(
+                                                    'memberProfile',
+                                                    control.memiImage!,
+                                                    false,
+                                                    widget.uid);
+                                          }
+                                          datacontrol.updateMember(
+                                              userName: nameController.text,
+                                              phoneNumber: phoneController.text,
+                                              photoUrl: photoUrl,
+                                              age: ageController.text,
+                                              gender: _selectedGender,
+                                              title: widget.title,
+                                              memId: widget.uid);
+                                          showSnackBar('Updated Successfully',
+                                              kGreen, context);
+                                          Navigator.pop(context);
+                                        }
+                                      }
+                                    },
+                                  ),
+                                  kWidth10,
+                                  widget.data != null
+                                      ? ElevatedButton(
+                                          child: const SizedBox(
+                                            height: 40,
+                                            width: 120,
+                                            child: Center(
+                                              child: Text(
+                                                "Delete",
+                                                style: TextStyle(
+                                                  color: kWhite,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          style: ElevatedButton.styleFrom(
+                                            primary: kRed,
+                                            shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(
+                                                        20.0)),
+                                          ),
+                                          onPressed: () {
+                                            print(widget.uid);
+                                            datacontrol
+                                                .deleteMember(widget.uid);
+                                            Navigator.pop(context);
+                                          },
+                                        )
+                                      : SizedBox(),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
                 ),
               ],
             ),

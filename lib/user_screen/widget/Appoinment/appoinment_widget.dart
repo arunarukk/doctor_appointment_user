@@ -9,6 +9,7 @@ import 'package:doctor_appointment/user_screen/widget/connection_lost.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:sizer/sizer.dart';
 
 class AppointmentWidget extends StatelessWidget {
   bool isUpcoming;
@@ -21,7 +22,7 @@ class AppointmentWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // print("screen 121");
-    final size = MediaQuery.of(context).size.height;
+    
     return StreamBuilder(
         stream: Connectivity().onConnectivityChanged,
         builder: (context, AsyncSnapshot<ConnectivityResult> snapshot) {
@@ -56,6 +57,7 @@ class AppointmentWidget extends StatelessWidget {
                       }
 
                       return ListView.separated(
+                          physics: BouncingScrollPhysics(),
                           controller: scrollController,
                           padding: const EdgeInsets.only(
                             left: 20,
@@ -85,7 +87,7 @@ class AppointmentWidget extends StatelessWidget {
                                 DateFormat('dd/MM/yyyy').format(appoDate);
                             final isCanceled =
                                 fullDetails[index].appoDetails.status;
-                           
+
                             return Padding(
                               padding: const EdgeInsets.only(top: 6, bottom: 0),
                               child: Container(
@@ -131,7 +133,7 @@ class AppointmentWidget extends StatelessWidget {
                                                 fit: BoxFit.cover,
                                                 child: Image.network(docPhoto)),
                                             height: double.infinity,
-                                            width: size * .14,
+                                            width:14.h,
                                           ),
                                         ),
                                         // Container(
@@ -153,7 +155,7 @@ class AppointmentWidget extends StatelessWidget {
                                           children: [
                                             kHeight10,
                                             Container(
-                                              width: size * .26,
+                                              width: 26.h,
                                               child: Row(
                                                 mainAxisAlignment:
                                                     MainAxisAlignment
@@ -162,8 +164,8 @@ class AppointmentWidget extends StatelessWidget {
                                                   Text(docName.capitalize!),
                                                   isCanceled == 'canceled'
                                                       ? Container(
-                                                          height: size * .03,
-                                                          width: size * .11,
+                                                          height:3.h,
+                                                          width: 11.h,
                                                           decoration:
                                                               BoxDecoration(
                                                             color: kRed,
@@ -201,7 +203,7 @@ class AppointmentWidget extends StatelessWidget {
                                               ],
                                             ),
                                             SizedBox(
-                                              width: size * .26,
+                                              width:26.h,
                                               child: Padding(
                                                 padding: const EdgeInsets.only(
                                                     top: 7, right: 8),

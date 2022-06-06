@@ -4,6 +4,7 @@ import 'package:doctor_appointment/user_screen/widget/Appoinment/appoinment_widg
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:sizer/sizer.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 import '../../get_controller/get_controller.dart';
@@ -15,8 +16,7 @@ class AppointmentScreen extends StatelessWidget {
   DateTimeRange? dateRange;
 
   @override
-  Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size.height;
+  Widget build(BuildContext context) {  
     return DefaultTabController(
       length: 2,
       child: Scaffold(
@@ -95,13 +95,13 @@ class AppointmentScreen extends StatelessWidget {
   }
 
   Future<void> bottom_scheet(BuildContext context) {
-    final size = MediaQuery.of(context).size.height;
+   
     return showModalBottomSheet<void>(
       context: context,
       builder: (BuildContext context) {
         return Container(
-          height: size * .2,
-          width: size * .1,
+          height:2.h,
+          width:1.h,
 
           // color: kBlue,
           // decoration: BoxDecoration(
@@ -122,7 +122,7 @@ class AppointmentScreen extends StatelessWidget {
                   Row(
                     children: [
                       Container(
-                          width: size * .34,
+                          width:34.h,
                           // color: kBlack,
                           child: ListTile(
                             title: Text('Date range'),

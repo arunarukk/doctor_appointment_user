@@ -4,6 +4,7 @@ import 'package:doctor_appointment/resources/auth_method.dart';
 import 'package:doctor_appointment/user_screen/skeleton_screens/skeleton_doctorlist.dart';
 import 'package:doctor_appointment/user_screen/widget/doctor_profile.dart';
 import 'package:flutter/material.dart';
+import 'package:sizer/sizer.dart';
 
 final authC = AuthMethods();
 
@@ -16,7 +17,7 @@ class DoctorList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size.height;
+    
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -41,7 +42,7 @@ class DoctorList extends StatelessWidget {
             if (snapshot.connectionState == ConnectionState.waiting) {
               // print('waiting');
               return SkeletonDoctorList();
-            } else if (snapshot.data!.isEmpty) {
+            } else if (snapshot.data == null || snapshot.data!.isEmpty) {
               return Center(
                 child: Text('Sorry no doctor\'s available now'),
               );
@@ -55,7 +56,7 @@ class DoctorList extends StatelessWidget {
                   crossAxisCount: 3,
                   crossAxisSpacing: 4.0,
                   mainAxisSpacing: 4.0,
-                  mainAxisExtent: size * .21,
+                  mainAxisExtent: 21.h,
                 ),
                 controller: scrollController,
                 padding: const EdgeInsets.only(left: 20, right: 20, top: 10),
@@ -88,8 +89,8 @@ class DoctorList extends StatelessWidget {
                                     fit: BoxFit.cover,
                                     child: Image.network(
                                         allvalue[index]['photoUrl'])),
-                                height: size * .16,
-                                width: size * 1,
+                                height: 16.h,
+                                width: 100.h,
                               ),
                             ),
                             // kWidth20,

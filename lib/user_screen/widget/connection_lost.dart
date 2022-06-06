@@ -1,19 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:sizer/sizer.dart';
 
 class ConnectionLost extends StatelessWidget {
   const ConnectionLost({
     Key? key,
-    
   }) : super(key: key);
-
- 
 
   @override
   Widget build(BuildContext context) {
-     final size = MediaQuery.of(context).size.height;
+   
     return Container(
-      height: size * .8,
-      width: size * 1,
+      height: 8.h,
+      width: 100.h,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -21,10 +19,10 @@ class ConnectionLost extends StatelessWidget {
           Image.asset(
             'assets/error.gif',
             // scale: .002,
-            width: size * .2,
+            width: 2.h,
           ),
           SizedBox(
-            height: size * .02,
+            height: 2.h,
           ),
           Text('Check your connection!'),
         ],

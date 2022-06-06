@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sizer/sizer.dart';
 import 'package:skeletons/skeletons.dart';
 
 class SkeletonProfile extends StatelessWidget {
@@ -6,7 +7,6 @@ class SkeletonProfile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size.height;
     return ListView.builder(
       physics: NeverScrollableScrollPhysics(),
       itemCount: 8,
@@ -17,17 +17,17 @@ class SkeletonProfile extends StatelessWidget {
             child: Column(
           children: [
             SizedBox(
-              height: size * .02,
+              height: 2.h,
             ),
             SkeletonAvatar(
               style: SkeletonAvatarStyle(
                   shape: BoxShape.circle,
-                  width: size * .25,
-                  height: size * .25,
+                  width: 25.h,
+                  height: 25.h,
                   borderRadius:
                       BorderRadius.horizontal(left: Radius.circular(10))),
             ),
-            SizedBox(height: size * .06),
+            SizedBox(height: 6.h),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -39,14 +39,14 @@ class SkeletonProfile extends StatelessWidget {
                           randomLength: true,
                           height: 18,
                           borderRadius: BorderRadius.circular(8),
-                          minLength: size * .2,
-                          maxLength: size * .3)),
+                          minLength: 48.w,
+                          maxLength: 49.w)),
                 ),
                 SkeletonAvatar(
                   style: SkeletonAvatarStyle(
                     shape: BoxShape.circle,
-                    width: size * .04,
-                    height: size * .04,
+                    width: 4.h,
+                    height: 4.h,
                     // minHeight: size * .01,
                     // maxHeight: size * .02,
                   ),
@@ -59,11 +59,12 @@ class SkeletonProfile extends StatelessWidget {
                   lines: 20,
                   spacing: 20,
                   lineStyle: SkeletonLineStyle(
-                      randomLength: true,
-                      height: 10,
-                      borderRadius: BorderRadius.circular(8),
-                      minLength: size * .2,
-                      maxLength: size * .3)),
+                    randomLength: true,
+                    height: 10,
+                    borderRadius: BorderRadius.circular(8),
+                    minLength: 20.h,
+                    maxLength: 25.h,
+                  )),
             ),
           ],
         )),

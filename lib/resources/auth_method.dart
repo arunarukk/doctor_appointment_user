@@ -5,6 +5,7 @@ import 'package:doctor_appointment/main.dart';
 import 'package:doctor_appointment/models/Patients_model.dart';
 import 'package:doctor_appointment/models/appointment_model.dart';
 import 'package:doctor_appointment/models/schedule.dart';
+import 'package:doctor_appointment/resources/data_controller.dart';
 import 'package:doctor_appointment/resources/specialty_mathod.dart';
 import 'package:doctor_appointment/resources/storage_methods.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -304,6 +305,7 @@ class AuthMethods {
   // ===================== signOut user =================================
 
   Future<void> signOut() async {
+    
     await _auth.signOut();
   }
 
@@ -470,6 +472,7 @@ class AuthMethods {
         .collection('time')
         .doc(timeId)
         .delete();
+    datacontrol.update(['appointment']);
     final docFcm = await getFcmToken(docID, "doctors");
     notifyC.sendPushMessage("Appointment canceled", name + " " + time, docFcm);
 

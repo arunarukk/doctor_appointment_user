@@ -52,6 +52,7 @@ dependencies:
   sizer: ^2.0.15
   skeletons: ^0.0.3
   connectivity_plus: ^2.3.0
+  flutter_launcher_icons: ^0.9.2
   
   
 
@@ -65,6 +66,10 @@ dev_dependencies:
   flutter_lints: ^1.0.0
   flutter_test:
     sdk: flutter
+flutter_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/medoc.png"  
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -86,11 +91,11 @@ flutter:
     - assets/log_illu/Doctor-color-800px.png
     - assets/razorpay.png
     - assets/doctor_home.png
-    - assets/lukman.jpeg
     - assets/log_illu/login_screen.png
     - assets/atmchip.png
     - assets/no appointment.png
     - assets/error.gif
+    - assets/medoc.png
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
   # For details regarding adding assets from package dependencies, see

@@ -8,6 +8,7 @@ import 'package:doctor_appointment/user_screen/skeleton_screens/skeleton_member.
 import 'package:doctor_appointment/user_screen/widget/connection_lost.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:sizer/sizer.dart';
 
 class MembersScreen extends StatelessWidget {
   MembersScreen({
@@ -20,7 +21,6 @@ class MembersScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size.height;
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -100,6 +100,7 @@ class MembersScreen extends StatelessWidget {
                                       snapshot.data![index].data()['age'];
                                   final String photoUrl =
                                       snapshot.data![index].data()['photoUrl'];
+                                 // print(snapshot.data![index].id);
                                   return Card(
                                     color: kWhite,
                                     shape: RoundedRectangleBorder(
@@ -153,7 +154,7 @@ class MembersScreen extends StatelessWidget {
                                                           Radius.circular(15)),
                                               child: SizedBox(
                                                 height: double.infinity,
-                                                width: size * .13,
+                                                width: 13.h,
                                                 child: FittedBox(
                                                   fit: BoxFit.cover,
                                                   child:

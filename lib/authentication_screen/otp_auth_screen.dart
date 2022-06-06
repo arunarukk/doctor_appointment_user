@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otp_text_field/otp_text_field.dart';
 import 'package:otp_text_field/style.dart';
+import 'package:sizer/sizer.dart';
 
 import '../constant_value/constant_colors.dart';
 import '../resources/auth_method.dart';
@@ -32,7 +33,7 @@ class _PhoneAuthenticationState extends State<PhoneAuthentication> {
   Widget build(BuildContext context) {
     signControl.loading(false);
     // signControl.otpCodeVisible = false;
-    final size = MediaQuery.of(context).size.height;
+
     return Scaffold(
       body: Container(
         width: double.infinity,
@@ -82,7 +83,7 @@ class _PhoneAuthenticationState extends State<PhoneAuthentication> {
                       child: SizedBox(
                         child: Image.asset(
                           'assets/log_illu/login_screen.png',
-                          width: size * .36,
+                          width: 36.h,
                         ),
                       ),
                     ),
@@ -139,7 +140,7 @@ class _PhoneAuthenticationState extends State<PhoneAuthentication> {
                             // controller: otpCodeController,
                             keyboardType: TextInputType.number,
                             length: 6,
-                            width: size * .4,
+                            width: 40.h,
                             fieldWidth: 40,
                             style: TextStyle(fontSize: 17, color: kWhite),
                             textFieldAlignment: MainAxisAlignment.spaceAround,

@@ -6,6 +6,7 @@ import 'package:doctor_appointment/get_controller/get_controller.dart';
 import 'package:doctor_appointment/models/Patients_model.dart';
 import 'package:doctor_appointment/resources/data_controller.dart';
 import 'package:doctor_appointment/user_screen/payment_screen.dart';
+import 'package:doctor_appointment/user_screen/widget/Appoinment/problem_screen.dart';
 import 'package:doctor_appointment/user_screen/widget/doctor_list_widget/doctor_list_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -19,44 +20,47 @@ class MakeAppoinment extends StatelessWidget {
   final String docId;
 
   // final TextEditingController nameController = TextEditingController();
-  // final TextEditingController ageController = TextEditingController();
-  final TextEditingController probController = TextEditingController();
+
+  final TextEditingController disController = TextEditingController();
+
+  final GlobalKey<FormState> _key = GlobalKey<FormState>();
 
   DateTime? _selectedDate;
 
   //String dropdownValue = 'Binil';
-
   String? name;
+
   String? phone;
+
   String? age;
+
   String? photo;
+
   String? gender;
 
   bool timeSelected = false;
 
   // static final Map<String, String> genderMap = {
-  //   'male': 'Male',
-  //   'female': 'Female',
-  //   'other': 'Other',
-  // };
-
   final control = Get.put(StateController());
 
   // String _selectedGender = genderMap.keys.first;
   DateTime? selectedDate;
+
   bool selectedTime = false;
+
   String? dateID;
 
   @override
   Widget build(BuildContext context) {
-    statecontrol.currentDate = -1;
+    print('widget');
+
+    statecontrol.currentDate = 0;
     statecontrol.dropDateValue = null;
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
     final yesterday = DateTime(now.year, now.month, now.day - 1);
     final tomorrow = DateTime(now.year, now.month, now.day + 1);
     final date = DateFormat('dd/MM/yyyy').format(tomorrow);
-    // final size = MediaQuery.of(context).size.height;
 
     return Scaffold(
       appBar: AppBar(
@@ -85,7 +89,7 @@ class MakeAppoinment extends StatelessWidget {
                 future: datacontrol.getScheduleDetails(docId),
                 builder: (context, schduledata) {
                   // print('schedule${schduledata.data}');
-
+                  print('helllo');
                   bool nineAm = false;
                   bool tenAm = false;
                   bool elevenAm = false;
@@ -117,6 +121,10 @@ class MakeAppoinment extends StatelessWidget {
                         ),
                       );
                     }
+                    _selectedDate =
+                        (schduledata.data![0]['date'] as Timestamp).toDate();
+                    dateID = schduledata.data![0].id;
+                    statecontrol.dropDateValue = schduledata.data![0].data();
                   }
 
                   return schduledata.data == null
@@ -138,6 +146,7 @@ class MakeAppoinment extends StatelessWidget {
                                       DateTime date = (schduledata.data![index]
                                               ['date'] as Timestamp)
                                           .toDate();
+
                                       return Center(
                                         child: Padding(
                                           padding: const EdgeInsets.all(8.0),
@@ -531,7 +540,7 @@ class MakeAppoinment extends StatelessWidget {
                                         fontSize: 16,
                                         fontWeight: FontWeight.bold),
                                   ),
-                                  //kHeight10,
+                                  kHeight10,
                                   // GetBuilder<StateController>(
                                   //   init: StateController(),
                                   //   builder: (controller) {
@@ -578,7 +587,8 @@ class MakeAppoinment extends StatelessWidget {
                                   // ================   member selection   =================================================================================
                                   Row(
                                     children: [
-                                      Center(
+                                      Container(
+                                        // color: kRed,
                                         child: Padding(
                                           padding: const EdgeInsets.only(
                                             bottom: 8.0,
@@ -588,6 +598,17 @@ class MakeAppoinment extends StatelessWidget {
                                           child: FutureBuilder<Patients>(
                                             future: authC.getUserDetails(),
                                             builder: (context, user) {
+                                              if (user.hasData) {
+                                                name = user.data!.userName;
+
+                                                age = user.data!.age;
+
+                                                phone = user.data!.phoneNumber;
+
+                                                photo = user.data!.photoUrl;
+                                                gender = user.data!.gender;
+                                              }
+
                                               return user.data == null
                                                   ? Center(
                                                       child: Container(),
@@ -623,7 +644,7 @@ class MakeAppoinment extends StatelessWidget {
                                                             gender = user
                                                                 .data!.gender;
 
-                                                            print(photo);
+                                                            // print(photo);
                                                           },
                                                           child: Container(
                                                               height: 4.h,
@@ -665,112 +686,119 @@ class MakeAppoinment extends StatelessWidget {
                                           ),
                                         ),
                                       ),
-                                      StreamBuilder<
-                                              List<
-                                                  QueryDocumentSnapshot<
-                                                      Map<String, dynamic>>>>(
-                                          stream: datacontrol.getMembers(),
-                                          builder: (context, member) {
-                                            print(member.data);
-                                            return Container(
-                                              width: 34.w,
-                                              height: 1.h,
-                                              // color: kBlue,
-                                              child: member.data == null
-                                                  ? Center(
-                                                      child: Text(
-                                                          'No Members added!'),
-                                                    )
-                                                  : ListView.builder(
-                                                      scrollDirection:
-                                                          Axis.horizontal,
-                                                      itemCount:
-                                                          member.data!.length,
-                                                      itemBuilder:
-                                                          ((context, index) {
-                                                        final members =
-                                                            member.data![index];
+                                      Container(
+                                        // color: kGreen,
+                                        height: 5.h,
+                                        width: 70.w,
+                                        child:
+                                            StreamBuilder<
+                                                    List<
+                                                        QueryDocumentSnapshot<
+                                                            Map<String,
+                                                                dynamic>>>>(
+                                                stream:
+                                                    datacontrol.getMembers(),
+                                                builder: (context, member) {
+                                                  return Container(
+                                                    width: 38.w,
+                                                    height: 1.h,
+                                                    // color: kBlue,
+                                                    child: member.data == null
+                                                        ? Center(
+                                                            child: Text(
+                                                                'No Members added!'),
+                                                          )
+                                                        : ListView.builder(
+                                                            scrollDirection:
+                                                                Axis.horizontal,
+                                                            itemCount: member
+                                                                .data!.length,
+                                                            itemBuilder:
+                                                                ((context,
+                                                                    index) {
+                                                              // print(
+                                                              //     'member ${member.data!.first.data()}');
 
-                                                        final userName =
-                                                            members['userName'];
+                                                              final members =
+                                                                  member.data![
+                                                                      index];
 
-                                                        return Center(
-                                                          child: Padding(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                    .only(
-                                                              bottom: 8.0,
-                                                              left: 8,
-                                                              right: 8,
-                                                            ),
-                                                            child: GetBuilder<
-                                                                StateController>(
-                                                              init:
-                                                                  StateController(),
-                                                              id: 'memberControl',
-                                                              builder:
-                                                                  (memberControl) {
-                                                                return InkWell(
-                                                                  onTap: () {
-                                                                    memberControl
-                                                                            .memberSel =
-                                                                        index;
-                                                                    memberControl
-                                                                        .update([
-                                                                      'memberControl'
-                                                                    ]);
+                                                              final userName =
+                                                                  members[
+                                                                      'userName'];
 
-                                                                    memberControl
-                                                                            .selectionMember =
-                                                                        false;
-                                                                    memberControl
-                                                                        .update([
-                                                                      'member'
-                                                                    ]);
+                                                              return Center(
+                                                                child: Padding(
+                                                                  padding:
+                                                                      const EdgeInsets
+                                                                          .only(
+                                                                    bottom: 8.0,
+                                                                    left: 8,
+                                                                    right: 8,
+                                                                  ),
+                                                                  child: GetBuilder<
+                                                                      StateController>(
+                                                                    init:
+                                                                        StateController(),
+                                                                    id: 'memberControl',
+                                                                    builder:
+                                                                        (memberControl) {
+                                                                      return InkWell(
+                                                                        onTap:
+                                                                            () {
+                                                                          memberControl.memberSel =
+                                                                              index;
+                                                                          memberControl
+                                                                              .update([
+                                                                            'memberControl'
+                                                                          ]);
 
-                                                                    name = members[
-                                                                        'userName'];
-                                                                    age = members[
-                                                                        'age'];
-                                                                    phone = members[
-                                                                        'phoneNumber'];
-                                                                    photo = members[
-                                                                        'photoUrl'];
-                                                                    gender =
-                                                                        members[
-                                                                            'gender'];
-                                                                    print(
-                                                                        photo);
-                                                                  },
-                                                                  child: Container(
-                                                                      height: 4.h,
-                                                                      width: 14.w,
-                                                                      decoration: BoxDecoration(color: memberControl.memberSel == index ? kBlue : kWhite, borderRadius: BorderRadius.circular(50), border: Border.all(color: kBlue, width: 1)),
-                                                                      child: Center(
-                                                                        child:
-                                                                            Text(
-                                                                          userName,
-                                                                          style:
-                                                                              TextStyle(
-                                                                            color: memberControl.memberSel == index
-                                                                                ? kWhite
-                                                                                : kBlack,
-                                                                          ),
-                                                                        ),
-                                                                      )),
-                                                                );
-                                                              },
-                                                            ),
-                                                          ),
-                                                        );
-                                                      })),
-                                            );
-                                          }),
+                                                                          memberControl.selectionMember =
+                                                                              false;
+                                                                          memberControl
+                                                                              .update([
+                                                                            'member'
+                                                                          ]);
+
+                                                                          name =
+                                                                              members['userName'];
+                                                                          age =
+                                                                              members['age'];
+                                                                          phone =
+                                                                              members['phoneNumber'];
+                                                                          photo =
+                                                                              members['photoUrl'];
+                                                                          gender =
+                                                                              members['gender'];
+                                                                          // print(
+                                                                          //     'photo $photo');
+                                                                        },
+                                                                        child: Container(
+                                                                            height: 4.h,
+                                                                            width: 20.w,
+                                                                            decoration: BoxDecoration(color: memberControl.memberSel == index ? kBlue : kWhite, borderRadius: BorderRadius.circular(50), border: Border.all(color: kBlue, width: 1)),
+                                                                            child: Center(
+                                                                              child: Text(
+                                                                                userName,
+                                                                                style: TextStyle(
+                                                                                  color: memberControl.memberSel == index ? kWhite : kBlack,
+                                                                                ),
+                                                                              ),
+                                                                            )),
+                                                                      );
+                                                                    },
+                                                                  ),
+                                                                ),
+                                                              );
+                                                            })),
+                                                  );
+                                                }),
+                                      ),
                                     ],
                                   ),
                                 ],
                               ),
-                              // kHeight10,
+                              kHeight10,
                               Center(
                                 child: Text(
                                   'Write your problem',
@@ -779,7 +807,34 @@ class MakeAppoinment extends StatelessWidget {
                                       fontWeight: FontWeight.bold),
                                 ),
                               ),
+
                               kHeight10,
+                              Padding(
+                                padding: const EdgeInsets.all(20.0),
+                                child: Form(
+                                  key: _key,
+                                  child: TextFormField(
+                                    controller: disController,
+                                    keyboardType: TextInputType.multiline,
+                                    maxLines: 3,
+                                    decoration: InputDecoration(
+                                      hintText: 'Description',
+                                      hintStyle: TextStyle(color: Colors.grey),
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(20.0)),
+                                      ),
+                                    ),
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return 'Please enter Discription';
+                                      }
+                                      return null;
+                                    },
+                                  ),
+                                ),
+                              ),
+
                               // Text('Full name',
                               //     style: TextStyle(
                               //       color: CupertinoColors.systemBlue,
@@ -857,35 +912,14 @@ class MakeAppoinment extends StatelessWidget {
                               //       color: CupertinoColors.systemBlue,
                               //       fontSize: 15.0,
                               //     )),
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                  left: 15.0,
-                                  right: 15,
-                                  top: 5,
-                                ),
-                                child: TextFormField(
-                                  controller: probController,
-                                  minLines: 6,
-                                  keyboardType: TextInputType.multiline,
-                                  maxLines: null,
-                                  decoration: const InputDecoration(
-                                    fillColor:
-                                        Color.fromARGB(255, 231, 231, 229),
-                                    filled: true,
-                                    hintText: 'Discription',
-                                    contentPadding: EdgeInsets.symmetric(
-                                        vertical: 8.0, horizontal: 5.0),
-                                    border: OutlineInputBorder(
-                                      borderSide: BorderSide.none,
-                                    ),
-                                  ),
-                                ),
-                              ),
+
                               kHeight30,
+
                               Center(
                                 child: ElevatedButton.icon(
                                   onPressed: () async {
                                     String result = '';
+
                                     if (statecontrol.currentDate == -1) {
                                       result = 'Select Date';
                                       showSnackBar(result, kRed, context);
@@ -913,29 +947,34 @@ class MakeAppoinment extends StatelessWidget {
                                       //     .then((value) => value.photoUrl);
                                       // print(photo);
                                     }
-                                    if (probController.text.isEmpty) {
-                                      result = 'Write your problem';
-                                      showSnackBar(result, kRed, context);
-                                      return;
-                                    }
+                                    // if (disController.text.isEmpty) {
+                                    //   result = 'Write your problem';
+                                    //   showSnackBar(result, kRed, context);
+                                    //   return;
+                                    // }
 
                                     // getMember();
 
-                                    Navigator.pushReplacement(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) => PaymentScreen(
-                                                  age: age ?? '',
-                                                  date: _selectedDate!,
-                                                  gender: gender ?? '',
-                                                  name: name!,
-                                                  problem: probController.text,
-                                                  doctorId: docId,
-                                                  phoneNum: phone!,
-                                                  photo: photo!,
-                                                  time: statecontrol.current,
-                                                  dateId: dateID!,
-                                                )));
+                                    if (_key.currentState!.validate()) {
+                                      Navigator.pushReplacement(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  PaymentScreen(
+                                                    age: age ?? '',
+                                                    date: _selectedDate!,
+                                                    gender: gender ?? '',
+                                                    name: name!,
+                                                    problem: disController.text,
+                                                    doctorId: docId,
+                                                    phoneNum: phone!,
+                                                    photo: photo!,
+                                                    time: statecontrol.current,
+                                                    dateId: dateID!,
+                                                  )));
+                                    }
+
+                                    // showMyDialog(context);
 
                                     // print('-----22222${_selectedDate}');
                                     // print('${statecontrol.current}');
@@ -984,6 +1023,51 @@ class MakeAppoinment extends StatelessWidget {
     );
   }
 
+  Future<void> showMyDialog(BuildContext context) async {
+    // print('show dialogue');
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Write your problem'),
+          content: Padding(
+            padding: const EdgeInsets.only(
+              left: 15.0,
+              right: 15,
+              top: 5,
+            ),
+            child: Form(
+              key: _key,
+              child: TextFormField(
+                controller: disController,
+                keyboardType: TextInputType.multiline,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter Discription';
+                  }
+                  return null;
+                },
+              ),
+            ),
+          ),
+          actions: [
+            TextButton(
+              child: Text('Confirm'),
+              onPressed: () {},
+            ),
+            TextButton(
+              child: Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   GetBuilder<StateController> appoinmentTime(
       bool newTime, String time, bool control, currentIndex) {
     return GetBuilder<StateController>(
@@ -992,16 +1076,16 @@ class MakeAppoinment extends StatelessWidget {
       builder: (stateController) {
         return InkWell(
           onTap: () {
-            print(
-                "dropdate value before ${stateController.selectedeValue} control: ${control} ");
+            // print(
+            //     "dropdate value before ${stateController.selectedeValue} control: ${control} ");
             if (stateController.dropDateValue != null) {
               if (newTime == true) {
                 stateController.current = time;
               }
             }
             stateController.update(['timeControl']);
-            print(
-                "dropdate value after ${stateController.current} control: ${control} ");
+            // print(
+            //     "dropdate value after ${stateController.current} control: ${control} ");
           },
           child: Container(
             width: 16.w,
@@ -1031,10 +1115,4 @@ class MakeAppoinment extends StatelessWidget {
       },
     );
   }
-
-  // void onGenderSelected(String genderKey) {
-  //   setState(() {
-  //     _selectedGender = genderKey;
-  //   });
-  // }
 }

@@ -5,6 +5,7 @@ import 'package:doctor_appointment/get_controller/get_controller.dart';
 import 'package:doctor_appointment/resources/data_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:sizer/sizer.dart';
 
 class RatingWidget extends StatelessWidget {
   final docID;
@@ -31,7 +32,7 @@ class RatingWidget extends StatelessWidget {
       child: Stack(
         children: [
           Container(
-            height: max(300, MediaQuery.of(context).size.height * 0.3),
+            height: max(300, 3.h),
             child: PageView(
               controller: _ratingPageController,
               physics: NeverScrollableScrollPhysics(),
@@ -50,13 +51,14 @@ class RatingWidget extends StatelessWidget {
               child: MaterialButton(
                 onPressed: () {
                   Navigator.pop(context);
-                  print(_rating);
-                  print(_reviewController.text);
-                  print(docID);
+                  // print(_rating);
+                  // print(_reviewController.text);
+                  // print(docID);
                   datacontrol.addRatingAndReview(
                       docID: docID,
                       rating: _rating,
                       review: _reviewController.text);
+                 
                 },
                 child: Text('Done'),
                 textColor: kWhite,

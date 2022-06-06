@@ -4,6 +4,7 @@ import 'package:doctor_appointment/resources/data_controller.dart';
 import 'package:doctor_appointment/user_screen/widget/Appoinment/make_appoinment.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:sizer/sizer.dart';
 
 class DoctorDetailScreen extends StatelessWidget {
   final data;
@@ -15,10 +16,10 @@ class DoctorDetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // final args = ModalRoute.of(context)!.settings.arguments as Doctor;
-    final size = MediaQuery.of(context).size.height;
 
     datacontrol.getRatingAndReview(doctorID: data['uid']);
     final name = data['userName'];
+    final uid = data['uid'];
 
     return Scaffold(
       appBar: AppBar(
@@ -49,7 +50,7 @@ class DoctorDetailScreen extends StatelessWidget {
                   padding: const EdgeInsets.only(left: 8, right: 8),
                   child: Container(
                     alignment: Alignment.topCenter,
-                    height: MediaQuery.of(context).size.height * 0.45,
+                    height: 45.h,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(20),
                       color: kGrey,
@@ -106,8 +107,8 @@ class DoctorDetailScreen extends StatelessWidget {
             ),
             Container(
               padding: const EdgeInsets.all(16),
-              height: MediaQuery.of(context).size.height * 0.44,
-              width: size * 1,
+              height: 44.h,
+              width: 100.w,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -116,8 +117,8 @@ class DoctorDetailScreen extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Container(
-                          width: size * .14,
-                          height: size * .07,
+                          width: 14.h,
+                          height: 7.h,
                           decoration: BoxDecoration(
                               // color: Colors.blueAccent,
                               borderRadius: BorderRadius.circular(50),
@@ -159,8 +160,8 @@ class DoctorDetailScreen extends StatelessWidget {
                           id: 'rating',
                           builder: (patient) {
                             return Container(
-                              width: size * .14,
-                              height: size * .07,
+                              width: 14.h,
+                              height: 7.h,
                               decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(50),
                                   border: Border.all(color: kBlue, width: 1)),
@@ -208,8 +209,8 @@ class DoctorDetailScreen extends StatelessWidget {
                             }
 
                             return Container(
-                              width: size * .13,
-                              height: size * .07,
+                              width: 13.h,
+                              height: 7.h,
                               decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(50),
                                   border: Border.all(color: kBlue, width: 1)),
@@ -259,12 +260,21 @@ class DoctorDetailScreen extends StatelessWidget {
                           ),
                         ),
                       ),
+                      SizedBox(
+                        height: .8.h,
+                      ),
+                      data['qualifications'] == null
+                          ? Container()
+                          : Text(
+                              '${data['qualifications'].toString().toUpperCase()}',
+                              style: TextStyle(fontSize: 14),
+                            ),
                       kHeight10,
                       data['speciality']['name'] == null
                           ? Container()
                           : Container(
-                              height: size * .03,
-                              width: size * .12,
+                              height: 3.h,
+                              width: 12.h,
                               decoration: BoxDecoration(
                                   // color: Colors.blueAccent,
                                   borderRadius: BorderRadius.circular(50),
@@ -298,32 +308,19 @@ class DoctorDetailScreen extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.end,
                       //crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        // Container(
-                        //   height: 40,
-                        //   width: 40,
-                        //   decoration: BoxDecoration(
-                        //     borderRadius: BorderRadius.circular(10),
-                        //     color: kBlue,
-                        //   ),
-                        //   child: Icon(
-                        //     Icons.chat_outlined,
-                        //     color: kWhite,
-                        //   ),
-                        // ),
-                        // const SizedBox(
-                        //   width: 16,
-                        // ),
+                        
                         Center(
                           child: InkWell(
-                            onTap: () => Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => MakeAppoinment(
-                                          docId: data['uid'],
-                                        ))),
+                            onTap: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          MakeAppoinment(docId: uid)));
+                            },
                             child: Container(
-                              height: size * .06,
-                              width: MediaQuery.of(context).size.width - 104,
+                              height: 6.h,
+                              width: 100.w - 104,
                               decoration: BoxDecoration(
                                 gradient: const LinearGradient(
                                   colors: [

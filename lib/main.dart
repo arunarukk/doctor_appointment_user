@@ -2,10 +2,12 @@ import 'package:doctor_appointment/authentication_screen/log_in.dart';
 import 'package:doctor_appointment/authentication_screen/login_profile_screen.dart';
 import 'package:doctor_appointment/constant_value/constant_colors.dart';
 import 'package:doctor_appointment/resources/push_notification.dart';
+import 'package:doctor_appointment/splash_screen/splash_screen.dart';
 import 'package:doctor_appointment/user_screen/main_screen_home/main_home_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
 
 final notifyC = NotificationControl();
@@ -37,55 +39,51 @@ class _MyAppState extends State<MyApp> {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return Sizer(builder: ((context, orientation, deviceType) =>
-      MaterialApp(
-        title: 'Flutter Demo',
-        theme: ThemeData(
-          splashColor: Colors.transparent,
-          highlightColor: Colors.transparent,
-          hoverColor: Colors.transparent,
-          //scaffoldBackgroundColor: Colors.grey.shade200,
-          appBarTheme: const AppBarTheme(
-            backgroundColor: Colors.white,
-          ),
-          primarySwatch: Colors.blue,
-          dialogTheme: DialogTheme(
-            backgroundColor: kWhite,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(24),
-            ),
-          ),
-        ),
-        home: StreamBuilder(
-          stream: FirebaseAuth.instance.authStateChanges(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.active) {
-              if (snapshot.hasData) {
-                if (snapshot.data != null) {
-                  return MainHomeScreen();
-                }
-                print('111111 ${snapshot.data}');
-                return LoginProfileScreen();
-              } else if (snapshot.hasError) {
-                return Center(
-                  child: Text('${snapshot.error}'),
-                );
-              } else {
-                return LogInScreen();
-              }
-            }
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(
-                child: CircularProgressIndicator(
-                  color: kBlack,
+    return Sizer(
+      builder: ((context, orientation, deviceType) => GetMaterialApp(
+            title: 'Flutter Demo',
+            theme: ThemeData(
+              splashColor: Colors.transparent,
+              highlightColor: Colors.transparent,
+              hoverColor: Colors.transparent,
+              //scaffoldBackgroundColor: Colors.grey.shade200,
+              appBarTheme: const AppBarTheme(
+                backgroundColor: Colors.white,
+              ),
+              primarySwatch: Colors.blue,
+              dialogTheme: DialogTheme(
+                backgroundColor: kWhite,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(24),
                 ),
-              );
-            }
-            return LogInScreen();
-          },
-        ),
-        debugShowCheckedModeBanner: false,
-      )),
+              ),
+            ),
+            home: StreamBuilder(
+              stream: FirebaseAuth.instance.authStateChanges(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.active) {
+                  if (snapshot.hasData) {
+                    if (snapshot.data != null) {
+                      return MainHomeScreen();
+                    }
+
+                    return LoginProfileScreen();
+                  } else if (snapshot.hasError) {
+                    return Center(
+                      child: Text('${snapshot.error}'),
+                    );
+                  } else {
+                    return LogInScreen();
+                  }
+                }
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return SplashScreen();
+                }
+                return LogInScreen();
+              },
+            ),
+            debugShowCheckedModeBanner: false,
+          )),
     );
   }
 }

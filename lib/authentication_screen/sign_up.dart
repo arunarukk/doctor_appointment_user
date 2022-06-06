@@ -51,9 +51,10 @@ class SignUpScreen extends StatelessWidget {
   }
 
   void verifyNumber() async {
-    control.loading(true);
-    control.update(['checkbox']);
+    
     if (_formKey.currentState!.validate()) {
+      control.loading(true);
+    control.update(['checkbox']);
       _auth.verifyPhoneNumber(
           phoneNumber: '+91${_phoneNumber.text}',
           verificationCompleted: (PhoneAuthCredential credential) async {
@@ -118,12 +119,13 @@ class SignUpScreen extends StatelessWidget {
   }
 
   void signUpPatient(BuildContext ctx) async {
-    control.loading(true);
+   
     if (control.image == null) {
       print('image is null');
       return;
     }
     if (_formKey.currentState!.validate()) {
+       control.loading(true);
       String result = await AuthMethods().signUpPatient(
         email: _emailController.text,
         password: _password.text,
@@ -147,7 +149,7 @@ class SignUpScreen extends StatelessWidget {
     print('otp');
     signControl.otpCodeVisible = false;
     // control.loading(false);
-    // final size = MediaQuery.of(context).size.height;
+   
     //signControl.otpCodeVisible = false;
     // control.loading(false);
     return Scaffold(
