@@ -8,9 +8,7 @@ class ProblemScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return
-        // backgroundColor: Colors.transparent,
-        // appBar: AppBar(backgroundColor: Colors.transparent),
-        Scaffold(
+         Scaffold(
       backgroundColor: kWhite.withOpacity(.2),
       //primary: false,
       extendBody: false,

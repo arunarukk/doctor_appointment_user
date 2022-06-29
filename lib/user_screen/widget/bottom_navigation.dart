@@ -14,36 +14,36 @@ class NewBottomNavigationBar extends StatelessWidget {
           selectedIndex: updatedIndex,
           onItemSelected: (index) {
             MainHomeScreen.selectedIndexNotifier.value = index;
-            //this.index = index;
+           
           },
           items: [
             BottomNavyBarItem(
-              icon: Icon(
+              icon: const Icon(
                 Icons.home_outlined,
                 size: 30,
               ),
-              title: Text('Home'),
+              title: const Text('Home'),
               textAlign: TextAlign.center,
               activeColor: Colors.blueAccent.shade700,
               inactiveColor: Colors.grey,
             ),
             BottomNavyBarItem(
-              icon: Icon(Icons.calendar_today_outlined),
-              title: Text('Appointment'),
+              icon: const Icon(Icons.calendar_today_outlined),
+              title: const Text('Appointment'),
               textAlign: TextAlign.center,
               activeColor: Colors.blueAccent.shade700,
               inactiveColor: Colors.grey,
             ),
             BottomNavyBarItem(
-              icon: Icon(Icons.person_outline),
-              title: Text('Profile'),
+              icon: const Icon(Icons.person_outline),
+              title: const Text('Profile'),
               textAlign: TextAlign.center,
               activeColor: Colors.blueAccent.shade700,
               inactiveColor: Colors.grey,
             ),
             BottomNavyBarItem(
-              icon: Icon(Icons.apps_outlined),
-              title: Text('More'),
+              icon: const Icon(Icons.apps_outlined),
+              title: const Text('More'),
               textAlign: TextAlign.center,
               activeColor: Colors.blueAccent.shade700,
               inactiveColor: Colors.grey,

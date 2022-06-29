@@ -4,19 +4,17 @@ import 'package:doctor_appointment/resources/data_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
- final TextEditingController searchController = TextEditingController();
+final TextEditingController searchController = TextEditingController();
 
 class SearchBar extends StatelessWidget {
   SearchBar({Key? key}) : super(key: key);
-
- 
 
   QuerySnapshot? snapshot;
 
   @override
   Widget build(BuildContext context) {
     searchController.clear();
-   
+
     return Padding(
         padding: const EdgeInsets.only(
           top: 10.0,
@@ -27,15 +25,13 @@ class SearchBar extends StatelessWidget {
         child: GetBuilder<DataController>(
           init: DataController(),
           builder: (dataControl) {
-          //  FocusScope.of(context).requestFocus(FocusNode());
             return TextField(
               controller: searchController,
               decoration: InputDecoration(
                 hintText: 'Search',
                 prefixIcon: IconButton(
                   onPressed: () {},
-                  icon: Icon(Icons.search_outlined),
-                  // color: kBlue,
+                  icon: const Icon(Icons.search_outlined),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(50.0),
@@ -43,19 +39,15 @@ class SearchBar extends StatelessWidget {
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(50.0),
-                  borderSide: BorderSide(color: Colors.grey),
+                  borderSide: const BorderSide(color: Colors.grey),
                 ),
               ),
               onChanged: (newvalue) async {
-                // await Future.delayed(Duration(seconds: 1));
                 if (newvalue.isEmpty || newvalue == null) {
                   dataControl.querySelection(false);
                 } else {
                   dataControl.querySelection(true);
                 }
-
-                // print(dataControl.querySelec);
-                // print(newvalue);
                 dataControl.queryData(newvalue);
                 dataControl.update(['search']);
               },

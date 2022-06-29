@@ -1,18 +1,11 @@
 import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:doctor_appointment/models/Patients_model.dart';
-import 'package:doctor_appointment/resources/auth_method.dart';
-import 'package:doctor_appointment/user_screen/widget/doctor_list_widget/doctor_list_widget.dart';
+import 'package:doctor_appointment/models/patients_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:uuid/uuid.dart';
-
-import '../main.dart';
-import '../models/appointment_model.dart';
-import '../models/schedule.dart';
 
 final statecontrol = Get.put(StateController());
 
@@ -54,10 +47,6 @@ class StateController extends GetxController {
   bool five = false;
   bool six = false;
 
-  final AuthMethods _authMethods = AuthMethods();
-
-  // Patients get getUser => _user!;
-
   String? selectedStartDate;
 
   String? selectedEndDate;
@@ -78,12 +67,6 @@ class StateController extends GetxController {
     selectedStartDate = DateFormat('MMM-dd').format(dateRange!.start);
     selectedEndDate = DateFormat('MMM-dd').format(dateRange.end);
     update(['filter']);
-  }
-
-  Future<void> refreshUser() async {
-    Patients _user = await _authMethods.getUserDetails();
-    user = _user;
-    update();
   }
 
   void starAnimation(var startPos) {
@@ -120,7 +103,7 @@ class StateController extends GetxController {
 final signControl = Get.put(SignController());
 
 class SignController extends GetxController {
-  Uint8List?        image;
+  Uint8List? image;
   Uint8List? memiImage;
   bool? isLoading;
   bool loadL = false;
@@ -133,6 +116,5 @@ class SignController extends GetxController {
 
   void loading(bool load) {
     isLoading = load;
-    //update();
   }
 }

@@ -1,10 +1,9 @@
 import 'package:doctor_appointment/constant_value/constant_colors.dart';
 import 'package:doctor_appointment/constant_value/constant_size.dart';
-import 'package:doctor_appointment/get_controller/get_controller.dart';
 import 'package:doctor_appointment/resources/data_controller.dart';
+import 'package:doctor_appointment/user_screen/chat_screen/chat_screen.dart';
 import 'package:doctor_appointment/user_screen/widget/doctor_list_widget/doctor_list_widget.dart';
 import 'package:doctor_appointment/user_screen/widget/rating_widget.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -20,17 +19,17 @@ class CancelAppoinment extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // final args = ModalRoute.of(context)!.settings.arguments as Doctor;
-
     final String docPhoto = data.doctorDetails.photoUrl;
-    // print(docPhoto);
     final String docName = data.doctorDetails.userName;
     final String docPhone = data.doctorDetails.phoneNumber;
-    final String docSpeciality = data.doctorDetails.speciality['name'];
+    String docSpeciality = "Genaral";
+    if (data.doctorDetails.speciality['name'] != null) {
+      docSpeciality = data.doctorDetails.speciality['name'];
+    }
+
     final DateTime appoDate = data.appoDetails.date;
     final String time = data.appoDetails.time;
     final String about = data.doctorDetails.about;
-    final date = DateFormat('dd/MM/yyyy').format(appoDate);
     final String docID = data.appoDetails.doctorId;
     final String schedID = data.appoDetails.scheduleID;
     final String experience = data.doctorDetails.experience;
@@ -41,7 +40,7 @@ class CancelAppoinment extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           'Profile',
           style: TextStyle(color: kBlack),
         ),
@@ -51,7 +50,7 @@ class CancelAppoinment extends StatelessWidget {
             onPressed: () {
               Navigator.pop(context);
             },
-            icon: Icon(
+            icon: const Icon(
               Icons.arrow_back,
               color: kBlack,
             )),
@@ -76,46 +75,6 @@ class CancelAppoinment extends StatelessWidget {
                         fit: BoxFit.cover,
                         image: NetworkImage(
                           docPhoto,
-                        ),
-                      ),
-                    ),
-                    child: SafeArea(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 30,
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            // GestureDetector(
-                            //   onTap: () {
-                            //     Navigator.pop(context);
-                            //   },
-                            //   child: Container(
-                            //     height: 24,
-                            //     width: 24,
-                            //     decoration: const BoxDecoration(
-                            //       image: DecorationImage(
-                            //         image: Svg('assets/svg/icon-back.svg'),
-                            //       ),
-                            //     ),
-                            //   ),
-                            // ),
-                            // GestureDetector(
-                            //   onTap: () {
-                            //     Navigator.pop(context);
-                            //   },
-                            //   child: Container(
-                            //     height: 24,
-                            //     width: 24,
-                            //     decoration: const BoxDecoration(
-                            //       image: DecorationImage(
-                            //         image: Svg('assets/svg/icon-bookmark.svg'),
-                            //       ),
-                            //     ),
-                            //   ),
-                            // )
-                          ],
                         ),
                       ),
                     ),
@@ -144,7 +103,7 @@ class CancelAppoinment extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              Text('Experience',
+                              const Text('Experience',
                                   style: TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold)),
@@ -154,12 +113,12 @@ class CancelAppoinment extends StatelessWidget {
                                 children: [
                                   Text(
                                     experience,
-                                    style: TextStyle(fontSize: 16),
+                                    style: const TextStyle(fontSize: 16),
                                   ),
                                   const SizedBox(
                                     width: 4,
                                   ),
-                                  Text(
+                                  const Text(
                                     'yr',
                                     style: TextStyle(fontSize: 16),
                                   )
@@ -186,7 +145,7 @@ class CancelAppoinment extends StatelessWidget {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
-                                  Text('Patients',
+                                  const Text('Patients',
                                       style: TextStyle(
                                           fontSize: 16,
                                           fontWeight: FontWeight.bold)),
@@ -197,12 +156,12 @@ class CancelAppoinment extends StatelessWidget {
                                     children: [
                                       Text(
                                         patients.totalPatient.toString(),
-                                        style: TextStyle(fontSize: 16),
+                                        style: const TextStyle(fontSize: 16),
                                       ),
                                       const SizedBox(
                                         width: 4,
                                       ),
-                                      Text(
+                                      const Text(
                                         'Ps',
                                         style: TextStyle(fontSize: 16),
                                       )
@@ -231,7 +190,7 @@ class CancelAppoinment extends StatelessWidget {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
-                                  Text('Rating',
+                                  const Text('Rating',
                                       style: TextStyle(
                                           fontSize: 16,
                                           fontWeight: FontWeight.bold)),
@@ -245,7 +204,7 @@ class CancelAppoinment extends StatelessWidget {
                                             ? '0'
                                             : rating.totalRating
                                                 .toStringAsFixed(1),
-                                        style: TextStyle(fontSize: 16),
+                                        style: const TextStyle(fontSize: 16),
                                       ),
                                     ],
                                   )
@@ -261,15 +220,18 @@ class CancelAppoinment extends StatelessWidget {
                     height: 24,
                   ),
                   Row(
-                    // crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       Hero(
-                        tag: Text('Dr name'),
+                        tag: const Text('Dr name'),
                         child: Material(
                           color: Colors.transparent,
-                          child: Text(
-                            'Dr ${docName.capitalize}',
-                            style: Theme.of(context).textTheme.headline5,
+                          child: SizedBox(
+                            width: 60.w,
+                            child: Text(
+                              'Dr ${docName.capitalize}',
+                              overflow: TextOverflow.ellipsis,
+                              style: Theme.of(context).textTheme.headline5,
+                            ),
                           ),
                         ),
                       ),
@@ -280,13 +242,12 @@ class CancelAppoinment extends StatelessWidget {
                         height: 3.h,
                         width: 12.h,
                         decoration: BoxDecoration(
-                            // color: Colors.blueAccent,
                             borderRadius: BorderRadius.circular(50),
                             border: Border.all(color: kRed, width: 1.2)),
                         child: Center(
                           child: Text(
                             docSpeciality.toUpperCase(),
-                            style: TextStyle(fontSize: 12),
+                            style: const TextStyle(fontSize: 12),
                           ),
                         ),
                       ),
@@ -302,13 +263,12 @@ class CancelAppoinment extends StatelessWidget {
                           height: 4.h,
                           width: 12.h,
                           decoration: BoxDecoration(
-                              // color: Colors.blueAccent,
                               borderRadius: BorderRadius.circular(50),
                               border: Border.all(color: kBlue, width: 1.2)),
                           child: Center(
                             child: Text(
                               DateFormat('dd.MM.yyyy').format(appoDate),
-                              style: TextStyle(fontSize: 12),
+                              style: const TextStyle(fontSize: 12),
                             ),
                           ),
                         ),
@@ -316,13 +276,12 @@ class CancelAppoinment extends StatelessWidget {
                           height: 4.h,
                           width: 12.h,
                           decoration: BoxDecoration(
-                              // color: Colors.blueAccent,
                               borderRadius: BorderRadius.circular(50),
                               border: Border.all(color: kBlue, width: 1.2)),
                           child: Center(
                             child: Text(
                               time,
-                              style: TextStyle(fontSize: 12),
+                              style: const TextStyle(fontSize: 12),
                             ),
                           ),
                         ),
@@ -335,17 +294,38 @@ class CancelAppoinment extends StatelessWidget {
                   Text(about,
                       overflow: TextOverflow.ellipsis,
                       maxLines: 5,
-                      style: TextStyle(fontSize: 13)),
-                  const SizedBox(
-                    height: 16,
+                      style: const TextStyle(fontSize: 13)),
+                  SizedBox(
+                    height: 10.h,
                   ),
-                  //const Spacer(),
-
-                  kHeight20,
-                  // const Spacer(),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
+                      isUpComing == true
+                          ? InkWell(
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => ChatScreen(
+                                            doctorId: docID,
+                                            doctorNmae: docName.capitalize!,
+                                            doctorImage: docPhoto)));
+                              },
+                              child: Container(
+                                height: 6.h,
+                                width: 6.h,
+                                decoration: BoxDecoration(
+                                  color: Colors.yellow.shade700,
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: const Icon(
+                                  Icons.chat,
+                                  color: kWhite,
+                                ),
+                              ),
+                            )
+                          : Container(),
                       InkWell(
                         onTap: () {
                           launchUrl(Uri(scheme: 'tel', path: docPhone));
@@ -357,7 +337,7 @@ class CancelAppoinment extends StatelessWidget {
                             color: kGreen,
                             borderRadius: BorderRadius.circular(12),
                           ),
-                          child: Icon(
+                          child: const Icon(
                             Icons.call,
                             color: kWhite,
                           ),
@@ -365,12 +345,6 @@ class CancelAppoinment extends StatelessWidget {
                       ),
                       InkWell(
                         onTap: () {
-                          // print(appoID);
-                          // print(time);
-                          // print(date);
-                          // print(docID);
-                          // print(schedID);
-
                           if (isCanceled != 'canceled') {
                             if (isUpComing == true) {
                               authC.cancelAppoin(
@@ -383,26 +357,23 @@ class CancelAppoinment extends StatelessWidget {
                               );
                               datacontrol.update(['appointment']);
                               Navigator.pop(context);
-                              //print('cancel');
                             } else {
                               openRatingDialog(context, appoID);
-                              // datacontrol.getRatingAndReview(doctorID: docID);
-                              // print('rate');
                             }
                           }
                         },
                         child: Container(
                           height: 6.h,
-                          width: 35.h,
+                          width: 30.h,
                           decoration: BoxDecoration(
                             gradient: isCanceled == 'canceled'
-                                ? LinearGradient(
+                                ? const LinearGradient(
                                     colors: [
                                       Color.fromARGB(255, 236, 4, 4),
                                       Color.fromARGB(255, 246, 84, 84),
                                     ],
                                   )
-                                : LinearGradient(
+                                : const LinearGradient(
                                     colors: [
                                       Color.fromARGB(255, 18, 67, 214),
                                       Color.fromARGB(255, 35, 134, 247),
@@ -416,7 +387,7 @@ class CancelAppoinment extends StatelessWidget {
                               isCanceled == 'canceled'
                                   ? 'Canceled'
                                   : isUpComing == true
-                                      ? 'Cancel Appoinment'
+                                      ? 'Cancel Appointment'
                                       : 'Rate Doctor',
                               style: Theme.of(context)
                                   .textTheme

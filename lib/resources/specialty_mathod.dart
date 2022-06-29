@@ -8,23 +8,12 @@ final FirebaseFirestore _fireStore = FirebaseFirestore.instance;
 
 User currentUser = _auth.currentUser!;
 
-// Future<List<QueryDocumentSnapshot<Object?>>> getdoctorDetails() async {
-//   QuerySnapshot snapshot = await _fireStore.collection('doctors').get();
-
-//   List<QueryDocumentSnapshot<Object?>> docSnap = snapshot.docs;
-
-//   // print(docSnap[1].data());
-
-//   //return Patients.fromSnapshot(snapshot);
-//   return docSnap;
-// }
 
 Future<List<QueryDocumentSnapshot<Object?>>> getSpeciality() async {
   final snap = await _fireStore.collection('speciality').get();
 
   final docSnap = snap.docs;
-  // print(docSnap);
-  return docSnap;
+   return docSnap;
 }
 
 Future<List<QueryDocumentSnapshot<Object?>>> getListWise(String id) async {
@@ -32,22 +21,9 @@ Future<List<QueryDocumentSnapshot<Object?>>> getListWise(String id) async {
   List<QueryDocumentSnapshot<Object?>> data = [];
   snap.forEach((element) {
     if (id == element['speciality']['did']) {
-      // print(id);
-
       data.add(element);
-      // print(data);
-    }
+     }
   });
   return data;
 }
 
-// Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>> getMember() async {
-//   User currentUser = _auth.currentUser!;
-//   final snap = await _fireStore
-//       .collection('members')
-//       .where('uid', isEqualTo: currentUser.uid)
-//       .get();
-//   final members = snap.docs;
-//   print(members.length);
-//   return members;
-// }

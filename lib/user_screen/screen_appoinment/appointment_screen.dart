@@ -3,36 +3,32 @@ import 'package:doctor_appointment/resources/data_controller.dart';
 import 'package:doctor_appointment/user_screen/widget/Appoinment/appoinment_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:intl/intl.dart';
 import 'package:sizer/sizer.dart';
-import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 import '../../get_controller/get_controller.dart';
 
 class AppointmentScreen extends StatelessWidget {
   AppointmentScreen({Key? key}) : super(key: key);
 
-  // final TabController _tabController = TabController(vsync: this,length: 2);
   DateTimeRange? dateRange;
 
   @override
-  Widget build(BuildContext context) {  
+  Widget build(BuildContext context) {
     return DefaultTabController(
       length: 2,
       child: Scaffold(
         appBar: AppBar(
           automaticallyImplyLeading: false,
-          title: Text(
-            'Appoinment',
+          title: const Text(
+            'Appointment',
             style: TextStyle(color: kBlack),
           ),
           actions: [
             IconButton(
                 onPressed: () {
                   bottom_scheet(context);
-                  print('filter');
                 },
-                icon: Icon(
+                icon: const Icon(
                   Icons.filter_list_outlined,
                   color: kBlack,
                 ))
@@ -41,16 +37,15 @@ class AppointmentScreen extends StatelessWidget {
           elevation: 0,
           bottom: TabBar(
               indicatorWeight: 1,
-              //indicatorColor: Colors.black,
               indicatorSize: TabBarIndicatorSize.label,
               unselectedLabelColor: Colors.grey,
               isScrollable: true,
               labelColor: kWhite,
-              labelStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+              labelStyle:
+                  const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
               indicator: BoxDecoration(
                 color: kBlue,
                 borderRadius: BorderRadius.circular(50),
-                //border: Border.all(),
               ),
               tabs: [
                 Tab(
@@ -59,7 +54,7 @@ class AppointmentScreen extends StatelessWidget {
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(50),
                         border: Border.all(color: kBlue, width: 1)),
-                    child: Align(
+                    child: const Align(
                       alignment: Alignment.center,
                       child: Text("Upcoming"),
                     ),
@@ -71,7 +66,7 @@ class AppointmentScreen extends StatelessWidget {
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(50),
                         border: Border.all(color: kBlue, width: 1)),
-                    child: Align(
+                    child: const Align(
                       alignment: Alignment.center,
                       child: Text("Past"),
                     ),
@@ -80,7 +75,6 @@ class AppointmentScreen extends StatelessWidget {
               ]),
         ),
         body: TabBarView(
-          //controller: _tabController,
           children: [
             AppointmentWidget(
               isUpcoming: true,
@@ -95,50 +89,40 @@ class AppointmentScreen extends StatelessWidget {
   }
 
   Future<void> bottom_scheet(BuildContext context) {
-   
     return showModalBottomSheet<void>(
       context: context,
       builder: (BuildContext context) {
         return Container(
-          height:2.h,
-          width:1.h,
-
-          // color: kBlue,
-          // decoration: BoxDecoration(
-          //   color: kBlack,
-          //   borderRadius:
-          //       BorderRadius.vertical(top: Radius.circular(30)),
-          // ),
+          height: 16.h,
+          width: 1.h,
           child: GetBuilder<StateController>(
             init: StateController(),
             id: 'filter',
             builder: (filter) {
               return Column(
                 mainAxisAlignment: MainAxisAlignment.center,
-                // mainAxisSize: MainAxisSize.min,
-                // crossAxisAlignment: CrossAxisAlignment.center,
-
                 children: [
                   Row(
                     children: [
                       Container(
-                          width:34.h,
-                          // color: kBlack,
+                          width: 34.h,
                           child: ListTile(
-                            title: Text('Date range'),
+                            title: const Text('Date range'),
                             onTap: () async {
                               await pickDateRange(context);
-                              //  print(dateRange!.start);
                             },
                           )),
                       dateRange == null
                           ? Container()
                           : Text(
                               '${filter.selectedStartDate}  - ${filter.selectedEndDate}',
-                              style: TextStyle(color: Colors.black),
-                              // _selectedDate.toString(),
+                              style: const TextStyle(color: Colors.black),
                             ),
                     ],
+                  ),
+                  Text(
+                    'Filter for past',
+                    style: TextStyle(color: Colors.grey.shade300),
                   )
                 ],
               );
@@ -152,7 +136,7 @@ class AppointmentScreen extends StatelessWidget {
   Future pickDateRange(BuildContext context) async {
     final initialDateRange = DateTimeRange(
       start: DateTime.now(),
-      end: DateTime.now().add(Duration(hours: 24 * 3)),
+      end: DateTime.now().add(const Duration(hours: 24 * 3)),
     );
     final newDateRange = await showDateRangePicker(
       context: context,
@@ -170,7 +154,7 @@ class AppointmentScreen extends StatelessWidget {
             ),
 
             // Here I Chaged the overline to my Custom TextStyle.
-            textTheme: TextTheme(overline: TextStyle(fontSize: 16)),
+            textTheme: const TextTheme(overline: TextStyle(fontSize: 16)),
             dialogBackgroundColor: kWhite,
           ),
           child: child!,
@@ -184,53 +168,6 @@ class AppointmentScreen extends StatelessWidget {
     // statecontrol.update();
     datacontrol.dateRange = dateRange;
     datacontrol.update(['appointment']);
-
-    // setState(() {});
-
-    //print(newDateRange.start);
-    //print(dateRange);
-    // print(_selectedStartDate);
     if (dateRange != null) {}
   }
 }
-
-// class DateRange extends StatefulWidget {
-//   const DateRange({Key? key}) : super(key: key);
-
-//   @override
-//   State<DateRange> createState() => _DateRangeState();
-// }
-
-// class _DateRangeState extends State<DateRange> {
-//   void _onSelectionChanged(DateRangePickerSelectionChangedArgs args) {
-//     String _selectedDate = '';
-//     String _dateCount = '';
-//     String _range = '';
-//     String _rangeCount = '';
-
-//     setState(() {
-//       if (args.value is PickerDateRange) {
-//         _range = '${DateFormat('dd/MM/yyyy').format(args.value.startDate)} -'
-//             // ignore: lines_longer_than_80_chars
-//             ' ${DateFormat('dd/MM/yyyy').format(args.value.endDate ?? args.value.startDate)}';
-//       } else if (args.value is DateTime) {
-//         _selectedDate = args.value.toString();
-//       } else if (args.value is List<DateTime>) {
-//         _dateCount = args.value.length.toString();
-//       } else {
-//         _rangeCount = args.value.length.toString();
-//       }
-//     });
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return SfDateRangePicker(
-//       onSelectionChanged: _onSelectionChanged,
-//       selectionMode: DateRangePickerSelectionMode.range,
-//       initialSelectedRange: PickerDateRange(
-//           DateTime.now().subtract(const Duration(days: 4)),
-//           DateTime.now().add(const Duration(days: 3))),
-//     );
-//   }
-// }

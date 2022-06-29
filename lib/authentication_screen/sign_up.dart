@@ -29,8 +29,6 @@ class SignUpScreen extends StatelessWidget {
 
   final TextEditingController _userNameController = TextEditingController();
 
-  // final OtpFieldController _otpController = OtpFieldController();
-
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   String verificationIdRecieved = '';
@@ -46,36 +44,39 @@ class SignUpScreen extends StatelessWidget {
       Uint8List im = await pickImage(ImageSource.gallery);
       control.imageUpdate(im);
     } catch (e) {
-      print('no image $e');
+      debugPrint('no image $e');
     }
   }
 
-  void verifyNumber() async {
-    
+  void verifyNumber(BuildContext ctx) async {
+    if (control.image == null) {
+      showSnackBar('Image required', kRed, ctx);
+      debugPrint('image is null');
+      return;
+    }
     if (_formKey.currentState!.validate()) {
       control.loading(true);
-    control.update(['checkbox']);
+      control.update(['checkbox']);
       _auth.verifyPhoneNumber(
           phoneNumber: '+91${_phoneNumber.text}',
           verificationCompleted: (PhoneAuthCredential credential) async {
             await _auth.signInWithCredential(credential).then((value) => {
-                  print('verifynumber${value.user!.uid}'),
-                  print("your logged in successfully"),
+                  debugPrint('verifynumber${value.user!.uid}'),
+                  debugPrint("your logged in successfully"),
                 });
           },
           verificationFailed: (FirebaseAuthException exception) {
-            print(exception.message);
+            debugPrint(exception.message);
           },
           codeSent: (String verificationId, int? resendToken) {
             verificationIdRecieved = verificationId;
             signControl.otpCodeVisible = true;
             signControl.update(['otp']);
             control.update(['checkbox']);
-            //setState(() {});
           },
           codeAutoRetrievalTimeout: (String verificationId) {});
     }
-    await Future.delayed(Duration(seconds: 2));
+    await Future.delayed(const Duration(seconds: 2));
     control.loading(false);
     control.update(['checkbox']);
   }
@@ -83,13 +84,11 @@ class SignUpScreen extends StatelessWidget {
   void verifyCode(BuildContext ctx) async {
     PhoneAuthCredential cred = PhoneAuthProvider.credential(
         verificationId: verificationIdRecieved, smsCode: otpPin);
-    //User currentUser = _auth.currentUser!;
     control.loading(true);
     control.update(['checkbox']);
     await _auth.signInWithCredential(cred).then((value) async {
       {
         try {
-          print('verifycode ${value.user!.uid}');
           String result = await AuthMethods().otpSingUp(
             email: _emailController.text,
             uid: value.user!.uid,
@@ -100,32 +99,31 @@ class SignUpScreen extends StatelessWidget {
 
           if (result != 'Success') {
             showSnackBar(result, kRed, ctx);
+            return;
           }
-          // Navigator.of(ctx).pushReplacement(
-          //     MaterialPageRoute(builder: (ctx) => MainHomeScreen()));
           Navigator.of(ctx).pushAndRemoveUntil(
-              MaterialPageRoute(builder: (ctx) => MainHomeScreen()),
+              MaterialPageRoute(builder: (ctx) => const MainHomeScreen()),
               (route) => false);
           showSnackBar(result, kGreen, ctx);
-          print('otp login wit succes');
         } catch (e) {
-          print('verifycode otp${e}');
+          debugPrint('verifycode otp $e');
         }
       }
     });
-    await Future.delayed(Duration(seconds: 2));
+    await Future.delayed(const Duration(seconds: 2));
     control.loading(false);
     control.update(['checkbox']);
   }
 
   void signUpPatient(BuildContext ctx) async {
-   
     if (control.image == null) {
-      print('image is null');
+      showSnackBar('Image required', kRed, ctx);
+      debugPrint('image is null');
       return;
     }
     if (_formKey.currentState!.validate()) {
-       control.loading(true);
+      control.loading(true);
+      control.update(['checkbox']);
       String result = await AuthMethods().signUpPatient(
         email: _emailController.text,
         password: _password.text,
@@ -134,24 +132,21 @@ class SignUpScreen extends StatelessWidget {
         file: control.image!,
       );
       control.loading(false);
+      control.update(['checkbox']);
       if (result != 'Success') {
         showSnackBar(result, kRed, ctx);
+        return;
       }
+
       Navigator.of(ctx)
           .pushReplacement(MaterialPageRoute(builder: (ctx) => LogInScreen()));
       showSnackBar(result, kGreen, ctx);
     }
-    // print('picture$_image');
   }
 
   @override
   Widget build(BuildContext context) {
-    print('otp');
     signControl.otpCodeVisible = false;
-    // control.loading(false);
-   
-    //signControl.otpCodeVisible = false;
-    // control.loading(false);
     return Scaffold(
       backgroundColor: Colors.amber,
       body: Container(
@@ -169,13 +164,13 @@ class SignUpScreen extends StatelessWidget {
         child: Stack(
           children: [
             Positioned(
-              top: -10,
-              left: -90,
+              top: 1.h,
+              left: -20.w,
               child: Container(
                 height: 20.h,
                 width: 60.w,
                 decoration: BoxDecoration(
-                  color: Colors.orange.withOpacity(0.8),
+                  color: Colors.orange.withOpacity(0.7),
                   borderRadius: const BorderRadius.only(
                       bottomLeft: Radius.circular(300),
                       bottomRight: Radius.circular(300)),
@@ -183,13 +178,13 @@ class SignUpScreen extends StatelessWidget {
               ),
             ),
             Positioned(
-              top: 16,
-              left: 200,
+              top: 1.h,
+              left: 60.w,
               child: Container(
                 height: 18.h,
                 width: 60.w,
                 decoration: BoxDecoration(
-                  color: Colors.orange.withOpacity(0.8),
+                  color: Colors.orange.withOpacity(0.7),
                   borderRadius: const BorderRadius.only(
                       bottomLeft: Radius.circular(300),
                       bottomRight: Radius.circular(300)),
@@ -197,8 +192,8 @@ class SignUpScreen extends StatelessWidget {
               ),
             ),
             Positioned(
-              top: -100,
-              right: -40,
+              top: -10.h,
+              right: -10.w,
               child: Container(
                 height: 33.h,
                 width: 120.w,
@@ -211,8 +206,8 @@ class SignUpScreen extends StatelessWidget {
               ),
             ),
             Positioned(
-              top: 680,
-              right: -100,
+              top: 90.h,
+              right: -25.w,
               child: Container(
                 height: 30.h,
                 width: 60.w,
@@ -222,8 +217,8 @@ class SignUpScreen extends StatelessWidget {
               ),
             ),
             Positioned(
-              top: 680,
-              left: -100,
+              top: 90.h,
+              left: -25.w,
               child: Container(
                 height: 30.h,
                 width: 60.w,
@@ -238,10 +233,8 @@ class SignUpScreen extends StatelessWidget {
                 width: 100.w,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    // const SizedBox(
-                    //   height: 50,
-                    // ),
                     Stack(
                       children: [
                         GetBuilder<SignController>(
@@ -271,7 +264,6 @@ class SignUpScreen extends StatelessWidget {
                         )
                       ],
                     ),
-
                     Form(
                       key: _formKey,
                       autovalidateMode: AutovalidateMode.always,
@@ -284,7 +276,6 @@ class SignUpScreen extends StatelessWidget {
                               controller: _userNameController,
                               decoration: const InputDecoration(
                                 fillColor: Color.fromARGB(255, 48, 150, 223),
-                                //filled: true,
                                 focusedBorder: UnderlineInputBorder(
                                   borderSide: BorderSide(color: Colors.white),
                                 ),
@@ -293,7 +284,6 @@ class SignUpScreen extends StatelessWidget {
                                 enabledBorder: UnderlineInputBorder(
                                   borderSide: BorderSide(color: Colors.white),
                                 ),
-
                                 prefixIcon: Padding(
                                   padding: EdgeInsets.only(
                                       top: 0), // add padding to adjust icon
@@ -317,11 +307,9 @@ class SignUpScreen extends StatelessWidget {
                                 left: 50.0, right: 50, top: 10),
                             child: TextFormField(
                               controller: _phoneNumber,
-                              //  inputFormatters: [],
                               keyboardType: TextInputType.number,
                               decoration: const InputDecoration(
                                 fillColor: Color.fromARGB(255, 48, 150, 223),
-                                //filled: true,
                                 focusedBorder: UnderlineInputBorder(
                                   borderSide: BorderSide(color: Colors.white),
                                 ),
@@ -330,7 +318,6 @@ class SignUpScreen extends StatelessWidget {
                                 enabledBorder: UnderlineInputBorder(
                                   borderSide: BorderSide(color: Colors.white),
                                 ),
-
                                 prefixIcon: Padding(
                                   padding: EdgeInsets.only(
                                       top: 0), // add padding to adjust icon
@@ -398,12 +385,12 @@ class SignUpScreen extends StatelessWidget {
                               return Visibility(
                                 visible: otp.otpCodeVisible,
                                 child: OTPTextField(
-                                  // controller: _otpController,
                                   keyboardType: TextInputType.number,
                                   length: 6,
                                   width: 40.h,
                                   fieldWidth: 40,
-                                  style: TextStyle(fontSize: 17, color: kWhite),
+                                  style: const TextStyle(
+                                      fontSize: 17, color: kWhite),
                                   textFieldAlignment:
                                       MainAxisAlignment.spaceAround,
                                   fieldStyle: FieldStyle.underline,
@@ -414,11 +401,8 @@ class SignUpScreen extends StatelessWidget {
                                     focusBorderColor: kWhite,
                                     errorBorderColor: kRed,
                                   ),
-                                  onChanged: (newpin) {
-                                    print(newpin);
-                                  },
+                                  onChanged: (newpin) {},
                                   onCompleted: (pin) {
-                                    print("Completed: " + pin);
                                     otpPin = pin;
                                   },
                                 ),
@@ -439,57 +423,76 @@ class SignUpScreen extends StatelessWidget {
                                         right: 50,
                                         top: 10,
                                       ),
-                                      child: TextFormField(
-                                        enabled: passwordDisable,
-                                        controller: _password,
-                                        obscureText: true,
-                                        style: TextStyle(color: kWhite),
-                                        // keyboardType: TextInputType.number,
-                                        decoration: InputDecoration(
-                                            fillColor: Colors.white,
-                                            //filled: true,
-                                            focusedBorder: UnderlineInputBorder(
-                                              borderSide: BorderSide(
-                                                  color: Colors.white),
-                                            ),
-                                            labelStyle:
-                                                TextStyle(color: Colors.white),
-                                            labelText: 'Password',
-                                            enabledBorder: UnderlineInputBorder(
-                                              borderSide: BorderSide(
-                                                  color: Colors.white),
-                                            ),
-                                            prefixIcon: Padding(
-                                              padding: EdgeInsets.only(
-                                                  top:
-                                                      0), // add padding to adjust icon
-                                              child: Icon(
-                                                Icons.lock_outline,
-                                                color: Colors.white,
-                                                size: 16,
-                                              ),
-                                            ),
-                                            suffixIcon: IconButton(
-                                                onPressed: () {},
-                                                icon: Icon(
-                                                  Icons.remove_red_eye_rounded,
-                                                  color: Colors.white,
-                                                  size: 16,
-                                                ))),
-                                        validator: (value) {
-                                          // RegExp regex =
-                                          // RegExp(r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$');
-                                          RegExp regex = RegExp(
-                                              r'^(?=.*?[a-z])(?=.*?[0-9]).{8,}$');
-                                          if (value == null || value.isEmpty) {
-                                            return 'Please enter password';
-                                          } else if (!regex.hasMatch(value)) {
-                                            return 'Password must contain at least one lower case \nand one digit';
-                                          }
-                                          // else if (value.length < 8) {
-                                          //   return 'Must be atleast 8 charater';
-                                          // }
-                                          return null;
+                                      child: GetBuilder<StateController>(
+                                        init: StateController(),
+                                        id: 'pass',
+                                        builder: (pass) {
+                                          return TextFormField(
+                                            enabled: passwordDisable,
+                                            controller: _password,
+                                            obscureText: pass.passwordVisible,
+                                            style:
+                                                const TextStyle(color: kWhite),
+                                            decoration: InputDecoration(
+                                                fillColor: Colors.white,
+                                                focusedBorder:
+                                                    const UnderlineInputBorder(
+                                                  borderSide: BorderSide(
+                                                      color: Colors.white),
+                                                ),
+                                                labelStyle: const TextStyle(
+                                                    color: Colors.white),
+                                                labelText: 'Password',
+                                                enabledBorder:
+                                                    const UnderlineInputBorder(
+                                                  borderSide: BorderSide(
+                                                      color: Colors.white),
+                                                ),
+                                                prefixIcon: const Padding(
+                                                  padding: EdgeInsets.only(
+                                                      top:
+                                                          0), // add padding to adjust icon
+                                                  child: Icon(
+                                                    Icons.lock_outline,
+                                                    color: Colors.white,
+                                                    size: 16,
+                                                  ),
+                                                ),
+                                                suffixIcon: IconButton(
+                                                    onPressed: () {
+                                                      if (pass.passwordVisible ==
+                                                          true) {
+                                                        pass.passwordVisible =
+                                                            false;
+                                                      } else {
+                                                        pass.passwordVisible =
+                                                            true;
+                                                      }
+
+                                                      pass.update(['pass']);
+                                                    },
+                                                    icon: Icon(
+                                                        pass.passwordVisible ==
+                                                                true
+                                                            ? Icons
+                                                                .remove_red_eye_rounded
+                                                            : Icons
+                                                                .remove_red_eye_outlined,
+                                                        size: 16,
+                                                        color: kWhite))),
+                                            validator: (value) {
+                                              RegExp regex = RegExp(
+                                                  r'^(?=.*?[a-z])(?=.*?[0-9]).{8,}$');
+                                              if (value == null ||
+                                                  value.isEmpty) {
+                                                return 'Please enter password';
+                                              } else if (!regex
+                                                  .hasMatch(value)) {
+                                                return 'Password must contain at least one lower case \nand one digit';
+                                              }
+                                              return null;
+                                            },
+                                          );
                                         },
                                       ),
                                     ),
@@ -502,50 +505,75 @@ class SignUpScreen extends StatelessWidget {
                                           right: 50,
                                           top: 10,
                                           bottom: 20),
-                                      child: TextFormField(
-                                        enabled: passwordDisable,
-                                        controller: _confirmPassword,
-                                        style: TextStyle(color: kWhite),
-                                        obscureText: true,
-                                        // keyboardType: TextInputType.number,
-                                        decoration: InputDecoration(
-                                            fillColor: Colors.white,
-                                            //filled: true,
-                                            focusedBorder: UnderlineInputBorder(
-                                              borderSide: BorderSide(
-                                                  color: Colors.white),
-                                            ),
-                                            labelStyle:
-                                                TextStyle(color: Colors.white),
-                                            labelText: 'Confirm password',
-                                            enabledBorder: UnderlineInputBorder(
-                                              borderSide: BorderSide(
-                                                  color: Colors.white),
-                                            ),
-                                            prefixIcon: Padding(
-                                              padding: EdgeInsets.only(
-                                                  top:
-                                                      0), // add padding to adjust icon
-                                              child: Icon(
-                                                Icons.lock_outline,
-                                                color: Colors.white,
-                                                size: 16,
-                                              ),
-                                            ),
-                                            suffixIcon: IconButton(
-                                                onPressed: () {},
-                                                icon: Icon(
-                                                  Icons.remove_red_eye_rounded,
-                                                  color: Colors.white,
-                                                  size: 16,
-                                                ))),
-                                        validator: (value) {
-                                          if (value == null ||
-                                              value.isEmpty ||
-                                              value != _password.text) {
-                                            return "Password doesn't match";
-                                          }
-                                          return null;
+                                      child: GetBuilder<StateController>(
+                                        init: StateController(),
+                                        id: 'confirm',
+                                        builder: (confirm) {
+                                          return TextFormField(
+                                            enabled: passwordDisable,
+                                            controller: _confirmPassword,
+                                            style:
+                                                const TextStyle(color: kWhite),
+                                            obscureText:
+                                                confirm.passwordVisible,
+                                            decoration: InputDecoration(
+                                                fillColor: Colors.white,
+                                                focusedBorder:
+                                                    const UnderlineInputBorder(
+                                                  borderSide: BorderSide(
+                                                      color: Colors.white),
+                                                ),
+                                                labelStyle: const TextStyle(
+                                                    color: Colors.white),
+                                                labelText: 'Confirm password',
+                                                enabledBorder:
+                                                    const UnderlineInputBorder(
+                                                  borderSide: BorderSide(
+                                                      color: Colors.white),
+                                                ),
+                                                prefixIcon: const Padding(
+                                                  padding: EdgeInsets.only(
+                                                      top:
+                                                          0), // add padding to adjust icon
+                                                  child: Icon(
+                                                    Icons.lock_outline,
+                                                    color: Colors.white,
+                                                    size: 16,
+                                                  ),
+                                                ),
+                                                suffixIcon: IconButton(
+                                                    onPressed: () {
+                                                      if (confirm
+                                                              .passwordVisible ==
+                                                          true) {
+                                                        confirm.passwordVisible =
+                                                            false;
+                                                      } else {
+                                                        confirm.passwordVisible =
+                                                            true;
+                                                      }
+
+                                                      confirm
+                                                          .update(['confirm']);
+                                                    },
+                                                    icon: Icon(
+                                                        confirm.passwordVisible ==
+                                                                true
+                                                            ? Icons
+                                                                .remove_red_eye_rounded
+                                                            : Icons
+                                                                .remove_red_eye_outlined,
+                                                        size: 16,
+                                                        color: kWhite))),
+                                            validator: (value) {
+                                              if (value == null ||
+                                                  value.isEmpty ||
+                                                  value != _password.text) {
+                                                return "Password doesn't match";
+                                              }
+                                              return null;
+                                            },
+                                          );
                                         },
                                       ),
                                     ),
@@ -558,7 +586,7 @@ class SignUpScreen extends StatelessWidget {
                                         bottom: 20),
                                     child: Row(
                                       children: [
-                                        Text(
+                                        const Text(
                                           'Login with phone number',
                                           style: TextStyle(color: Colors.white),
                                         ),
@@ -566,12 +594,9 @@ class SignUpScreen extends StatelessWidget {
                                           activeColor: kRed,
                                           value: checkBox.otpLogin,
                                           onChanged: (bool? value) {
-                                            // print(value);
                                             passwordDisable = !value!;
-                                            // print(passwordDisable);
                                             checkBox.otpLogin = value;
                                             checkBox.update(['checkbox']);
-                                            // print(checkBox.otpLogin);
                                           },
                                         ),
                                       ],
@@ -583,14 +608,13 @@ class SignUpScreen extends StatelessWidget {
                           ),
                           ElevatedButton(
                             onPressed: () {
-                              //signUpPatient(context);
                               if (signControl.otpLogin == false) {
                                 signUpPatient(context);
                               } else {
                                 if (signControl.otpCodeVisible) {
                                   verifyCode(context);
                                 } else {
-                                  verifyNumber();
+                                  verifyNumber(context);
                                 }
                               }
                             },
@@ -609,7 +633,7 @@ class SignUpScreen extends StatelessWidget {
                                             : controller.otpCodeVisible
                                                 ? "Login"
                                                 : "verify",
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                             color: Colors.white, fontSize: 18),
                                       );
                               },
@@ -621,14 +645,11 @@ class SignUpScreen extends StatelessWidget {
                                 shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(50))),
                           ),
-                          const SizedBox(
-                            height: 10,
+                          SizedBox(
+                            height: 3.h,
                           )
                         ],
                       ),
-                    ),
-                    SizedBox(
-                      height: 15.h,
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -645,14 +666,11 @@ class SignUpScreen extends StatelessWidget {
                                       builder: (context) => LogInScreen()));
                             },
                             child: const Text(
-                              'Login',
+                              'Login here',
                               style: TextStyle(color: kWhite),
                             )),
                       ],
                     ),
-                    // SizedBox(
-                    //   height: 200,
-                    // ),
                   ],
                 ),
               ),

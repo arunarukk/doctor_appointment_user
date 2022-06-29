@@ -50,7 +50,7 @@ class _PhoneAuthenticationState extends State<PhoneAuthentication> {
           child: Stack(
             children: [
               Container(
-                height: 450,
+                height: 55.h,
                 width: double.infinity,
                 decoration: const BoxDecoration(
                   color: Colors.white,
@@ -63,14 +63,6 @@ class _PhoneAuthenticationState extends State<PhoneAuthentication> {
                   borderRadius: BorderRadius.only(
                       bottomLeft: Radius.circular(200),
                       bottomRight: Radius.circular(200)),
-                  // gradient: LinearGradient(
-                  //   begin: Alignment.topLeft,
-                  //   end: Alignment.bottomRight,
-                  //   colors: [
-                  //     Color.fromARGB(255, 165, 17, 42),
-                  //     Color.fromARGB(255, 16, 211, 58)
-                  //   ],
-                  // ),
                 ),
               ),
               Padding(
@@ -79,7 +71,7 @@ class _PhoneAuthenticationState extends State<PhoneAuthentication> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Padding(
-                      padding: const EdgeInsets.only(top: 100.0, bottom: 80),
+                      padding: EdgeInsets.only(top: 13.h, bottom: 14.h),
                       child: SizedBox(
                         child: Image.asset(
                           'assets/log_illu/login_screen.png',
@@ -92,22 +84,22 @@ class _PhoneAuthenticationState extends State<PhoneAuthentication> {
                           const EdgeInsets.only(left: 50.0, right: 50, top: 10),
                       child: TextFormField(
                         controller: phoneController,
-                        style: TextStyle(color: kWhite),
+                        style: const TextStyle(color: kWhite),
                         //  inputFormatters: [],
                         keyboardType: TextInputType.number,
-                        decoration: InputDecoration(
-                          fillColor: Color.fromARGB(255, 48, 150, 223),
+                        decoration: const InputDecoration(
+                          fillColor:  Color.fromARGB(255, 48, 150, 223),
                           //filled: true,
-                          focusedBorder: UnderlineInputBorder(
+                          focusedBorder:  UnderlineInputBorder(
                             borderSide: BorderSide(color: Colors.white),
                           ),
-                          labelStyle: TextStyle(color: Colors.white),
+                          labelStyle:  TextStyle(color: Colors.white),
                           labelText: 'Phone number',
-                          enabledBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(color: Colors.white),
+                          enabledBorder:  UnderlineInputBorder(
+                            borderSide:  BorderSide(color: Colors.white),
                           ),
 
-                          prefixIcon: Padding(
+                          prefixIcon:  Padding(
                             padding: EdgeInsets.only(
                                 top: 0), // add padding to adjust icon
                             child: Icon(
@@ -142,7 +134,7 @@ class _PhoneAuthenticationState extends State<PhoneAuthentication> {
                             length: 6,
                             width: 40.h,
                             fieldWidth: 40,
-                            style: TextStyle(fontSize: 17, color: kWhite),
+                            style: const TextStyle(fontSize: 17, color: kWhite),
                             textFieldAlignment: MainAxisAlignment.spaceAround,
                             fieldStyle: FieldStyle.underline,
                             otpFieldStyle: OtpFieldStyle(
@@ -153,10 +145,10 @@ class _PhoneAuthenticationState extends State<PhoneAuthentication> {
                               errorBorderColor: kRed,
                             ),
                             onChanged: (newpin) {
-                              print(newpin);
+                              debugPrint(newpin);
                             },
                             onCompleted: (pin) {
-                              print("Completed: " + pin);
+                              debugPrint("Completed: " + pin);
                               otpPin = pin;
                             },
                           ),
@@ -177,18 +169,19 @@ class _PhoneAuthenticationState extends State<PhoneAuthentication> {
                               }
                             },
                             style: ElevatedButton.styleFrom(
-                                primary: Color.fromARGB(255, 241, 187, 38),
+                                primary:
+                                    const Color.fromARGB(255, 241, 187, 38),
                                 fixedSize: const Size(300, 50),
                                 shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(50))),
                             child: otpvi.isLoading!
-                                ? Center(
+                                ? const Center(
                                     child: CircularProgressIndicator(
                                     color: kWhite,
                                   ))
                                 : Text(
                                     otpvi.otpCodeVisible ? "Login" : "Verify",
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                         color: Colors.white, fontSize: 18),
                                   ));
                       },
@@ -210,21 +203,19 @@ class _PhoneAuthenticationState extends State<PhoneAuthentication> {
         phoneNumber: "+91${phoneController.text}",
         verificationCompleted: (PhoneAuthCredential credential) async {
           await auth.signInWithCredential(credential).then((value) => {
-                print("your logged in successfully"),
+                debugPrint("your logged in successfully"),
               });
         },
         verificationFailed: (FirebaseAuthException exception) {
-          print(exception.message);
+          debugPrint(exception.message);
         },
         codeSent: (String verificationId, int? resendToken) {
           verificationIdRecieved = verificationId;
           signControl.otpCodeVisible = true;
           signControl.update(['visible']);
-
-          //setState(() {});
         },
         codeAutoRetrievalTimeout: (String verificationId) {});
-    await Future.delayed(Duration(seconds: 2));
+    await Future.delayed(const Duration(seconds: 2));
     signControl.loading(false);
     signControl.update(['otp']);
   }
@@ -239,38 +230,23 @@ class _PhoneAuthenticationState extends State<PhoneAuthentication> {
         User currentUser = auth.currentUser!;
         final data = await AuthMethods().getUserDetails();
         try {
-          // if (currentUser.email == null) {
-          //   print("current user emty otp sign");
-          //   Navigator.pushReplacement(context,
-          //       MaterialPageRoute(builder: (context) => LoginProfileScreen()));
-          // }
-          print("you are logged in successfully");
-          // Navigator.pushAndRemoveUntil(
-          //   context,
-          //   MaterialPageRoute(
-          //     builder: (BuildContext context) => HomeScreen(),
-          //   ),
-          //   (route) => false,
-          // );
-
-          //  signControl.update(['otp']);
           if (data.userName != null) {
             Navigator.pushAndRemoveUntil(
               context,
               MaterialPageRoute(
-                builder: (BuildContext context) => MainHomeScreen(),
+                builder: (BuildContext context) =>const MainHomeScreen(),
               ),
               (route) => false,
             );
           } else {
-            print('phone exist verify code');
+            debugPrint('phone exist verify code');
 
             currentUser.delete();
           }
           signControl.loading(false);
           signControl.update(['otp']);
         } catch (e) {
-          print('otp auth screen $e');
+          debugPrint('otp auth screen $e');
         }
       }
     });

@@ -11,6 +11,7 @@ import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
 
 final notifyC = NotificationControl();
+ GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
@@ -26,13 +27,14 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+ 
+
   @override
   void initState() {
     notifyC.requestPermission();
     notifyC.loadFCM();
     notifyC.listenFCM();
 
-    // TODO: implement initState
     super.initState();
   }
 
@@ -41,6 +43,7 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return Sizer(
       builder: ((context, orientation, deviceType) => GetMaterialApp(
+            navigatorKey: navigatorKey,
             title: 'Flutter Demo',
             theme: ThemeData(
               splashColor: Colors.transparent,
@@ -64,10 +67,10 @@ class _MyAppState extends State<MyApp> {
                 if (snapshot.connectionState == ConnectionState.active) {
                   if (snapshot.hasData) {
                     if (snapshot.data != null) {
-                      return MainHomeScreen();
+                      return const MainHomeScreen();
                     }
 
-                    return LoginProfileScreen();
+                    return const LoginProfileScreen();
                   } else if (snapshot.hasError) {
                     return Center(
                       child: Text('${snapshot.error}'),
@@ -77,7 +80,7 @@ class _MyAppState extends State<MyApp> {
                   }
                 }
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return SplashScreen();
+                  return const SplashScreen();
                 }
                 return LogInScreen();
               },

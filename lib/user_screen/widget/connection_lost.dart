@@ -8,9 +8,8 @@ class ConnectionLost extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-   
     return Container(
-      height: 8.h,
+      height: 80.h,
       width: 100.h,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -19,12 +18,12 @@ class ConnectionLost extends StatelessWidget {
           Image.asset(
             'assets/error.gif',
             // scale: .002,
-            width: 2.h,
+            width: 25.h,
           ),
           SizedBox(
             height: 2.h,
           ),
-          Text('Check your connection!'),
+          const Text('Check your connection!'),
         ],
       ),
     );

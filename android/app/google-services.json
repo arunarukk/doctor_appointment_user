@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "729367121342-4nsod9c1dr65kdo7icbs2b0vd4nl1gq8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.doc_side_appoinment",
+            "certificate_hash": "f48ae3e3c3330db29ae5b78d051df28999a5ee89"
+          }
+        },
+        {
           "client_id": "729367121342-p4icl2su8idds5mrn0qmblebl372aec9.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -42,6 +50,80 @@
         }
       },
       "oauth_client": [
+        {
+          "client_id": "729367121342-j3j91fdq6onfnr46ra645u825e1l8jap.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.doctor_appointment",
+            "certificate_hash": "f48ae3e3c3330db29ae5b78d051df28999a5ee89"
+          }
+        },
+        {
+          "client_id": "729367121342-p4icl2su8idds5mrn0qmblebl372aec9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC7rN_yKXd-OL8TRHgiHW7JlFL1Qc2oGao"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "729367121342-p4icl2su8idds5mrn0qmblebl372aec9.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:729367121342:android:34595c51e4ee2c096cbdef",
+        "android_client_info": {
+          "package_name": "com.example.doctor_side_new_appoinment"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "729367121342-p4icl2su8idds5mrn0qmblebl372aec9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC7rN_yKXd-OL8TRHgiHW7JlFL1Qc2oGao"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "729367121342-p4icl2su8idds5mrn0qmblebl372aec9.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:729367121342:android:2bc96f4f7e73a5d86cbdef",
+        "android_client_info": {
+          "package_name": "in.medocarun.doctor_appointment"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "729367121342-mm2kk17qbd427gi95c56k9a2qv5aclvv.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "in.medocarun.doctor_appointment",
+            "certificate_hash": "f48ae3e3c3330db29ae5b78d051df28999a5ee89"
+          }
+        },
         {
           "client_id": "729367121342-p4icl2su8idds5mrn0qmblebl372aec9.apps.googleusercontent.com",
           "client_type": 3

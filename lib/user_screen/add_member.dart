@@ -5,7 +5,6 @@ import 'package:doctor_appointment/constant_value/constant_colors.dart';
 import 'package:doctor_appointment/constant_value/constant_size.dart';
 import 'package:doctor_appointment/get_controller/get_controller.dart';
 import 'package:doctor_appointment/resources/data_controller.dart';
-import 'package:doctor_appointment/user_screen/widget/doctor_list_widget/doctor_list_widget.dart';
 import 'package:doctor_appointment/utils/utility_method.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -49,17 +48,13 @@ class MapScreenState extends State<AddMembers>
   selectImage() async {
     try {
       Uint8List im = await pickImage(ImageSource.gallery);
-      // control.imageUpdate(im);
+    
       control.memiImage = im;
       control.update();
     } catch (e) {
-      print('no image $e');
+      debugPrint('no image $e');
     }
-    //_image = im;
-    // setState(() {
-    //   _image = im;
-    // });
-  }
+   }
 
   @override
   Widget build(BuildContext context) {
@@ -122,7 +117,7 @@ class MapScreenState extends State<AddMembers>
                                                 decoration: BoxDecoration(
                                                     shape: BoxShape.circle,
                                                     image: widget.data == null
-                                                        ? DecorationImage(
+                                                        ? const DecorationImage(
                                                             image: NetworkImage(
                                                                 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png'),
                                                             fit: BoxFit.cover,
@@ -204,13 +199,6 @@ class MapScreenState extends State<AddMembers>
                                           ),
                                         ],
                                       ),
-                                      // Column(
-                                      //   mainAxisAlignment: MainAxisAlignment.end,
-                                      //   mainAxisSize: MainAxisSize.min,
-                                      //   children: <Widget>[
-                                      //     _status ? _getEditIcon() : Container(),
-                                      //   ],
-                                      // )
                                     ],
                                   )),
                               Padding(
@@ -243,7 +231,7 @@ class MapScreenState extends State<AddMembers>
                                       Flexible(
                                         child: TextFormField(
                                           controller: nameController,
-                                          decoration: InputDecoration(
+                                          decoration: const InputDecoration(
                                             hintText: "Enter Your Name",
                                           ),
                                           validator: (value) {
@@ -253,48 +241,10 @@ class MapScreenState extends State<AddMembers>
                                             }
                                             return null;
                                           },
-                                          // enabled: !_status,
-                                          // autofocus: !_status,
-                                        ),
+                                         ),
                                       ),
                                     ],
                                   )),
-                              // Padding(
-                              //     padding: const EdgeInsets.only(
-                              //         left: 25.0, right: 25.0, top: 25.0),
-                              //     child: Row(
-                              //       mainAxisSize: MainAxisSize.max,
-                              //       children: <Widget>[
-                              //         Column(
-                              //           mainAxisAlignment:
-                              //               MainAxisAlignment.start,
-                              //           mainAxisSize: MainAxisSize.min,
-                              //           children: const <Widget>[
-                              //             Text(
-                              //               'Email ID',
-                              //               style: TextStyle(
-                              //                   fontSize: 16.0,
-                              //                   fontWeight: FontWeight.bold),
-                              //             ),
-                              //           ],
-                              //         ),
-                              //       ],
-                              //     )),
-                              // Padding(
-                              //     padding: const EdgeInsets.only(
-                              //         left: 25.0, right: 25.0, top: 2.0),
-                              //     child: Row(
-                              //       mainAxisSize: MainAxisSize.max,
-                              //       children: const <Widget>[
-                              //         Flexible(
-                              //           child: TextFormField(
-                              //             decoration: InputDecoration(
-                              //                 hintText: "Enter Email ID"),
-                              //             //enabled: !_status,
-                              //           ),
-                              //         ),
-                              //       ],
-                              //     )),
                               Padding(
                                   padding: const EdgeInsets.only(
                                       left: 25.0, right: 25.0, top: 25.0),
@@ -325,7 +275,7 @@ class MapScreenState extends State<AddMembers>
                                       Flexible(
                                         child: TextFormField(
                                           controller: phoneController,
-                                          decoration: InputDecoration(
+                                          decoration: const InputDecoration(
                                               hintText: "Enter Mobile Number"),
                                           //enabled: !_status,
                                           validator: (value) {
@@ -351,30 +301,17 @@ class MapScreenState extends State<AddMembers>
                                   child: Row(
                                     mainAxisSize: MainAxisSize.max,
                                     mainAxisAlignment: MainAxisAlignment.start,
-                                    children: <Widget>[
+                                    children: const[
                                       Expanded(
-                                        child: Container(
-                                          child: const Text(
-                                            'Age',
-                                            style: const TextStyle(
-                                                fontSize: 16.0,
-                                                fontWeight: FontWeight.bold),
-                                          ),
+                                        child:  Text(
+                                          'Age',
+                                          style:  TextStyle(
+                                              fontSize: 16.0,
+                                              fontWeight: FontWeight.bold),
                                         ),
                                         flex: 2,
                                       ),
-                                      // Expanded(
-                                      //   child: Container(
-                                      //     child: const Text(
-                                      //       'State',
-                                      //       style: const TextStyle(
-                                      //           fontSize: 16.0,
-                                      //           fontWeight: FontWeight.bold),
-                                      //     ),
-                                      //   ),
-                                      //   flex: 2,
-                                      // ),
-                                    ],
+                                   ],
                                   )),
                               Padding(
                                   padding: const EdgeInsets.only(
@@ -385,10 +322,10 @@ class MapScreenState extends State<AddMembers>
                                     children: <Widget>[
                                       Flexible(
                                         child: Padding(
-                                          padding: EdgeInsets.only(right: 10.0),
+                                          padding: const EdgeInsets.only(right: 10.0),
                                           child: TextFormField(
                                             controller: ageController,
-                                            decoration: InputDecoration(
+                                            decoration: const InputDecoration(
                                                 hintText: "age"),
                                             //enabled: !_status,
                                             validator: (value) {
@@ -402,22 +339,14 @@ class MapScreenState extends State<AddMembers>
                                         ),
                                         flex: 2,
                                       ),
-                                      // Flexible(
-                                      //   child: TextFormField(
-                                      //     decoration: InputDecoration(
-                                      //         hintText: "Enter State"),
-                                      //     //enabled: !_status,
-                                      //   ),
-                                      //   flex: 2,
-                                      // ),
                                     ],
                                   )),
 
                               kHeight10,
-                              Padding(
-                                padding: const EdgeInsets.only(
+                              const Padding(
+                                padding: EdgeInsets.only(
                                     left: 25.0, right: 25.0, top: 2.0),
-                                child: const Text('Select Gender',
+                                child: Text('Select Gender',
                                     style: TextStyle(
                                       color: kBlack,
                                       fontSize: 16.0,
@@ -432,7 +361,6 @@ class MapScreenState extends State<AddMembers>
                                     initialKeyValue: _selectedGender),
                               ),
                               kHeight10,
-                              // !_status ? _getActionButtons() : Container(),
                               kHeight20,
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
@@ -446,7 +374,7 @@ class MapScreenState extends State<AddMembers>
                                           widget.data == null
                                               ? "Add"
                                               : 'Update',
-                                          style: TextStyle(
+                                          style: const TextStyle(
                                             color: kWhite,
                                           ),
                                         ),
@@ -459,7 +387,6 @@ class MapScreenState extends State<AddMembers>
                                               BorderRadius.circular(20.0)),
                                     ),
                                     onPressed: () async {
-                                      print(widget.uid);
                                       if (_formKey.currentState!.validate()) {
                                         if (widget.data == null) {
                                           if (control.memiImage == null) {
@@ -530,13 +457,12 @@ class MapScreenState extends State<AddMembers>
                                                         20.0)),
                                           ),
                                           onPressed: () {
-                                            print(widget.uid);
                                             datacontrol
                                                 .deleteMember(widget.uid);
                                             Navigator.pop(context);
                                           },
                                         )
-                                      : SizedBox(),
+                                      : const SizedBox(),
                                 ],
                               ),
                             ],
@@ -565,88 +491,5 @@ class MapScreenState extends State<AddMembers>
     super.dispose();
   }
 
-  Widget _getActionButtons() {
-    return Padding(
-      padding: const EdgeInsets.only(left: 25.0, right: 25.0, top: 45.0),
-      child: Row(
-        mainAxisSize: MainAxisSize.max,
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: <Widget>[
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.only(right: 10.0),
-              child: Container(
-                child: ElevatedButton(
-                  child: const Text(
-                    "Save",
-                    style: TextStyle(
-                      color: kWhite,
-                    ),
-                  ),
-                  style: ElevatedButton.styleFrom(
-                    primary: Colors.green,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20.0)),
-                  ),
-                  onPressed: () {
-                    setState(() {
-                      _status = true;
-                      FocusScope.of(context).requestFocus(FocusNode());
-                    });
-                  },
-                ),
-              ),
-            ),
-            flex: 2,
-          ),
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.only(left: 10.0),
-              child: Container(
-                child: ElevatedButton(
-                  child: const Text(
-                    "Cancel",
-                    style: const TextStyle(
-                      color: kWhite,
-                    ),
-                  ),
-                  style: ElevatedButton.styleFrom(
-                    primary: Colors.red,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20.0)),
-                  ),
-                  onPressed: () {
-                    setState(() {
-                      _status = true;
-                      FocusScope.of(context).requestFocus(FocusNode());
-                    });
-                  },
-                ),
-              ),
-            ),
-            flex: 2,
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _getEditIcon() {
-    return GestureDetector(
-      child: CircleAvatar(
-        backgroundColor: kBlue,
-        radius: 14.0,
-        child: const Icon(
-          Icons.edit,
-          color: Colors.white,
-          size: 16.0,
-        ),
-      ),
-      onTap: () {
-        setState(() {
-          _status = false;
-        });
-      },
-    );
-  }
+ 
 }

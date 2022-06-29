@@ -8,11 +8,11 @@ class SkeletonHome extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
-      physics: NeverScrollableScrollPhysics(),
+      physics: const NeverScrollableScrollPhysics(),
       itemCount: 8,
       itemBuilder: (context, index) => Container(
         padding: const EdgeInsets.only(left: 20, right: 20, top: 10),
-        decoration: BoxDecoration(color: Colors.white),
+        decoration: const BoxDecoration(color: Colors.white),
         child: SkeletonItem(
             child: Column(
           children: [
@@ -24,9 +24,9 @@ class SkeletonHome extends StatelessWidget {
                       width: 14.h,
                       height: 16.h,
                       borderRadius:
-                          BorderRadius.horizontal(left: Radius.circular(10))),
+                          const BorderRadius.horizontal(left: Radius.circular(10))),
                 ),
-                SizedBox(width: 8),
+                const SizedBox(width: 8),
                 Expanded(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -56,7 +56,7 @@ class SkeletonHome extends StatelessWidget {
                               maxLength: 10.h,
                             )),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 5,
                       ),
                       SkeletonParagraph(
@@ -105,50 +105,6 @@ class SkeletonHome extends StatelessWidget {
                 )
               ],
             ),
-            // SizedBox(height: 12),
-            // SkeletonParagraph(
-            //   style: SkeletonParagraphStyle(
-            //       lines: 3,
-            //       spacing: 6,
-            //       lineStyle: SkeletonLineStyle(
-            //         randomLength: true,
-            //         height: 10,
-            //         borderRadius: BorderRadius.circular(8),
-            //         minLength: MediaQuery.of(context).size.width / 2,
-            //       )),
-            // ),
-            // SizedBox(height: 12),
-            // SkeletonAvatar(
-            //   style: SkeletonAvatarStyle(
-            //     width: double.infinity,
-            //     minHeight: MediaQuery.of(context).size.height / 8,
-            //     maxHeight: MediaQuery.of(context).size.height / 3,
-            //   ),
-            // ),
-            // SizedBox(height: 8),
-            // Row(
-            //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            //   children: [
-            //     Row(
-            //       children: [
-            //         SkeletonAvatar(
-            //             style: SkeletonAvatarStyle(width: 20, height: 20)),
-            //         SizedBox(width: 8),
-            //         SkeletonAvatar(
-            //             style: SkeletonAvatarStyle(width: 20, height: 20)),
-            //         SizedBox(width: 8),
-            //         SkeletonAvatar(
-            //             style: SkeletonAvatarStyle(width: 20, height: 20)),
-            //       ],
-            //     ),
-            //     SkeletonLine(
-            //       style: SkeletonLineStyle(
-            //           height: 16,
-            //           width: 64,
-            //           borderRadius: BorderRadius.circular(8)),
-            //     )
-            //   ],
-            // )
           ],
         )),
       ),

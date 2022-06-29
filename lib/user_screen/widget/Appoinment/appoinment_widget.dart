@@ -21,8 +21,6 @@ class AppointmentWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // print("screen 121");
-    
     return StreamBuilder(
         stream: Connectivity().onConnectivityChanged,
         builder: (context, AsyncSnapshot<ConnectivityResult> snapshot) {
@@ -39,7 +37,7 @@ class AppointmentWidget extends StatelessWidget {
                     builder: (context, snapshot) {
                       final fullDetails = snapshot.data;
                       if (snapshot.connectionState == ConnectionState.waiting) {
-                        return SkeletonHome();
+                        return const SkeletonHome();
                       }
                       if (fullDetails == null || fullDetails.isEmpty) {
                         return Center(
@@ -50,14 +48,14 @@ class AppointmentWidget extends StatelessWidget {
                                 'assets/no appointment.png',
                                 scale: .8,
                               ),
-                              Text('Nothing to show here'),
+                              const Text('Nothing to show here'),
                             ],
                           ),
                         );
                       }
 
                       return ListView.separated(
-                          physics: BouncingScrollPhysics(),
+                          physics: const BouncingScrollPhysics(),
                           controller: scrollController,
                           padding: const EdgeInsets.only(
                             left: 20,
@@ -65,16 +63,21 @@ class AppointmentWidget extends StatelessWidget {
                             top: 10,
                           ),
                           itemBuilder: (ctx, index) {
-                            //final nelist = dataControl.getAppointmentDetails();
-                            //  print("121 ${fullDetails.length}");
                             final String docPhoto =
                                 fullDetails[index].doctorDetails.photoUrl;
                             // print(docPhoto);
                             final String docName =
                                 fullDetails[index].doctorDetails.userName;
-                            final String docSpeciality = fullDetails[index]
-                                .doctorDetails
-                                .speciality['name'];
+                            String docSpeciality = "Genaral";
+                            if (fullDetails[index]
+                                    .doctorDetails
+                                    .speciality['name'] !=
+                                null) {
+                              docSpeciality = fullDetails[index]
+                                  .doctorDetails
+                                  .speciality['name'];
+                            }
+
                             final DateTime appoDate =
                                 fullDetails[index].appoDetails.date;
                             final String time =
@@ -91,24 +94,13 @@ class AppointmentWidget extends StatelessWidget {
                             return Padding(
                               padding: const EdgeInsets.only(top: 6, bottom: 0),
                               child: Container(
-                                // elevation: 2.5,
-                                // / color: kGrey,
                                 decoration: BoxDecoration(
-                                  color: kWhite,
+                                  color: Colors.grey.shade100,
                                   borderRadius: BorderRadius.circular(10.0),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.grey,
-                                      blurRadius: .2,
-                                      // spreadRadius: .1,
-                                      // blurStyle: BlurStyle.outer
-                                      // offset: Offset(2.0, 2.0), // shadow direction: bottom right
-                                    )
-                                  ],
-                                ),
+                                 ),
 
                                 child: SizedBox(
-                                  height: 120,
+                                  height: 16.h,
                                   child: InkWell(
                                     onTap: () {
                                       Navigator.push(
@@ -122,7 +114,6 @@ class AppointmentWidget extends StatelessWidget {
                                                   )));
                                     },
                                     child: Row(
-                                      //crossAxisAlignment: CrossAxisAlignment.center,
                                       children: [
                                         ClipRRect(
                                           borderRadius:
@@ -133,19 +124,9 @@ class AppointmentWidget extends StatelessWidget {
                                                 fit: BoxFit.cover,
                                                 child: Image.network(docPhoto)),
                                             height: double.infinity,
-                                            width:14.h,
+                                            width: 14.h,
                                           ),
                                         ),
-                                        // Container(
-                                        //   height: 90,
-                                        //   width: 80,
-                                        //   decoration: BoxDecoration(
-                                        //     // color: kBlue,
-                                        //     borderRadius: BorderRadius.circular(6.0),
-                                        //   ),
-                                        //   child:
-                                        //       Image.asset('assets/log_illu/Doctor-color-800px.png'),
-                                        // ),
                                         kWidth20,
                                         Column(
                                           mainAxisAlignment:
@@ -153,7 +134,10 @@ class AppointmentWidget extends StatelessWidget {
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
-                                            kHeight10,
+                                            // kHeight10,
+                                            SizedBox(
+                                              height: 1.h,
+                                            ),
                                             Container(
                                               width: 26.h,
                                               child: Row(
@@ -161,10 +145,16 @@ class AppointmentWidget extends StatelessWidget {
                                                     MainAxisAlignment
                                                         .spaceBetween,
                                                 children: [
-                                                  Text(docName.capitalize!),
+                                                  SizedBox(
+                                                      width: 24.h,
+                                                      child: Text(
+                                                        docName.capitalize!,
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                      )),
                                                   isCanceled == 'canceled'
                                                       ? Container(
-                                                          height:3.h,
+                                                          height: 3.h,
                                                           width: 11.h,
                                                           decoration:
                                                               BoxDecoration(
@@ -174,7 +164,7 @@ class AppointmentWidget extends StatelessWidget {
                                                                     .circular(
                                                                         8.0),
                                                           ),
-                                                          child: Center(
+                                                          child: const Center(
                                                               child: Text(
                                                                   'Canceled',
                                                                   style: TextStyle(
@@ -187,7 +177,7 @@ class AppointmentWidget extends StatelessWidget {
                                                 ],
                                               ),
                                             ),
-                                            // kHeight10,
+                                            kHeight10,
                                             Text(docSpeciality.toUpperCase()),
                                             kHeight10,
                                             Row(
@@ -196,17 +186,23 @@ class AppointmentWidget extends StatelessWidget {
                                                   'Patient : ',
                                                   style: TextStyle(color: kRed),
                                                 ),
-                                                Text(
-                                                  patientName.capitalize!,
-                                                  style: TextStyle(color: kRed),
+                                                SizedBox(
+                                                  width: 20.h,
+                                                  child: Text(
+                                                    patientName.capitalize!,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    style:
+                                                        TextStyle(color: kRed),
+                                                  ),
                                                 ),
                                               ],
                                             ),
                                             SizedBox(
-                                              width:26.h,
+                                              width: 26.h,
                                               child: Padding(
                                                 padding: const EdgeInsets.only(
-                                                    top: 7, right: 8),
+                                                    top: 16, right: 8),
                                                 child: Row(
                                                   mainAxisAlignment:
                                                       MainAxisAlignment
@@ -216,7 +212,6 @@ class AppointmentWidget extends StatelessWidget {
                                                       height: 25,
                                                       width: 100,
                                                       decoration: BoxDecoration(
-                                                        //color: kBlue,
                                                         border: Border.all(
                                                             color: kBlue,
                                                             width: 1),
@@ -232,7 +227,6 @@ class AppointmentWidget extends StatelessWidget {
                                                       height: 25,
                                                       width: 70,
                                                       decoration: BoxDecoration(
-                                                          // color: kBlue,
                                                           borderRadius:
                                                               BorderRadius
                                                                   .circular(
@@ -247,7 +241,7 @@ class AppointmentWidget extends StatelessWidget {
                                                 ),
                                               ),
                                             ),
-                                            kHeight10
+                                            SizedBox(height: 1.h),
                                           ],
                                         ),
                                       ],
@@ -267,7 +261,7 @@ class AppointmentWidget extends StatelessWidget {
                   );
                 });
           } else {
-            return ConnectionLost();
+            return const ConnectionLost();
           }
         });
   }

@@ -17,8 +17,6 @@ class RatingWidget extends StatelessWidget {
   double _rating = 0;
   final TextEditingController _reviewController = TextEditingController();
 
-  // var _isMoreDetailActive = false;
-
   @override
   Widget build(BuildContext context) {
     control.startPosition = 200.0;
@@ -35,7 +33,7 @@ class RatingWidget extends StatelessWidget {
             height: max(300, 3.h),
             child: PageView(
               controller: _ratingPageController,
-              physics: NeverScrollableScrollPhysics(),
+              physics: const NeverScrollableScrollPhysics(),
               children: [
                 _buildThanksNote(),
                 _causeOfRating(),
@@ -51,16 +49,13 @@ class RatingWidget extends StatelessWidget {
               child: MaterialButton(
                 onPressed: () {
                   Navigator.pop(context);
-                  // print(_rating);
-                  // print(_reviewController.text);
-                  // print(docID);
                   datacontrol.addRatingAndReview(
                       docID: docID,
                       rating: _rating,
                       review: _reviewController.text);
                  
                 },
-                child: Text('Done'),
+                child: const Text('Done'),
                 textColor: kWhite,
               ),
             ),
@@ -71,7 +66,7 @@ class RatingWidget extends StatelessWidget {
               onPressed: () {
                 Navigator.pop(context);
               },
-              child: Text('Skip'),
+              child: const Text('Skip'),
             ),
           ),
           GetBuilder<StateController>(
@@ -88,17 +83,17 @@ class RatingWidget extends StatelessWidget {
                     (index) => IconButton(
                       onPressed: () {
                         _ratingPageController.nextPage(
-                            duration: Duration(milliseconds: 300),
+                            duration: const Duration(milliseconds: 300),
                             curve: Curves.easeIn);
                         controller.starAnimation(20.0);
                         _rating = index + 1;
                       },
                       icon: index < _rating
-                          ? Icon(
+                          ? const Icon(
                               Icons.star,
                               size: 32,
                             )
-                          : Icon(
+                          : const Icon(
                               Icons.star_border,
                               size: 32,
                             ),
@@ -106,7 +101,7 @@ class RatingWidget extends StatelessWidget {
                     ),
                   ),
                 ),
-                duration: Duration(milliseconds: 300),
+                duration: const Duration(milliseconds: 300),
               );
             },
           ),
@@ -144,7 +139,7 @@ class RatingWidget extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text('What could be Better?'),
+              const Text('What could be Better?'),
               GetBuilder<StateController>(
                 init: StateController(),
                 builder: (controller) {
@@ -155,7 +150,6 @@ class RatingWidget extends StatelessWidget {
                       6,
                       (index) => InkWell(
                         onTap: () {
-                          print('click');
                           controller.selectedIndex(index);
                         },
                         child: Chip(
@@ -173,19 +167,16 @@ class RatingWidget extends StatelessWidget {
                   onTap: () {
                     control.isMoreDetailActive(true);
                   },
-                  child: Text(
+                  child: const Text(
                     'Want to tell us more?',
-                    style: TextStyle(decoration: TextDecoration.underline),
+                    style:  TextStyle(decoration: TextDecoration.underline),
                   )),
             ],
           ),
           replacement: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text('Tell us more'),
-              // Chip(
-              //   label: Text('Text ${control.selectedChipIndex + 1}'),
-              // ),
+              const Text('Tell us more'),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 child: TextField(

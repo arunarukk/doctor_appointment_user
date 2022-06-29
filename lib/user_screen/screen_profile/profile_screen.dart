@@ -4,7 +4,7 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:cupertino_radio_choice/cupertino_radio_choice.dart';
 import 'package:doctor_appointment/constant_value/constant_colors.dart';
 import 'package:doctor_appointment/get_controller/get_controller.dart';
-import 'package:doctor_appointment/models/Patients_model.dart';
+import 'package:doctor_appointment/models/patients_model.dart';
 import 'package:doctor_appointment/resources/auth_method.dart';
 import 'package:doctor_appointment/resources/storage_methods.dart';
 import 'package:doctor_appointment/user_screen/skeleton_screens/skeleton_profile.dart';
@@ -14,10 +14,13 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:sizer/sizer.dart';
 
 import '../widget/connection_lost.dart';
 
 class ProfileScreen extends StatefulWidget {
+  const ProfileScreen({Key? key}) : super(key: key);
+
   @override
   MapScreenState createState() => MapScreenState();
 }
@@ -43,8 +46,6 @@ class MapScreenState extends State<ProfileScreen>
     'other': 'Other',
   };
 
-  //String _selectedGender = genderMap.keys.first;
-
   String? image;
   selectImage() async {
     try {
@@ -52,40 +53,31 @@ class MapScreenState extends State<ProfileScreen>
       control.imageUpdate(im);
       control.update(['photo']);
     } catch (e) {
-      print('no image $e');
+      debugPrint('no image $e');
     }
-    //_image = im;
-    // setState(() {
-    //   _image = im;
-    // });
   }
 
   @override
   void initState() {
-    statecontrol.refreshUser();
-    // TODO: implement initState
+    statecontrol.getUserProfileDetails();
+
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     AuthMethods().getUserDetails();
+    if (signControl.image != null) {
+      signControl.image = null;
+    }
     return Scaffold(
         appBar: AppBar(
-          title: Text(
+          title: const Text(
             'Profile',
             style: TextStyle(color: kBlack),
           ),
           centerTitle: true,
           elevation: 0,
-          // leading: IconButton(
-          //     onPressed: () {
-          //       Navigator.pop(context);
-          //     },
-          //     icon: Icon(
-          //       Icons.arrow_back,
-          //       color: kBlack,
-          //     )),
           automaticallyImplyLeading: false,
         ),
         body: SafeArea(
@@ -93,71 +85,58 @@ class MapScreenState extends State<ProfileScreen>
               stream: Connectivity().onConnectivityChanged,
               builder: (context, AsyncSnapshot<ConnectivityResult> snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting ||
-                    snapshot.hasData &&
+                    snapshot.data != null &&
+                        snapshot.hasData &&
                         snapshot.data != ConnectivityResult.none) {
-                  return Container(
-                    //color: Colors.white,
-                    child: GetBuilder<StateController>(
-                        id: 'profile',
-                        builder: (controller) {
-                          // if (controller.user == null) {
-                          //   return Center(
-                          //     child: Text('Something went wrong'),
-                          //   );
-                          // }
-                          // if (controller.user != null) {
-                          //   nameController.text = controller.user!.userName;
-                          //   emailController.text = controller.user!.email;
-                          //   mobileController.text =
-                          //       controller.user!.phoneNumber;
-                          //   ageController.text =
-                          //       controller.user!.age.toString();
-                          //   image = controller.user!.photoUrl;
-                          // }
+                  return GetBuilder<StateController>(
+                      id: 'profile',
+                      builder: (controller) {
+                        return StreamBuilder<Patients>(
+                            stream: controller.getUserProfileDetails(),
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return const SkeletonProfile();
+                              }
+                              if (snapshot.data == null) {
+                                return const Center(
+                                  child: Text('Something went wrong'),
+                                );
+                              }
 
-                          return StreamBuilder<Patients>(
-                              stream: controller.getUserProfileDetails(),
-                              builder: (context, snapshot) {
-                                if (snapshot.connectionState ==
-                                    ConnectionState.waiting) {
-                                  return SkeletonProfile();
-                                }
-                                if (snapshot.data == null) {
-                                  return Center(
-                                    child: Text('Something went wrong'),
-                                  );
-                                }
-
-                                if (snapshot.data != null) {
-                                  nameController.text = snapshot.data!.userName;
-                                  emailController.text = snapshot.data!.email;
-                                  mobileController.text =
-                                      snapshot.data!.phoneNumber;
-                                  ageController.text =
-                                      snapshot.data!.age.toString();
-                                  image = snapshot.data!.photoUrl;
-                                  statecontrol.selectedGender =
-                                      snapshot.data!.gender;
-                                  print('gen${statecontrol.selectedGender}');
-                                }
-                                return ListView(
-                                  children: [
-                                    Form(
-                                      key: _formKey,
-                                      child: Column(
-                                        children: [
-                                          Container(
-                                            height: 250.0,
-                                            //color: Colors.white,
-                                            child: Column(
-                                              children: <Widget>[
-                                                Padding(
-                                                  padding: EdgeInsets.only(
-                                                      top: 20.0),
-                                                  child: Stack(
-                                                      fit: StackFit.loose,
-                                                      children: <Widget>[
-                                                        Row(
+                              if (snapshot.data != null) {
+                                nameController.text = snapshot.data!.userName;
+                                emailController.text = snapshot.data!.email;
+                                mobileController.text =
+                                    snapshot.data!.phoneNumber;
+                                ageController.text =
+                                    snapshot.data!.age.toString();
+                                image = snapshot.data!.photoUrl;
+                                statecontrol.selectedGender =
+                                    snapshot.data!.gender;
+                              }
+                              return ListView(
+                                physics: const BouncingScrollPhysics(),
+                                children: [
+                                  Form(
+                                    key: _formKey,
+                                    child: Column(
+                                      children: [
+                                        Container(
+                                          height: 30.h,
+                                          child: Column(
+                                            children: <Widget>[
+                                              Padding(
+                                                padding: const EdgeInsets.only(
+                                                    top: 20.0),
+                                                child: Stack(
+                                                    fit: StackFit.loose,
+                                                    children: <Widget>[
+                                                      Positioned(
+                                                        top: 0,
+                                                        bottom: 0,
+                                                        left: 6.h,
+                                                        child: Row(
                                                           crossAxisAlignment:
                                                               CrossAxisAlignment
                                                                   .center,
@@ -172,530 +151,462 @@ class MapScreenState extends State<ProfileScreen>
                                                               id: 'photo',
                                                               builder: (photo) {
                                                                 return Container(
-                                                                    width:
-                                                                        200.0,
+                                                                    width: 75.w,
                                                                     height:
-                                                                        200.0,
+                                                                        75.h,
                                                                     decoration: BoxDecoration(
                                                                         shape: BoxShape.circle,
                                                                         image: photo.image != null
                                                                             ? DecorationImage(
                                                                                 image: MemoryImage(photo.image!),
-                                                                                //NetworkImage(image!),
                                                                                 fit: BoxFit.cover,
                                                                               )
-                                                                            : DecorationImage(
-                                                                                image: NetworkImage(image ?? 'https://i.stack.imgur.com/l60Hf.png'),
-                                                                                fit: BoxFit.cover,
-                                                                              )));
+                                                                            : image != null
+                                                                                ? DecorationImage(
+                                                                                    image: NetworkImage(image!),
+                                                                                    fit: BoxFit.cover,
+                                                                                  )
+                                                                                : const DecorationImage(
+                                                                                    image: AssetImage('assets/noProfile.png'),
+                                                                                    fit: BoxFit.cover,
+                                                                                  )));
                                                               },
                                                             ),
                                                           ],
                                                         ),
-                                                        Padding(
-                                                            padding:
-                                                                EdgeInsets.only(
-                                                                    top: 160.0,
-                                                                    right:
-                                                                        100.0),
-                                                            child: Row(
-                                                              mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .center,
-                                                              children: [
-                                                                InkWell(
-                                                                  onTap: () {
-                                                                    if (!_status) {
-                                                                      selectImage();
-                                                                    }
-
-                                                                    //DataController().getMembers();
-                                                                  },
+                                                      ),
+                                                      Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                      .only(
+                                                                  top: 160.0,
+                                                                  right: 100.0),
+                                                          child: Row(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .center,
+                                                            children: [
+                                                              InkWell(
+                                                                onTap: () {
+                                                                  if (!_status) {
+                                                                    selectImage();
+                                                                  }
+                                                                },
+                                                                child:
+                                                                    CircleAvatar(
+                                                                  backgroundColor:
+                                                                      kBlue,
+                                                                  radius: 25.0,
                                                                   child:
-                                                                      CircleAvatar(
-                                                                    backgroundColor:
-                                                                        kBlue,
-                                                                    radius:
-                                                                        25.0,
-                                                                    child: Icon(
-                                                                      Icons
-                                                                          .camera_alt,
-                                                                      color: Colors
-                                                                          .white,
-                                                                    ),
+                                                                      const Icon(
+                                                                    Icons
+                                                                        .camera_alt,
+                                                                    color: Colors
+                                                                        .white,
                                                                   ),
-                                                                )
-                                                              ],
-                                                            )),
-                                                      ]),
-                                                )
-                                              ],
-                                            ),
+                                                                ),
+                                                              )
+                                                            ],
+                                                          )),
+                                                    ]),
+                                              )
+                                            ],
                                           ),
-                                          Container(
-                                            color: Color(0xffFFFFFF),
-                                            child: Padding(
-                                              padding:
-                                                  EdgeInsets.only(bottom: 25.0),
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.start,
-                                                children: <Widget>[
-                                                  Padding(
-                                                      padding: EdgeInsets.only(
-                                                          left: 25.0,
-                                                          right: 25.0,
-                                                          top: 25.0),
-                                                      child: Row(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .spaceBetween,
-                                                        mainAxisSize:
-                                                            MainAxisSize.max,
-                                                        children: <Widget>[
-                                                          Column(
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .start,
-                                                            mainAxisSize:
-                                                                MainAxisSize
-                                                                    .min,
-                                                            children: <Widget>[
-                                                              Text(
-                                                                'Parsonal Information',
-                                                                style: TextStyle(
-                                                                    fontSize:
-                                                                        18.0,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                          Column(
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .end,
-                                                            mainAxisSize:
-                                                                MainAxisSize
-                                                                    .min,
-                                                            children: <Widget>[
-                                                              _status
-                                                                  ? _getEditIcon()
-                                                                  : Container(),
-                                                            ],
-                                                          )
-                                                        ],
-                                                      )),
-                                                  Padding(
-                                                      padding: EdgeInsets.only(
-                                                          left: 25.0,
-                                                          right: 25.0,
-                                                          top: 25.0),
-                                                      child: Row(
-                                                        mainAxisSize:
-                                                            MainAxisSize.max,
-                                                        children: <Widget>[
-                                                          Column(
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .start,
-                                                            mainAxisSize:
-                                                                MainAxisSize
-                                                                    .min,
-                                                            children: <Widget>[
-                                                              Text(
-                                                                'Name',
-                                                                style: TextStyle(
-                                                                    fontSize:
-                                                                        16.0,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        ],
-                                                      )),
-                                                  Padding(
-                                                      padding: EdgeInsets.only(
-                                                          left: 25.0,
-                                                          right: 25.0,
-                                                          top: 2.0),
-                                                      child: Row(
-                                                        mainAxisSize:
-                                                            MainAxisSize.max,
-                                                        children: <Widget>[
-                                                          Flexible(
-                                                            child:
-                                                                TextFormField(
-                                                              controller:
-                                                                  nameController,
-                                                              decoration:
-                                                                  const InputDecoration(
-                                                                hintText:
-                                                                    "Name",
-                                                              ),
-                                                              enabled: !_status,
-                                                              autofocus:
-                                                                  !_status,
-                                                              validator:
-                                                                  (value) {
-                                                                if (value ==
-                                                                        null ||
-                                                                    value
-                                                                        .isEmpty) {
-                                                                  return 'Please enter name';
-                                                                }
-                                                                return null;
-                                                              },
+                                        ),
+                                        Container(
+                                          color: const Color(0xffFFFFFF),
+                                          child: Padding(
+                                            padding: const EdgeInsets.only(
+                                                bottom: 25.0),
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.start,
+                                              children: <Widget>[
+                                                Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            left: 25.0,
+                                                            right: 25.0,
+                                                            top: 25.0),
+                                                    child: Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .spaceBetween,
+                                                      mainAxisSize:
+                                                          MainAxisSize.max,
+                                                      children: <Widget>[
+                                                        Column(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .start,
+                                                          mainAxisSize:
+                                                              MainAxisSize.min,
+                                                          children: const [
+                                                            Text(
+                                                              'Parsonal Information',
+                                                              style: TextStyle(
+                                                                  fontSize:
+                                                                      18.0,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold),
                                                             ),
-                                                          ),
-                                                        ],
-                                                      )),
-                                                  Padding(
-                                                      padding: EdgeInsets.only(
-                                                          left: 25.0,
-                                                          right: 25.0,
-                                                          top: 25.0),
-                                                      child: Row(
-                                                        mainAxisSize:
-                                                            MainAxisSize.max,
-                                                        children: <Widget>[
-                                                          Column(
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .start,
-                                                            mainAxisSize:
-                                                                MainAxisSize
-                                                                    .min,
-                                                            children: <Widget>[
-                                                              Text(
-                                                                'Email ID',
-                                                                style: TextStyle(
-                                                                    fontSize:
-                                                                        16.0,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        ],
-                                                      )),
-                                                  Padding(
-                                                      padding: EdgeInsets.only(
-                                                          left: 25.0,
-                                                          right: 25.0,
-                                                          top: 2.0),
-                                                      child: Row(
-                                                        mainAxisSize:
-                                                            MainAxisSize.max,
-                                                        children: <Widget>[
-                                                          Flexible(
-                                                            child:
-                                                                TextFormField(
-                                                              controller:
-                                                                  emailController,
-                                                              decoration:
-                                                                  const InputDecoration(
-                                                                      hintText:
-                                                                          "aaaa@gmail.com"),
-                                                              enabled: !_status,
-                                                              validator:
-                                                                  (value) {
-                                                                if (value ==
-                                                                        null ||
-                                                                    value
-                                                                        .isEmpty) {
-                                                                  return 'Please enter E-mail';
-                                                                } else if (!value
-                                                                        .contains(
-                                                                            '@') ||
-                                                                    !value.endsWith(
-                                                                        '.com')) {
-                                                                  return 'Please enter a valid E-mail';
-                                                                }
-                                                                return null;
-                                                              },
+                                                          ],
+                                                        ),
+                                                        Column(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .end,
+                                                          mainAxisSize:
+                                                              MainAxisSize.min,
+                                                          children: <Widget>[
+                                                            _status
+                                                                ? _getEditIcon()
+                                                                : Container(),
+                                                          ],
+                                                        )
+                                                      ],
+                                                    )),
+                                                Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            left: 25.0,
+                                                            right: 25.0,
+                                                            top: 25.0),
+                                                    child: Row(
+                                                      mainAxisSize:
+                                                          MainAxisSize.max,
+                                                      children: <Widget>[
+                                                        Column(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .start,
+                                                          mainAxisSize:
+                                                              MainAxisSize.min,
+                                                          children: const [
+                                                            Text(
+                                                              'Name',
+                                                              style: TextStyle(
+                                                                  fontSize:
+                                                                      16.0,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold),
                                                             ),
+                                                          ],
+                                                        ),
+                                                      ],
+                                                    )),
+                                                Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            left: 25.0,
+                                                            right: 25.0,
+                                                            top: 2.0),
+                                                    child: Row(
+                                                      mainAxisSize:
+                                                          MainAxisSize.max,
+                                                      children: <Widget>[
+                                                        Flexible(
+                                                          child: TextFormField(
+                                                            controller:
+                                                                nameController,
+                                                            decoration:
+                                                                const InputDecoration(
+                                                              hintText: "Name",
+                                                            ),
+                                                            enabled: !_status,
+                                                            autofocus: !_status,
+                                                            validator: (value) {
+                                                              if (value ==
+                                                                      null ||
+                                                                  value
+                                                                      .isEmpty) {
+                                                                return 'Please enter name';
+                                                              }
+                                                              return null;
+                                                            },
                                                           ),
-                                                        ],
-                                                      )),
-                                                  Padding(
-                                                      padding: EdgeInsets.only(
-                                                          left: 25.0,
-                                                          right: 25.0,
-                                                          top: 25.0),
-                                                      child: Row(
-                                                        mainAxisSize:
-                                                            MainAxisSize.max,
-                                                        children: <Widget>[
-                                                          Column(
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .start,
-                                                            mainAxisSize:
-                                                                MainAxisSize
-                                                                    .min,
-                                                            children: <Widget>[
-                                                              Text(
-                                                                'Mobile',
-                                                                style: TextStyle(
-                                                                    fontSize:
-                                                                        16.0,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold),
-                                                              ),
-                                                            ],
+                                                        ),
+                                                      ],
+                                                    )),
+                                                Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            left: 25.0,
+                                                            right: 25.0,
+                                                            top: 25.0),
+                                                    child: Row(
+                                                      mainAxisSize:
+                                                          MainAxisSize.max,
+                                                      children: <Widget>[
+                                                        Column(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .start,
+                                                          mainAxisSize:
+                                                              MainAxisSize.min,
+                                                          children: const [
+                                                            Text(
+                                                              'Email ID',
+                                                              style: TextStyle(
+                                                                  fontSize:
+                                                                      16.0,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ],
+                                                    )),
+                                                Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            left: 25.0,
+                                                            right: 25.0,
+                                                            top: 2.0),
+                                                    child: Row(
+                                                      mainAxisSize:
+                                                          MainAxisSize.max,
+                                                      children: <Widget>[
+                                                        Flexible(
+                                                          child: TextFormField(
+                                                            controller:
+                                                                emailController,
+                                                            decoration:
+                                                                const InputDecoration(
+                                                                    hintText:
+                                                                        "aaaa@gmail.com"),
+                                                            enabled: !_status,
+                                                            validator: (value) {
+                                                              if (value ==
+                                                                      null ||
+                                                                  value
+                                                                      .isEmpty) {
+                                                                return 'Please enter E-mail';
+                                                              } else if (!value
+                                                                      .contains(
+                                                                          '@') ||
+                                                                  !value.endsWith(
+                                                                      '.com')) {
+                                                                return 'Please enter a valid E-mail';
+                                                              }
+                                                              return null;
+                                                            },
                                                           ),
-                                                        ],
-                                                      )),
-                                                  Padding(
-                                                      padding: EdgeInsets.only(
-                                                          left: 25.0,
-                                                          right: 25.0,
-                                                          top: 2.0),
-                                                      child: Row(
-                                                        mainAxisSize:
-                                                            MainAxisSize.max,
-                                                        children: <Widget>[
-                                                          Flexible(
+                                                        ),
+                                                      ],
+                                                    )),
+                                                Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            left: 25.0,
+                                                            right: 25.0,
+                                                            top: 25.0),
+                                                    child: Row(
+                                                      mainAxisSize:
+                                                          MainAxisSize.max,
+                                                      children: <Widget>[
+                                                        Column(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .start,
+                                                          mainAxisSize:
+                                                              MainAxisSize.min,
+                                                          children: const [
+                                                            Text(
+                                                              'Mobile',
+                                                              style: TextStyle(
+                                                                  fontSize:
+                                                                      16.0,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ],
+                                                    )),
+                                                Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            left: 25.0,
+                                                            right: 25.0,
+                                                            top: 2.0),
+                                                    child: Row(
+                                                      mainAxisSize:
+                                                          MainAxisSize.max,
+                                                      children: <Widget>[
+                                                        Flexible(
+                                                          child: TextFormField(
+                                                            controller:
+                                                                mobileController,
+                                                            keyboardType:
+                                                                TextInputType
+                                                                    .number,
+                                                            decoration:
+                                                                const InputDecoration(
+                                                                    hintText:
+                                                                        "888888888"),
+                                                            enabled: !_status,
+                                                            validator: (value) {
+                                                              String pattern =
+                                                                  r'(^(?:[+0]9)?[0-9]{10}$)';
+                                                              RegExp regExp =
+                                                                  RegExp(
+                                                                      pattern);
+                                                              if (value ==
+                                                                      null ||
+                                                                  value
+                                                                      .isEmpty) {
+                                                                return 'Please enter phone number';
+                                                              } else if (!regExp
+                                                                  .hasMatch(
+                                                                      value)) {
+                                                                return 'Please enter valid phone number';
+                                                              }
+                                                              return null;
+                                                            },
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    )),
+                                                Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            left: 25.0,
+                                                            right: 25.0,
+                                                            top: 25.0),
+                                                    child: Row(
+                                                      mainAxisSize:
+                                                          MainAxisSize.max,
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .start,
+                                                      children: const [
+                                                        Expanded(
+                                                          child: Text(
+                                                            'Age',
+                                                            style: TextStyle(
+                                                                fontSize: 16.0,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold),
+                                                          ),
+                                                          flex: 2,
+                                                        ),
+                                                      ],
+                                                    )),
+                                                Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            left: 25.0,
+                                                            right: 25.0,
+                                                            top: 2.0),
+                                                    child: Row(
+                                                      mainAxisSize:
+                                                          MainAxisSize.max,
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .start,
+                                                      children: <Widget>[
+                                                        Flexible(
+                                                          child: Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                        .only(
+                                                                    right:
+                                                                        10.0),
                                                             child:
                                                                 TextFormField(
                                                               controller:
-                                                                  mobileController,
+                                                                  ageController,
                                                               keyboardType:
                                                                   TextInputType
                                                                       .number,
-                                                              decoration:
-                                                                  const InputDecoration(
-                                                                      hintText:
-                                                                          "888888888"),
                                                               enabled: !_status,
                                                               validator:
                                                                   (value) {
-                                                                String pattern =
-                                                                    r'(^(?:[+0]9)?[0-9]{10}$)';
-                                                                RegExp regExp =
-                                                                    RegExp(
-                                                                        pattern);
                                                                 if (value ==
                                                                         null ||
                                                                     value
                                                                         .isEmpty) {
-                                                                  return 'Please enter phone number';
-                                                                } else if (!regExp
-                                                                    .hasMatch(
-                                                                        value)) {
-                                                                  return 'Please enter valid phone number';
+                                                                  return 'Please enter Age';
                                                                 }
                                                                 return null;
                                                               },
                                                             ),
                                                           ),
-                                                        ],
-                                                      )),
-                                                  Padding(
-                                                      padding: EdgeInsets.only(
+                                                          flex: 2,
+                                                        ),
+                                                      ],
+                                                    )),
+                                                Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            left: 25.0,
+                                                            right: 25.0,
+                                                            top: 25.0),
+                                                    child: Row(
+                                                      mainAxisSize:
+                                                          MainAxisSize.max,
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .start,
+                                                      children: const [
+                                                        Expanded(
+                                                          child: Text(
+                                                            'Gender',
+                                                            style: TextStyle(
+                                                                fontSize: 16.0,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold),
+                                                          ),
+                                                          flex: 2,
+                                                        ),
+                                                      ],
+                                                    )),
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
                                                           left: 25.0,
                                                           right: 25.0,
                                                           top: 25.0),
-                                                      child: Row(
-                                                        mainAxisSize:
-                                                            MainAxisSize.max,
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .start,
-                                                        children: <Widget>[
-                                                          Expanded(
-                                                            child: Container(
-                                                              child: Text(
-                                                                'Age',
-                                                                style: TextStyle(
-                                                                    fontSize:
-                                                                        16.0,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold),
-                                                              ),
-                                                            ),
-                                                            flex: 2,
-                                                          ),
-                                                          // Expanded(
-                                                          //   child: Container(
-                                                          //     child: Text(
-                                                          //       'State',
-                                                          //       style: TextStyle(
-                                                          //           fontSize: 16.0,
-                                                          //           fontWeight:
-                                                          //               FontWeight.bold),
-                                                          //     ),
-                                                          //   ),
-                                                          //   flex: 2,
-                                                          // ),
-                                                        ],
-                                                      )),
-                                                  Padding(
-                                                      padding: EdgeInsets.only(
-                                                          left: 25.0,
-                                                          right: 25.0,
-                                                          top: 2.0),
-                                                      child: Row(
-                                                        mainAxisSize:
-                                                            MainAxisSize.max,
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .start,
-                                                        children: <Widget>[
-                                                          Flexible(
-                                                            child: Padding(
-                                                              padding: EdgeInsets
-                                                                  .only(
-                                                                      right:
-                                                                          10.0),
-                                                              child:
-                                                                  TextFormField(
-                                                                controller:
-                                                                    ageController,
-                                                                keyboardType:
-                                                                    TextInputType
-                                                                        .number,
-                                                                // decoration: const InputDecoration(
-                                                                //     hintText: "555555"),
-                                                                enabled:
-                                                                    !_status,
-                                                                validator:
-                                                                    (value) {
-                                                                  if (value ==
-                                                                          null ||
-                                                                      value
-                                                                          .isEmpty) {
-                                                                    return 'Please enter Age';
-                                                                  }
-                                                                  return null;
-                                                                },
-                                                              ),
-                                                            ),
-                                                            flex: 2,
-                                                          ),
-                                                          // Flexible(
-                                                          //   child: TextFormField(
-                                                          //     // decoration: const InputDecoration(
-                                                          //     //     hintText: "kerala"),
-                                                          //     enabled: !_status,
-                                                          //   ),
-                                                          //   flex: 2,
-                                                          // ),
-                                                        ],
-                                                      )),
-                                                  Padding(
-                                                      padding: EdgeInsets.only(
-                                                          left: 25.0,
-                                                          right: 25.0,
-                                                          top: 25.0),
-                                                      child: Row(
-                                                        mainAxisSize:
-                                                            MainAxisSize.max,
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .start,
-                                                        children: <Widget>[
-                                                          Expanded(
-                                                            child: Container(
-                                                              child: Text(
-                                                                'Gender',
-                                                                style: TextStyle(
-                                                                    fontSize:
-                                                                        16.0,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold),
-                                                              ),
-                                                            ),
-                                                            flex: 2,
-                                                          ),
-                                                        ],
-                                                      )),
-                                                  Padding(
-                                                    padding: EdgeInsets.only(
-                                                        left: 25.0,
-                                                        right: 25.0,
-                                                        top: 25.0),
-                                                    child: GetBuilder<
-                                                        StateController>(
-                                                      init: StateController(),
-                                                      id: 'gender',
-                                                      builder: (gender) {
-                                                        return CupertinoRadioChoice(
-                                                            choices: genderMap,
-                                                            onChange: gender
-                                                                .onGenderSelected,
-                                                            initialKeyValue: gender
-                                                                .selectedGender);
-                                                      },
-                                                    ),
+                                                  child: GetBuilder<
+                                                      StateController>(
+                                                    init: StateController(),
+                                                    id: 'gender',
+                                                    builder: (gender) {
+                                                      return CupertinoRadioChoice(
+                                                          enabled: !_status,
+                                                          choices: genderMap,
+                                                          onChange: gender
+                                                              .onGenderSelected,
+                                                          initialKeyValue: gender
+                                                              .selectedGender);
+                                                    },
                                                   ),
-                                                  // Padding(
-                                                  //     padding: EdgeInsets.only(
-                                                  //         left: 25.0, right: 25.0, top: 25.0),
-                                                  //     child: Row(
-                                                  //       mainAxisSize: MainAxisSize.max,
-                                                  //       children: <Widget>[
-                                                  //         Column(
-                                                  //           mainAxisAlignment:
-                                                  //               MainAxisAlignment.start,
-                                                  //           mainAxisSize: MainAxisSize.min,
-                                                  //           children: <Widget>[
-                                                  //             Text(
-                                                  //               'About',
-                                                  //               style: TextStyle(
-                                                  //                   fontSize: 16.0,
-                                                  //                   fontWeight:
-                                                  //                       FontWeight.bold),
-                                                  //             ),
-                                                  //           ],
-                                                  //         ),
-                                                  //       ],
-                                                  //     )),
-                                                  // Padding(
-                                                  //     padding: EdgeInsets.only(
-                                                  //         left: 25.0, right: 25.0, top: 2.0),
-                                                  //     child: Row(
-                                                  //       mainAxisSize: MainAxisSize.max,
-                                                  //       children: <Widget>[
-                                                  //         Flexible(
-                                                  //           child: TextFormField(
-                                                  //             controller: aboutController,
-                                                  //             maxLines: 3,
-                                                  //             // decoration: const InputDecoration(
-
-                                                  //             //         ),
-                                                  //             enabled: !_status,
-                                                  //           ),
-                                                  //         ),
-                                                  //       ],
-                                                  // )),
-                                                  !_status
-                                                      ? _getActionButtons()
-                                                      : Container(),
-                                                ],
-                                              ),
+                                                ),
+                                                !_status
+                                                    ? _getActionButtons()
+                                                    : Container(),
+                                              ],
                                             ),
-                                          )
-                                        ],
-                                      ),
+                                          ),
+                                        )
+                                      ],
                                     ),
-                                  ],
-                                );
-                              });
-                        }),
-                  );
+                                  ),
+                                ],
+                              );
+                            });
+                      });
                 } else {
-                  return ConnectionLost();
+                  return const ConnectionLost();
                 }
               }),
         ));
@@ -710,17 +621,16 @@ class MapScreenState extends State<ProfileScreen>
 
   Widget _getActionButtons() {
     return Padding(
-      padding: EdgeInsets.only(left: 25.0, right: 25.0, top: 45.0),
+      padding: const EdgeInsets.only(left: 25.0, right: 25.0, top: 45.0),
       child: Row(
         mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
           Expanded(
             child: Padding(
-              padding: EdgeInsets.only(right: 10.0),
-              child: Container(
-                  child: ElevatedButton(
-                child: Text(
+              padding: const EdgeInsets.only(right: 10.0),
+              child: ElevatedButton(
+                child: const Text(
                   "Save",
                   style: TextStyle(
                     color: kWhite,
@@ -743,7 +653,6 @@ class MapScreenState extends State<ProfileScreen>
                     } else {
                       imageUrl = image!;
                     }
-                    // print(image.toString());
                     authC.updateUser(
                         age: ageController.text,
                         email: emailController.text,
@@ -758,16 +667,15 @@ class MapScreenState extends State<ProfileScreen>
                     });
                   }
                 },
-              )),
+              ),
             ),
             flex: 2,
           ),
           Expanded(
             child: Padding(
-              padding: EdgeInsets.only(left: 10.0),
-              child: Container(
-                  child: ElevatedButton(
-                child: Text(
+              padding: const EdgeInsets.only(left: 10.0),
+              child: ElevatedButton(
+                child: const Text(
                   "Cancel",
                   style: TextStyle(
                     color: kWhite,
@@ -784,7 +692,7 @@ class MapScreenState extends State<ProfileScreen>
                     FocusScope.of(context).requestFocus(FocusNode());
                   });
                 },
-              )),
+              ),
             ),
             flex: 2,
           ),
@@ -798,7 +706,7 @@ class MapScreenState extends State<ProfileScreen>
       child: CircleAvatar(
         backgroundColor: kBlue,
         radius: 14.0,
-        child: Icon(
+        child: const Icon(
           Icons.edit,
           color: Colors.white,
           size: 16.0,

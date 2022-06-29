@@ -2,48 +2,24 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:doctor_appointment/authentication_screen/log_in.dart';
 import 'package:doctor_appointment/constant_value/constant_colors.dart';
 import 'package:doctor_appointment/get_controller/get_controller.dart';
-import 'package:doctor_appointment/models/Patients_model.dart';
-import 'package:doctor_appointment/resources/auth_method.dart';
-import 'package:doctor_appointment/resources/data_controller.dart';
+import 'package:doctor_appointment/models/patients_model.dart';
+import 'package:doctor_appointment/user_screen/main_screen_home/main_home_screen.dart';
 import 'package:doctor_appointment/user_screen/members_screen.dart';
 import 'package:doctor_appointment/user_screen/screen_profile/profile_screen.dart';
-import 'package:doctor_appointment/user_screen/widget/Appoinment/make_appoinment.dart';
 import 'package:doctor_appointment/user_screen/widget/appbar_wiget.dart';
 import 'package:doctor_appointment/user_screen/widget/connection_lost.dart';
 import 'package:doctor_appointment/user_screen/widget/doctor_list_widget/doctor_list_widget.dart';
-import 'package:doctor_appointment/utils/utility_method.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../../constant_value/constant_size.dart';
-import '../widget/Appoinment/problem_screen.dart';
-
 class MoreScreen extends StatelessWidget {
-  // static final String path = "lib/src/pages/settings/settings1.dart";
-
-//   @override
-//   _SettingsOnePageState createState() => _SettingsOnePageState();
-// }
-
-// class _SettingsOnePageState extends State<MoreScreen> {
-//   late bool _dark;
-
-  // @override
-  // void initState() {
-  //   statecontrol.refreshUser();
-  //   super.initState();
-  //   _dark = false;
-  // }
-
-  // Brightness _getBrightness() {
-  //   return _dark ? Brightness.dark : Brightness.light;
-  // }
-
   final Uri _url = Uri.parse(
       'https://www.privacypolicies.com/live/865cfcc5-fe55-4100-af27-4b88bda6c477');
+
+  MoreScreen({Key? key}) : super(key: key);
 
   void _launchUrl() async {
     if (!await launchUrl(_url)) throw 'Could not launch $_url';
@@ -52,13 +28,11 @@ class MoreScreen extends StatelessWidget {
   DateTimeRange? dateRange;
   @override
   Widget build(BuildContext context) {
+    statecontrol.getUserProfileDetails();
     return Theme(
-      data: ThemeData(
-          // brightness: _getBrightness(),
-          ),
+      data: ThemeData(),
       child: Scaffold(
-        // backgroundColor: _dark ? null : Colors.grey.shade200,
-        appBar: PreferredSize(
+        appBar: const PreferredSize(
             child: AppBarWidget(title: 'More'),
             preferredSize: Size.fromHeight(60)),
         body: StreamBuilder(
@@ -89,7 +63,7 @@ class MoreScreen extends StatelessWidget {
                                           ConnectionState.waiting) {
                                         return Container(
                                           height: 7.h,
-                                          child: Center(
+                                          child: const Center(
                                             child: CupertinoActivityIndicator(
                                               color: kWhite,
                                             ),
@@ -113,11 +87,11 @@ class MoreScreen extends StatelessWidget {
                                               context,
                                               MaterialPageRoute(
                                                   builder: (context) =>
-                                                      ProfileScreen()));
+                                                      const ProfileScreen()));
                                         },
                                         title: Text(
                                           snapshot.data!.userName,
-                                          style: TextStyle(
+                                          style: const TextStyle(
                                             color: Colors.white,
                                             fontWeight: FontWeight.w500,
                                           ),
@@ -126,61 +100,15 @@ class MoreScreen extends StatelessWidget {
                                           backgroundImage: NetworkImage(
                                               snapshot.data!.photoUrl),
                                         ),
-                                        trailing: Icon(
+                                        trailing: const Icon(
                                           Icons.edit,
                                           color: Colors.white,
                                         ),
                                       );
                                     });
                               })),
-                          const SizedBox(height: 10.0),
-                          // Card(
-                          //   elevation: 4.0,
-                          //   margin: const EdgeInsets.fromLTRB(32.0, 8.0, 32.0, 16.0),
-                          //   shape: RoundedRectangleBorder(
-                          //       borderRadius: BorderRadius.circular(10.0)),
-                          //   child: Column(
-                          //     children: <Widget>[
-                          //       ListTile(
-                          //         leading: Icon(
-                          //           Icons.lock_outline,
-                          //           color: Colors.purple,
-                          //         ),
-                          //         title: Text("Change Password"),
-                          //         trailing: Icon(Icons.keyboard_arrow_right),
-                          //         onTap: () {
-                          //           //open change password
-                          //         },
-                          //       ),
-                          //       _buildDivider(),
-                          //       ListTile(
-                          //         leading: Icon(
-                          //           Icons.language_outlined,
-                          //           color: Colors.purple,
-                          //         ),
-                          //         title: Text("Change Language"),
-                          //         trailing: Icon(Icons.keyboard_arrow_right),
-                          //         onTap: () {
-                          //           //open change language
-                          //         },
-                          //       ),
-                          //       _buildDivider(),
-                          //       ListTile(
-                          //         leading: Icon(
-                          //           Icons.location_on,
-                          //           color: Colors.purple,
-                          //         ),
-                          //         title: Text("Change Location"),
-                          //         trailing: Icon(Icons.keyboard_arrow_right),
-                          //         onTap: () {
-                          //           //open change location
-                          //         },
-                          //       ),
-                          //     ],
-                          //   ),
-                          // ),
-                          const SizedBox(height: 20.0),
-                          Text(
+                          SizedBox(height: 4.h),
+                          const Text(
                             "Settings",
                             style: TextStyle(
                               fontSize: 20.0,
@@ -189,11 +117,10 @@ class MoreScreen extends StatelessWidget {
                             ),
                           ),
                           ListTile(
-                            //  activeColor: Colors.purple,
                             contentPadding: const EdgeInsets.all(0),
-                            //value: true,
-                            title: Text("Members"),
-                            trailing: Icon(Icons.arrow_forward_ios_outlined),
+                            title: const Text("Members"),
+                            trailing:
+                                const Icon(Icons.arrow_forward_ios_outlined),
                             onTap: () {
                               Navigator.push(
                                   context,
@@ -202,13 +129,9 @@ class MoreScreen extends StatelessWidget {
                             },
                           ),
                           ListTile(
-                            //  activeColor: Colors.purple,
                             contentPadding: const EdgeInsets.all(0),
-                            // value: false,
-                            title: Text("About"),
-                            trailing: Icon(Icons.info_outline),
-                            //onChanged: null,
-
+                            title: const Text("About"),
+                            trailing: const Icon(Icons.info_outline),
                             onTap: () {
                               showAboutDialog(
                                 context: context,
@@ -225,17 +148,13 @@ class MoreScreen extends StatelessWidget {
                             onTap: () {
                               _launchUrl();
                             },
-                            //activeColor: Colors.purple,
                             contentPadding: const EdgeInsets.all(0),
-                            // value: true,
-                            title: Text("Privacy Policy"),
-                            trailing: Icon(Icons.privacy_tip_outlined),
-                            // onChanged: (val) {},
+                            title: const Text("Privacy Policy"),
+                            trailing: const Icon(Icons.privacy_tip_outlined),
                           ),
-
                           ListTile(
                             contentPadding: const EdgeInsets.all(0),
-                            title: Text('Logout'),
+                            title: const Text('Logout'),
                             trailing: Icon(
                               Icons.logout_outlined,
                               color: kRed,
@@ -248,36 +167,10 @@ class MoreScreen extends StatelessWidget {
                         ],
                       ),
                     ),
-                    // Positioned(
-                    //   bottom: -20,
-                    //   left: -20,
-                    //   child: Container(
-                    //     width: 80,
-                    //     height: 80,
-                    //     alignment: Alignment.center,
-                    //     decoration: BoxDecoration(
-                    //       color: kBlue,
-                    //       shape: BoxShape.circle,
-                    //     ),
-                    //   ),
-                    // ),
-                    // Positioned(
-                    //   bottom: 00,
-                    //   left: 00,
-                    //   child: IconButton(
-                    //     icon: Icon(
-                    //       Icons.power_off,
-                    //       color: Colors.white,
-                    //     ),
-                    //     onPressed: () {
-                    //       //log out
-                    //     },
-                    //   ),
-                    // )
                   ],
                 );
               } else {
-                return ConnectionLost();
+                return const ConnectionLost();
               }
             }),
       ),
@@ -294,12 +187,14 @@ class MoreScreen extends StatelessWidget {
             'Logout',
             style: TextStyle(color: kRed),
           ),
-          content: Text('Do you want to logout ?'),
+          content: const Text('Do you want to logout ?'),
           actions: [
             TextButton(
-              child: Text('Yes'),
+              child: const Text('Yes'),
               onPressed: () async {
-                authC.signOut();
+                authC.signOut().then((value) {
+                  MainHomeScreen.selectedIndexNotifier.value = 0;
+                });
                 Navigator.pushAndRemoveUntil(
                     context,
                     MaterialPageRoute(builder: (context) => LogInScreen()),
@@ -307,7 +202,7 @@ class MoreScreen extends StatelessWidget {
               },
             ),
             TextButton(
-              child: Text('No'),
+              child: const Text('No'),
               onPressed: () {
                 Navigator.of(context).pop();
               },
@@ -315,17 +210,6 @@ class MoreScreen extends StatelessWidget {
           ],
         );
       },
-    );
-  }
-
-  Container _buildDivider() {
-    return Container(
-      margin: const EdgeInsets.symmetric(
-        horizontal: 8.0,
-      ),
-      width: double.infinity,
-      height: 1.0,
-      color: Colors.grey.shade400,
     );
   }
 }

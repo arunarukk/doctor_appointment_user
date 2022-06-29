@@ -56,8 +56,6 @@ class UserSelection extends StatelessWidget {
               height: 100,
               decoration: const BoxDecoration(
                 color: Colors.white,
-                // border: Border(
-                //     bottom: BorderSide(color: Theme.of(context).dividerColor)),
                 borderRadius: BorderRadius.all(
                   Radius.circular(20.0),
                 ),
@@ -76,15 +74,8 @@ class UserSelection extends StatelessWidget {
                       },
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          // SizedBox(
-                          //   width: 20,
-                          //   child: Image.asset('assets/tick_cancel/tick.png'),
-                          // ),
-                          // SizedBox(
-                          //   width: 20,
-                          // ),
-                          Text(
+                        children:const [
+                    Text(
                             'Login',
                             style: TextStyle(
                                 fontSize: 18, fontWeight: FontWeight.bold),
@@ -92,13 +83,12 @@ class UserSelection extends StatelessWidget {
                         ],
                       ),
                     ),
-                    Divider(
+                    const Divider(
                       thickness: .6,
                       color: kBlack,
                     ),
                     InkWell(
                       onTap: () {
-                        print('not a doctor');
                         Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -106,17 +96,10 @@ class UserSelection extends StatelessWidget {
                       },
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          // SizedBox(
-                          //   width: 20,
-                          //   child: Image.asset('assets/tick_cancel/cancel.png'),
-                          // ),
-                          // SizedBox(
-                          //   width: 20,
-                          // ),
+                        children:const [
                           Text(
                             'Register',
-                            style: TextStyle(
+                            style:  TextStyle(
                                 fontSize: 18, fontWeight: FontWeight.bold),
                           ),
                         ],
@@ -126,22 +109,7 @@ class UserSelection extends StatelessWidget {
                 ),
               ),
             ),
-            // Container(
-            //   width: 200,
-            //   height: 50,
-            //   decoration: BoxDecoration(
-            //     color: Colors.white,
-            //     // border: Border.all(color: Colors.black),
-            //     borderRadius: BorderRadius.only(
-            //         bottomLeft: Radius.circular(20.0),
-            //         bottomRight: Radius.circular(20.0)),
-            //   ),
-            //   child: Column(
-            //     mainAxisAlignment: MainAxisAlignment.center,
-            //     children: [],
-            //   ),
-            // )
-          ],
+             ],
         ),
       ),
     );

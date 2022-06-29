@@ -5,7 +5,6 @@ import 'package:doctor_appointment/models/appointment_model.dart';
 import 'package:doctor_appointment/models/doc_appointment.dart';
 import 'package:doctor_appointment/models/doctor_model.dart';
 import 'package:doctor_appointment/resources/storage_methods.dart';
-import 'package:doctor_appointment/user_screen/widget/doctor_list_widget/doctor_list_widget.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -13,7 +12,7 @@ import 'package:uuid/uuid.dart';
 
 import '../main.dart';
 import '../models/member_model.dart';
-import '../models/schedule.dart';
+import 'auth_method.dart';
 
 final datacontrol = Get.put(DataController());
 
@@ -32,11 +31,11 @@ class DataController extends GetxController {
 
   String? selectedEndDate;
   QueryDocumentSnapshot<Map<String, dynamic>>? snapshotQuery;
-  //Future<QuerySnapshot<Map<String, dynamic>>?>
+ 
+
   queryData(String queryString) async {
     try {
-      // List<QuerySnapshot<Map<String, dynamic>>>? queryList;
-
+     
       final data = await _fireStore.collection('doctors').get();
       snapshot = [];
       for (var item in data.docs) {
@@ -45,76 +44,24 @@ class DataController extends GetxController {
             .toString()
             .toLowerCase()
             .contains(queryString.toLowerCase())) {
-          print('qury $queryString');
-          // print('1111 ${item.data()['userName']}');
-
+       
           snapshot.add(item);
         }
       }
       update(['search']);
 
       return snapshot;
-      //print(data);
-    } catch (e) {
-      print('queryData error $e');
+     } catch (e) {
+      debugPrint('queryData error $e');
     }
   }
 
   querySelection(bool value) {
     querySelec = value;
-    // update(['search']);
-    // update();
-  }
+    }
 
-  //  appointment details ============================
-
-  // Future<List<DoctorAppointment>> getAppointmentDetails() async {
-  //   User currentUser = _auth.currentUser!;
-
-  //   List<Appointment> appoList = [];
-  //   List<DoctorAppointment> docAppoList = [];
-
-  //   appoDocDetails = [];
-
-  //   final appointments = await _fireStore
-  //       .collection('appointment')
-  //       .where('patientId', isEqualTo: currentUser.uid)
-  //       .get();
-  //   // print(appointments.docs.first.data());
-  //   print(appointments.docs);
-  //   appointments.docs.forEach((element) {
-  //     appoList.add(Appointment.fromMap(element));
-  //   });
-  //   print(appoList);
-  //   //print('appolist 121  ${appoList.length}');
-  //   //int count = 1;
-  //   appoList.forEach((element1) async {
-  //     // print("121 count  $count ");
-  //     // count++;
-  //     print(element1);
-  //     final docDetails = await _fireStore
-  //         .collection('doctors')
-  //         .where('uid', isEqualTo: element1.doctorId)
-  //         .get();
-  //     print(docDetails.docs.first);
-  //     //
-  //     //getting doctor
-  //     // print('docDetials 121 ${docDetails.docs.length}');
-  //     docDetails.docs.forEach((element) {
-  //       docAppoList.add(DoctorAppointment(
-  //           doctorDetails: Doctor.fromSnapshot(element),
-  //           appoDetails: element1));
-  //     });
-  //     //
-  //     // appoDocDetails.addAll(docAppoList);
-  //     // update();
-  //     // print('docAppoList${docAppoList.length}');
-  //   });
-
-  //   //  print(appoDocDetails);
-  //   return appoDocDetails;
-  // }
-
+ 
+ 
 //-----------------get details of appointment--------------------------------------------------
 
   Future<List<DoctorAppointment>> getDetailedAppo() async {
@@ -128,8 +75,7 @@ class DataController extends GetxController {
         .collection('appointment')
         .where('patientId', isEqualTo: currentUser.uid)
         .get();
-    // print('appo');
-    for (var element in appointments.docs) {
+     for (var element in appointments.docs) {
       appoList.add(Appointment.fromMap(element));
     }
     for (var elu in appoList) {
@@ -141,7 +87,6 @@ class DataController extends GetxController {
       for (var value in docDetails.docs) {
         docAppoList.add(DoctorAppointment(
             doctorDetails: Doctor.fromSnapshot(value), appoDetails: elu));
-        print(docAppoList);
       }
     }
     appoDocDetails.addAll(docAppoList);
@@ -154,36 +99,23 @@ class DataController extends GetxController {
   Future<List<DoctorAppointment>> getUpcomingApp() async {
     User currentUser = _auth.currentUser!;
 
-    //final allAppoinment = getDetailedAppo();
-
     final now = DateTime.now();
-    final week = DateTime(now.year, now.month, now.day + 1);
-
     List<QueryDocumentSnapshot<Map<String, dynamic>>> upComing = [];
     List<Appointment> appoList = [];
     List<DoctorAppointment> docAppoList = [];
     QuerySnapshot<Map<String, dynamic>> docDetails;
-    print('upcoming');
     final appointments = await _fireStore
         .collection('appointment')
         .where('patientId', isEqualTo: currentUser.uid)
         .get();
-    //print(appointments.docs);
-
     for (var item in appointments.docs) {
       final date = (item.data()['date'] as Timestamp).toDate();
-      //print('------22 ${date.millisecondsSinceEpoch}');
-      if (now.millisecondsSinceEpoch <= date.millisecondsSinceEpoch) {
-        // print('------1111 ${date.millisecondsSinceEpoch}');
-        // print(week.millisecondsSinceEpoch);
-        //print(item);
-        upComing.add(item);
+       if (now.millisecondsSinceEpoch <= date.millisecondsSinceEpoch) {
+       upComing.add(item);
       }
     }
 
-    //print(appointments.docs.length);
-
-    for (var element in upComing) {
+     for (var element in upComing) {
       appoList.add(Appointment.fromMap(element));
     }
     for (var elu in appoList) {
@@ -191,16 +123,12 @@ class DataController extends GetxController {
           .collection('doctors')
           .where('uid', isEqualTo: elu.doctorId)
           .get();
-      //print(docDetails.docs);
       for (var value in docDetails.docs) {
         docAppoList.add(DoctorAppointment(
             doctorDetails: Doctor.fromSnapshot(value), appoDetails: elu));
-        // print(docAppoList);
       }
     }
     appoDocDetails.addAll(docAppoList);
-    // update(['appointment']);
-    // print('-----3333 ${docAppoList}');
     return docAppoList;
   }
 
@@ -209,16 +137,13 @@ class DataController extends GetxController {
   Future<List<DoctorAppointment>> getPastApp() async {
     User currentUser = _auth.currentUser!;
 
-    //final allAppoinment = getDetailedAppo();
-
+   
     final now = DateTime.now();
-    final week = DateTime(now.year, now.month, now.day + 1);
-
+   
     List<QueryDocumentSnapshot<Map<String, dynamic>>> past = [];
     List<Appointment> appoList = [];
     List<DoctorAppointment> docAppoList = [];
     QuerySnapshot<Map<String, dynamic>> docDetails;
-    print('past');
     final appointments = await _fireStore
         .collection('appointment')
         .where('patientId', isEqualTo: currentUser.uid)
@@ -226,16 +151,11 @@ class DataController extends GetxController {
 
     for (var item in appointments.docs) {
       final date = (item.data()['date'] as Timestamp).toDate();
-      //print('------22 ${date.millisecondsSinceEpoch}');
-      if (now.millisecondsSinceEpoch >= date.millisecondsSinceEpoch) {
-        // print('------1111 ${date.millisecondsSinceEpoch}');
-        // print(week.millisecondsSinceEpoch);
-        print(item);
+       if (now.millisecondsSinceEpoch >= date.millisecondsSinceEpoch) {
+     
         past.add(item);
       }
     }
-
-    //print(appointments.docs.length);
 
     for (var element in past) {
       appoList.add(Appointment.fromMap(element));
@@ -249,12 +169,10 @@ class DataController extends GetxController {
       for (var value in docDetails.docs) {
         docAppoList.add(DoctorAppointment(
             doctorDetails: Doctor.fromSnapshot(value), appoDetails: elu));
-        // print(docAppoList);
       }
     }
     appoDocDetails.addAll(docAppoList);
     update();
-    // print('-----3333 ${docAppoList}');
     return docAppoList;
   }
 
@@ -283,7 +201,6 @@ class DataController extends GetxController {
         .where('date', isGreaterThan: today)
         .get();
     final scheduleData = scheduleDetails.docs;
-    print(scheduleData);
     return scheduleData;
   }
 
@@ -293,23 +210,10 @@ class DataController extends GetxController {
       required double rating}) async {
     final appointment =
         await _fireStore.collection('appointment').doc(docID).get();
-    //print(appointment.data());
-
+  
     final data = appointment.data();
 
-    // print(data!['name']);
-    // print(data['date']);
-    // print(data['payment']);
-    // print(data['age']);
-    // print(data['scheduleID']);
-    // print(data['gender']);
-    // print(data['patientId']);
-    // print(data['bookingId']);
-    // print(data['photoUrl']);
-    // print(data['problem']);
-    // print(data['phoneNumber']);
-    // print(data['doctorId']);
-
+  
     await _fireStore.collection('appointment').doc(docID).update(Appointment(
             date: (data!['date'] as Timestamp).toDate(),
             time: data['time'],
@@ -340,8 +244,7 @@ class DataController extends GetxController {
 
     data = appointment.docs;
     double totRating = 0;
-    double total = 0;
-
+   
     int totalCount = 0;
     int five = 0, four = 0, three = 0, two = 0, one = 0;
 
@@ -367,7 +270,6 @@ class DataController extends GetxController {
         }
       }
       totRating = totRating + element.data()['rating'];
-     
     });
 
     totalPatient = appointment.docs.length;
@@ -386,14 +288,12 @@ class DataController extends GetxController {
 
     for (var item in pastAppo) {
       final date = item.appoDetails.date.millisecondsSinceEpoch;
-      // print(dateRange!.start);
-
+   
       if (startDate <= date && endDate >= date) {
         filteredData.add(item);
       }
     }
 
-    print(filteredData);
     return filteredData;
   }
 
@@ -401,11 +301,9 @@ class DataController extends GetxController {
 
   Future<List<DoctorAppointment>> pastRefresh() async {
     if (dateRange == null) {
-      // update();
       return await getPastApp();
     }
-    //update();
-    return await filterDateRange();
+     return await filterDateRange();
   }
 
   // -------------------- add members---------------------------------
@@ -418,11 +316,10 @@ class DataController extends GetxController {
     required String gender,
     required String title,
   }) async {
-    final String memberId = Uuid().v1();
+    final String memberId = const Uuid().v1();
     User currentUser = _auth.currentUser!;
 
-    print(title);
-
+  
     String imageUrl = await StorageMethods()
         .uploadImageToStorage('memberProfile', photoUrl, false, memberId);
 
@@ -465,9 +362,17 @@ class DataController extends GetxController {
   }
 
   deleteMember(String memId) async {
-    User currentUser = _auth.currentUser!;
     final memberDetails =
         await _fireStore.collection('members').doc(memId).delete();
     update(['member']);
+  }
+
+  docotrDetails({required String doctorId}) async {
+    final docotrs = await _fireStore.collection('doctors').doc(doctorId).get();
+    final fcmToken = docotrs.data()!['fcmToken'];
+    final patient = await AuthMethods().getUserDetails();
+    final name = patient.userName.capitalize;
+
+    notifyC.sendChatPushMessage('You have new Message', '$name', fcmToken);
   }
 }

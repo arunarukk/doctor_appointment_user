@@ -23,7 +23,7 @@ class MembersScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           'Members',
           style: TextStyle(color: kBlack),
         ),
@@ -33,11 +33,11 @@ class MembersScreen extends StatelessWidget {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => AddMembers(
+                        builder: (context) => const AddMembers(
                               title: 'Add member',
                             )));
               },
-              icon: Icon(
+              icon: const Icon(
                 Icons.add,
                 color: kBlack,
               ))
@@ -48,7 +48,7 @@ class MembersScreen extends StatelessWidget {
             onPressed: () {
               Navigator.pop(context);
             },
-            icon: Icon(
+            icon: const Icon(
               Icons.arrow_back,
               color: kBlack,
             )),
@@ -68,15 +68,14 @@ class MembersScreen extends StatelessWidget {
                       builder: (context, snapshot) {
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
-                          return SkeletonMember();
+                          return const SkeletonMember();
                         }
-                        print(snapshot.data);
                         return snapshot.data == null || snapshot.data!.isEmpty
                             ? Center(
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(
+                                  children:const [
+                                     Icon(
                                       Icons.person_off_outlined,
                                       size: 150,
                                       color: Colors.grey,
@@ -89,18 +88,17 @@ class MembersScreen extends StatelessWidget {
                                 ),
                               )
                             : ListView.separated(
+                                physics: const BouncingScrollPhysics(),
                                 controller: scrollController,
                                 padding: const EdgeInsets.only(
                                     left: 20, right: 20, top: 10),
                                 itemBuilder: (ctx, index) {
-                                  // print(snapshot.data![index].data());
                                   final String name =
                                       snapshot.data![index].data()['userName'];
                                   final String age =
                                       snapshot.data![index].data()['age'];
                                   final String photoUrl =
                                       snapshot.data![index].data()['photoUrl'];
-                                 // print(snapshot.data![index].id);
                                   return Card(
                                     color: kWhite,
                                     shape: RoundedRectangleBorder(
@@ -123,29 +121,9 @@ class MembersScreen extends StatelessWidget {
                                                             .data![index].id,
                                                       )));
                                         },
-                                        // leading: CircleAvatar(
-                                        //   radius: 40,
-                                        //   backgroundColor: Colors.white,
-                                        //   backgroundImage: NetworkImage(photoUrl),
-                                        // ),
-                                        // title: Padding(
-                                        //   padding: const EdgeInsets.all(8.0),
-                                        //   child: Column(
-                                        //     crossAxisAlignment:
-                                        //         CrossAxisAlignment.start,
-                                        //     mainAxisAlignment:
-                                        //         MainAxisAlignment.center,
-                                        //     children: [
-                                        //       Text(name),
-                                        //       kHeight10,
-                                        //       Text(age),
-                                        //     ],
-                                        //   ),
-                                        // ),
                                         child: Row(
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
-                                          // mainAxisAlignment: MainAxisAlignment.start,
                                           children: [
                                             ClipRRect(
                                               borderRadius:
@@ -171,14 +149,14 @@ class MembersScreen extends StatelessWidget {
                                               children: [
                                                 Row(
                                                   children: [
-                                                    Text('Name : '),
+                                                    const Text('Name : '),
                                                     Text(name.capitalize!),
                                                   ],
                                                 ),
                                                 kHeight10,
                                                 Row(
                                                   children: [
-                                                    Text('Age : '),
+                                                    const Text('Age : '),
                                                     Text(age),
                                                   ],
                                                 ),
@@ -200,7 +178,7 @@ class MembersScreen extends StatelessWidget {
                 },
               );
             } else {
-              return ConnectionLost();
+              return const ConnectionLost();
             }
           }),
     );

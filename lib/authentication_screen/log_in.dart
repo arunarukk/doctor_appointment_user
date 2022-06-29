@@ -16,38 +16,29 @@ class LogInScreen extends StatelessWidget {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
-  
-
   void logInPatient(BuildContext ctx) async {
     signControl.loading(true);
     signControl.update(['login']);
-    // print(_emailController.text);
-    // print('patient login');
     String result = await AuthMethods().logInUser(
       email: _emailController.text,
       password: _passwordController.text,
     );
-
     if (result == 'Success') {
-      Navigator.of(ctx).pushReplacement(
-          MaterialPageRoute(builder: (ctx) => MainHomeScreen()));
+      // Navigator.of(ctx).pushReplacement(
+      //     MaterialPageRoute(builder: (ctx) => const MainHomeScreen()));
+      Get.offAll(const MainHomeScreen());
       showSnackBar(result, kGreen, ctx);
-      print("----------------$result");
+      debugPrint("----------------$result");
     } else {
       showSnackBar(result, kRed, ctx);
     }
-    await Future.delayed(Duration(seconds: 2));
-
     signControl.loading(false);
-
     signControl.update(['login']);
   }
 
   @override
   Widget build(BuildContext context) {
     signControl.loadL = false;
-    //signControl.loading(false);
-   
     return Scaffold(
       body: Container(
         width: double.infinity,
@@ -64,33 +55,25 @@ class LogInScreen extends StatelessWidget {
           child: Stack(
             children: [
               Container(
-                height: 450,
+                height: 55.h,
                 width: double.infinity,
-                decoration: const BoxDecoration(
+                decoration: BoxDecoration(
                   color: Colors.white,
-                  boxShadow: [
+                  boxShadow: const [
                     BoxShadow(
                       color: Colors.black,
                       blurRadius: 8.0,
                     ),
                   ],
                   borderRadius: BorderRadius.only(
-                      bottomLeft: Radius.circular(200),
-                      bottomRight: Radius.circular(200)),
-                  // gradient: LinearGradient(
-                  //   begin: Alignment.topLeft,
-                  //   end: Alignment.bottomRight,
-                  //   colors: [
-                  //     Color.fromARGB(255, 165, 17, 42),
-                  //     Color.fromARGB(255, 16, 211, 58)
-                  //   ],
-                  // ),
+                      bottomLeft: Radius.circular(200.h),
+                      bottomRight: Radius.circular(200.h)),
                 ),
               ),
               Column(
                 children: [
                   Padding(
-                    padding: const EdgeInsets.only(top: 100.0, bottom: 60),
+                    padding: EdgeInsets.only(top: 13.h, bottom: 8.h),
                     child: SizedBox(
                       child: Image.asset(
                         'assets/log_illu/login_screen.png',
@@ -102,14 +85,13 @@ class LogInScreen extends StatelessWidget {
                     child: Column(
                       children: [
                         Padding(
-                          padding: const EdgeInsets.only(
-                              left: 50.0, right: 50, top: 20),
+                          padding: EdgeInsets.only(
+                              left: 13.w, right: 13.w, top: 1.h),
                           child: TextFormField(
                             controller: _emailController,
-                            style: TextStyle(color: kWhite),
+                            style: const TextStyle(color: kWhite),
                             decoration: const InputDecoration(
                               fillColor: Color.fromARGB(255, 48, 150, 223),
-                              //filled: true,
                               focusedBorder: UnderlineInputBorder(
                                 borderSide: BorderSide(color: Colors.white),
                               ),
@@ -118,10 +100,9 @@ class LogInScreen extends StatelessWidget {
                               enabledBorder: UnderlineInputBorder(
                                 borderSide: BorderSide(color: Colors.white),
                               ),
-
                               prefixIcon: Padding(
                                 padding: EdgeInsets.only(
-                                    top: 15), // add padding to adjust icon
+                                    top: 0), // add padding to adjust icon
                                 child: Icon(
                                   Icons.email_outlined,
                                   color: Colors.white,
@@ -132,8 +113,8 @@ class LogInScreen extends StatelessWidget {
                           ),
                         ),
                         Padding(
-                          padding: const EdgeInsets.only(
-                              left: 50.0, right: 50, top: 20, bottom: 20),
+                          padding: EdgeInsets.only(
+                              left: 13.w, right: 13.w, top: 3.h, bottom: 3.h),
                           child: GetBuilder<StateController>(
                             init: StateController(),
                             id: 'visiblity',
@@ -141,10 +122,9 @@ class LogInScreen extends StatelessWidget {
                               return TextFormField(
                                 obscureText: visible.passwordVisible,
                                 controller: _passwordController,
-                                style: TextStyle(color: kWhite),
+                                style: const TextStyle(color: kWhite),
                                 decoration: InputDecoration(
                                     fillColor: Colors.white,
-                                    //filled: true,
                                     focusedBorder: const UnderlineInputBorder(
                                       borderSide:
                                           BorderSide(color: Colors.white),
@@ -156,14 +136,12 @@ class LogInScreen extends StatelessWidget {
                                       borderSide:
                                           BorderSide(color: Colors.white),
                                     ),
-                                    prefixIcon: const Padding(
-                                      padding: EdgeInsets.only(
-                                          top:
-                                              15), // add padding to adjust icon
+                                    prefixIcon: Padding(
+                                      padding: const EdgeInsets.only(top: 0),
                                       child: Icon(
                                         Icons.lock_outline,
                                         color: Colors.white,
-                                        size: 20,
+                                        size: 5.w,
                                       ),
                                     ),
                                     suffixIcon: IconButton(
@@ -191,27 +169,6 @@ class LogInScreen extends StatelessWidget {
                             },
                           ),
                         ),
-                        // InkWell(
-                        //   onTap: () {},
-                        //   child: Container(
-                        //       width: 200,
-                        //       height: 50,
-                        //       decoration: BoxDecoration(
-                        //           gradient: LinearGradient(
-                        //               begin: Alignment.topLeft,
-                        //               end: Alignment.bottomRight,
-                        //               colors: [
-                        //                 Color.fromARGB(255, 212, 165, 33),
-                        //                 Color.fromARGB(255, 212, 165, 33)
-                        //               ]),
-                        //           borderRadius: BorderRadius.circular(50)),
-                        //       child: Center(
-                        //           child: Text(
-                        //         'Login',
-                        //         style: TextStyle(
-                        //             fontSize: 18, color: Colors.white),
-                        //       ))),
-                        // ),
                         ElevatedButton(
                           onPressed: () {
                             logInPatient(context);
@@ -221,12 +178,12 @@ class LogInScreen extends StatelessWidget {
                               id: 'login',
                               builder: (login) {
                                 return login.isLoading == true
-                                    ? Center(
+                                    ? const Center(
                                         child: CircularProgressIndicator(
                                           color: kWhite,
                                         ),
                                       )
-                                    : Text(
+                                    : const Text(
                                         'Login',
                                         style: TextStyle(
                                             color: Colors.white, fontSize: 18),
@@ -238,9 +195,8 @@ class LogInScreen extends StatelessWidget {
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(50))),
                         ),
-
-                        Padding(
-                          padding: const EdgeInsets.only(top: 8.0),
+                        const Padding(
+                          padding: EdgeInsets.only(top: 8.0),
                           child: Text(
                             'OR',
                             style: TextStyle(color: kWhite),
@@ -254,16 +210,15 @@ class LogInScreen extends StatelessWidget {
                                     context,
                                     MaterialPageRoute(
                                         builder: (context) =>
-                                            PhoneAuthentication()));
+                                            const PhoneAuthentication()));
                               },
-                              child: Text(
+                              child: const Text(
                                 "Login with phone",
                                 style: TextStyle(color: kWhite),
                               )),
                         ),
-
                         Padding(
-                          padding: const EdgeInsets.only(top: 40.0),
+                          padding: EdgeInsets.only(top: 4.h),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
@@ -280,8 +235,14 @@ class LogInScreen extends StatelessWidget {
                                                 SignUpScreen()));
                                   },
                                   child: const Text(
-                                    'Register!',
-                                    style: TextStyle(color: kWhite),
+                                    'Register here!',
+                                    style: TextStyle(
+                                        color: kWhite,
+                                        decoration: TextDecoration.underline,
+                                        decorationColor: kWhite,
+                                        decorationStyle:
+                                            TextDecorationStyle.solid,
+                                        decorationThickness: 1.5),
                                   )),
                             ],
                           ),

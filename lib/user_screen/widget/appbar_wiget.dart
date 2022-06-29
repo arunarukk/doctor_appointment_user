@@ -6,7 +6,7 @@ class AppBarWidget extends StatelessWidget {
     required this.title,
   }) : super(key: key);
   final String title;
-  //final IconData icon;
+ 
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -17,7 +17,7 @@ class AppBarWidget extends StatelessWidget {
         children: [
           Text(
             title,
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.w700,
             ),

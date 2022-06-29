@@ -9,7 +9,7 @@ class SkeletonSpeciality extends StatelessWidget {
   Widget build(BuildContext context) {
   
     return ListView(
-      physics: NeverScrollableScrollPhysics(),
+      physics: const NeverScrollableScrollPhysics(),
       scrollDirection: Axis.horizontal,
       children: List.generate(
           4,
@@ -24,7 +24,7 @@ class SkeletonSpeciality extends StatelessWidget {
                           width: 14.h,
                           height:15.h,
                           borderRadius:
-                              BorderRadius.vertical(top: Radius.circular(10))),
+                              const BorderRadius.vertical(top:  Radius.circular(10))),
                     ),
                     SkeletonParagraph(
                       style: SkeletonParagraphStyle(

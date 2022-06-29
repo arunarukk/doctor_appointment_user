@@ -2,8 +2,9 @@ import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:doctor_appointment/main.dart';
-import 'package:doctor_appointment/models/Patients_model.dart';
+import 'package:doctor_appointment/models/patients_model.dart';
 import 'package:doctor_appointment/models/appointment_model.dart';
+import 'package:doctor_appointment/models/doctor_model.dart';
 import 'package:doctor_appointment/models/schedule.dart';
 import 'package:doctor_appointment/resources/data_controller.dart';
 import 'package:doctor_appointment/resources/specialty_mathod.dart';
@@ -41,10 +42,12 @@ class AuthMethods {
 
     List<QueryDocumentSnapshot<Object?>> docSnap = snapshot.docs;
 
-    // print(docSnap[1].data());
+   return docSnap;
+  }
 
-    //return Patients.fromSnapshot(snapshot);
-    return docSnap;
+  getDoctor(String uid) async {
+    final doc = await _fireStore.collection('doctors').doc(uid).get();
+    return Doctor.fromSnapshot(doc);
   }
 
   getFcmToken(String uid, String userType) async {
@@ -67,11 +70,7 @@ class AuthMethods {
     try {
       dynamic test;
       final currentUser = getUserDetails();
-      // if (currentUser==null) {
-
-      // String photoUrl = await StorageMethods()
-      //     .uploadImageToStorage('profilePics', file, false);
-      final fcmToken = await FirebaseMessaging.instance.getToken();
+     final fcmToken = await FirebaseMessaging.instance.getToken();
       currentUser.then((value) async {
         Patients patients = Patients(
           userName: userName,
@@ -89,13 +88,10 @@ class AuthMethods {
             .update(patients.toJson());
         test = value;
         statecontrol.update(['profile']);
-        // print(test);
-      });
-      print(test);
-      //}
-
-    } catch (e) {
-      print('=============================' + e.toString());
+       });
+      debugPrint(test);
+     } catch (e) {
+      debugPrint('=============================' + e.toString());
     }
   }
   // ====================== set otp user ================================
@@ -130,10 +126,9 @@ class AuthMethods {
           password: password,
         );
 
-        print(cred.user!.uid);
+        debugPrint(cred.user!.uid);
 
-        String photoUrl = await StorageMethods().uploadImageToStorage(
-            'profilePics', file, false, _auth.currentUser!.uid);
+        String photoUrl = await StorageMethods().uploadImageToStorages(file);
 
         // add patients to database
 
@@ -148,7 +143,7 @@ class AuthMethods {
           fcmToken: token!,
         );
 
-        _fireStore
+        await _fireStore
             .collection('patients')
             .doc(cred.user!.uid)
             .set(patients.toJson());
@@ -157,6 +152,8 @@ class AuthMethods {
     } on FirebaseAuthException catch (err) {
       if (err.code == 'invalid-email') {
         result = 'The email is badly formatted.';
+      } else if (err.code == 'email-already-in-use') {
+        result = 'The email is already exist.';
       }
     } catch (err) {
       result = err.toString();
@@ -181,22 +178,7 @@ class AuthMethods {
         String photoUrl = await StorageMethods()
             .uploadImageToStorage('profilePics', file, false, uid);
 
-        // add doctor to database
-
-        // Doctor doctor = Doctor(
-        //   userName: userName,
-        //   uid: uid,
-        //   photoUrl: photoUrl,
-        //   email: email,
-        //   phoneNumber: phoneNumber,
-        //   speciality: {},
-        //   about: '',
-        //   experience: '',
-        //   rating: 0,
-        //   patients: 0,
-        // );
-
-        final fcmToken = await FirebaseMessaging.instance.getToken();
+       final fcmToken = await FirebaseMessaging.instance.getToken();
 
         Patients patients = Patients(
           userName: userName,
@@ -229,7 +211,6 @@ class AuthMethods {
     required String password,
   }) async {
     String result = 'Something went wrong.';
-    print(email);
     try {
       if (email.isNotEmpty || password.isNotEmpty) {
         await _auth.signInWithEmailAndPassword(
@@ -253,16 +234,16 @@ class AuthMethods {
 // ============================ phone verification=================================
 
   verifyPhone({required phoneNumber, required BuildContext context}) async {
-    String result = 'Something went wrong.';
+  
     try {
+        String result = 'Something went wrong.';
       if (phoneNumber.isNotEmpty) {
         await _auth.verifyPhoneNumber(
           phoneNumber: phoneNumber,
           verificationCompleted: (PhoneAuthCredential credential) async {
             await _auth.signInWithCredential(credential).then((value) {
-              print("You are logged in successfully");
             });
-            final snackBar = SnackBar(content: Text('Login Success'));
+            const snackBar =   SnackBar(content:  Text('Login Success'));
             ScaffoldMessenger.of(context).showSnackBar(snackBar);
           },
           verificationFailed: (FirebaseAuthException e) {
@@ -276,14 +257,14 @@ class AuthMethods {
           codeAutoRetrievalTimeout: (String verificationId) {
             verId = verificationId;
           },
-          timeout: Duration(seconds: 60),
+          timeout: const Duration(seconds: 60),
         );
         result = 'Success';
       } else {
         result = 'please enter all the fields';
       }
     } catch (e) {
-      print('phone Verification error $e');
+      debugPrint('phone Verification error $e');
     }
   }
 
@@ -294,7 +275,7 @@ class AuthMethods {
 
     try {
       await _auth.signInWithCredential(credential);
-      final snackBar = SnackBar(content: Text('Login Success'));
+      const snackBar =  SnackBar(content:  Text('Login Success'));
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
     } on FirebaseAuthException catch (e) {
       final snackBar = SnackBar(content: Text(e.message!));
@@ -305,7 +286,6 @@ class AuthMethods {
   // ===================== signOut user =================================
 
   Future<void> signOut() async {
-    
     await _auth.signOut();
   }
 
@@ -325,9 +305,7 @@ class AuthMethods {
     required photoUrl,
     required dateID,
   }) async {
-    // print('photo $photoUrl');
-    final String bookingId = Uuid().v1();
-    //print('book payment auth');
+    final String bookingId = const Uuid().v1();
     Appointment appointment = Appointment(
       name: name,
       patientId: patientId,
@@ -364,8 +342,7 @@ class AuthMethods {
         .collection('schedule')
         .doc(dateID)
         .get();
-    print(time);
-    print(date);
+
     final appoTimeData = dateData.data();
 
     updateDoctorSchedule(
@@ -426,8 +403,7 @@ class AuthMethods {
         .collection('schedule')
         .doc(scheduleID)
         .get();
-    print(time);
-    print(date);
+  
     final appoTimeData = dateData.data();
 
     updateDoctorSchedule(
@@ -475,7 +451,5 @@ class AuthMethods {
     datacontrol.update(['appointment']);
     final docFcm = await getFcmToken(docID, "doctors");
     notifyC.sendPushMessage("Appointment canceled", name + " " + time, docFcm);
-
-    print(timeId);
   }
 }

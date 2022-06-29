@@ -2,7 +2,7 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:doctor_appointment/constant_value/constant_size.dart';
 import 'package:doctor_appointment/get_controller/get_controller.dart';
 import 'package:doctor_appointment/main.dart';
-import 'package:doctor_appointment/models/Patients_model.dart';
+import 'package:doctor_appointment/models/patients_model.dart';
 import 'package:doctor_appointment/resources/data_controller.dart';
 import 'package:doctor_appointment/user_screen/widget/appbar_wiget.dart';
 import 'package:doctor_appointment/user_screen/widget/connection_lost.dart';
@@ -11,17 +11,20 @@ import 'package:doctor_appointment/user_screen/widget/doctor_profile.dart';
 import 'package:doctor_appointment/user_screen/widget/main_title_widget.dart';
 import 'package:doctor_appointment/user_screen/widget/search_bar/search_bar_widget.dart';
 import 'package:doctor_appointment/user_screen/widget/speciality_widget.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
 import 'package:skeletons/skeletons.dart';
 
 import '../../constant_value/constant_colors.dart';
+import '../../models/doctor_model.dart';
+import '../../resources/auth_method.dart';
+import '../chat_screen/chat_screen.dart';
 import '../widget/doctor_list_widget/doctor_list_widget.dart';
 
 class HomeScreen extends StatefulWidget {
-  HomeScreen({Key? key}) : super(key: key);
+const HomeScreen({Key? key}) : super(key: key);
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -32,48 +35,52 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void initState() {
+    statecontrol.getUserProfileDetails();
     notifyC.storeToken();
-    // notifyC.sayHi();
-    addData();
-    super.initState();
-  }
 
-  addData() async {
-    final statecontrol = Get.put(StateController());
-    await statecontrol.refreshUser();
-    statecontrol.update();
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) async {
+      debugPrint("onMessageOpenedApp:patient ${message.data}");
+
+      if (message.data["screen"] == "chatScreen") {
+        final uid = message.data['docId'];
+        final Doctor doc = await AuthMethods().getDoctor(uid);
+
+        Navigator.push(
+            navigatorKey.currentState!.context,
+            MaterialPageRoute(
+                builder: (context) => ChatScreen(
+                      doctorId: message.data['docId'],
+                      doctorImage: doc.photoUrl,
+                      doctorNmae: doc.userName.capitalize!,
+                    )));
+      }
+    });
+
+    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    //  print('-----------${FirebaseAuth.instance.currentUser}');
-    // Connectivity().onConnectivityChanged;
-    // control.querySelec == false;
-
     datacontrol.querySelection(false);
 
     return Scaffold(
-      appBar: PreferredSize(
+      appBar: const PreferredSize(
           child: AppBarWidget(
             title: 'Home',
           ),
           preferredSize: Size.fromHeight(60)),
       body: SingleChildScrollView(
-        child: StreamBuilder(
+        physics: const BouncingScrollPhysics(),
+        child: StreamBuilder<ConnectivityResult>(
             stream: Connectivity().onConnectivityChanged,
             builder: (context, AsyncSnapshot<ConnectivityResult> snapshot) {
-              // if (snapshot.data == null) {
-              //   Connectivity().onConnectivityChanged;
-              //   return Text('null');
-              // }
-              //print('connenction ${snapshot}');
               if (snapshot.connectionState == ConnectionState.waiting ||
                   snapshot.data != null &&
                       snapshot.hasData &&
                       snapshot.data != ConnectivityResult.none) {
                 return Column(
                   children: [
-                    SizedBox(
+                    const SizedBox(
                       height: 8,
                     ),
                     Row(
@@ -100,8 +107,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                               lineStyle: SkeletonLineStyle(
                                                 randomLength: true,
                                                 height: 35,
-                                                borderRadius:
-                                                    BorderRadius.vertical(),
+                                                borderRadius: const BorderRadius
+                                                    .vertical(),
                                                 minLength: 9.w,
                                                 maxLength: 10.w,
                                               )),
@@ -113,17 +120,14 @@ class _HomeScreenState extends State<HomeScreen> {
                                               lineStyle: SkeletonLineStyle(
                                                 randomLength: true,
                                                 height: 20,
-                                                borderRadius:
-                                                    BorderRadius.vertical(),
+                                                borderRadius: const BorderRadius
+                                                    .vertical(),
                                                 minLength: 34.w,
                                                 maxLength: 35.w,
                                               )),
                                         ),
                                       ],
                                     ));
-                                    // CupertinoActivityIndicator(
-                                    //   color: kBlue,
-                                    // );
                                   }
                                   if (snapshot.data == null ||
                                       snapshot.data!.userName.isEmpty) {
@@ -136,27 +140,44 @@ class _HomeScreenState extends State<HomeScreen> {
                                       ),
                                     );
                                   }
-
-                                  return Row(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                
+                                  return Column(
                                     children: [
-                                      Text(
-                                        'Hi, ',
-                                        style: TextStyle(
-                                          fontSize: 30,
-                                          fontWeight: FontWeight.bold,
-                                          color: kBlue,
-                                        ),
+                                      snapshot.data!.gender.isEmpty ||
+                                              snapshot.data!.age.isEmpty
+                                          ? Text(
+                                              '* Please update your profile!',
+                                              style: TextStyle(color: kRed),
+                                            )
+                                          : Container(),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.end,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.end,
+                                        children: [
+                                          Text(
+                                            'Hi, ',
+                                            style: TextStyle(
+                                              fontSize: 30,
+                                              fontWeight: FontWeight.bold,
+                                              color: kBlue,
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            width: 80.w,
+                                            child: Text(
+                                              ' ${snapshot.data!.userName.capitalize}',
+                                              overflow: TextOverflow.ellipsis,
+                                              style: TextStyle(
+                                                fontSize: 20,
+                                                fontWeight: FontWeight.bold,
+                                                color: kBlue,
+                                              ),
+                                            ),
+                                          )
+                                        ],
                                       ),
-                                      Text(
-                                        ' ${snapshot.data!.userName.capitalize}',
-                                        style: TextStyle(
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.bold,
-                                          color: kBlue,
-                                        ),
-                                      )
                                     ],
                                   );
                                 });
@@ -164,14 +185,11 @@ class _HomeScreenState extends State<HomeScreen> {
                         )
                       ],
                     ),
-                    //kHeight30,
                     Container(
-                      //color: Colors.amber,
                       height: 26.h,
                       width: 200.h,
                       child: Stack(
                         alignment: Alignment.bottomCenter,
-                        // clipBehavior: Clip.hardEdge,
                         children: [
                           Positioned(
                             bottom: 5,
@@ -179,7 +197,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(15.0),
                               ),
-                              color: Color.fromARGB(157, 119, 158, 255),
+                              color: const Color.fromARGB(157, 119, 158, 255),
                               child: Container(
                                 height: 20.h,
                                 width: 70.w,
@@ -192,7 +210,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(15.0),
                               ),
-                              color: Color.fromARGB(157, 119, 158, 255),
+                              color: const Color.fromARGB(157, 119, 158, 255),
                               child: Container(
                                 height: 20.h,
                                 width: 78.w,
@@ -206,7 +224,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               width: 83.w,
                               decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(15.0),
-                                  gradient: LinearGradient(colors: [
+                                  gradient: const LinearGradient(colors: [
                                     Color(0xff5B7FFF),
                                     Color(0xff00229C)
                                   ])),
@@ -214,7 +232,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 children: [
                                   kWidth20,
                                   Column(
-                                    children: [
+                                    children: const [
                                       kHeight30,
                                       Text(
                                         'Need a Doctor ?',
@@ -243,7 +261,6 @@ class _HomeScreenState extends State<HomeScreen> {
                         ],
                       ),
                     ),
-
                     Stack(
                       children: [
                         Column(
@@ -293,17 +310,16 @@ class _HomeScreenState extends State<HomeScreen> {
                                       style: TextStyle(color: kRed),
                                     ));
                               }
-                              //print(search.snapshot!.docs.['userName']);
                               return Positioned(
                                 top: 70,
                                 left: 0,
                                 child: Container(
                                   height: 50.h,
                                   width: 100.w,
-                                  color: Color.fromARGB(100, 255, 255, 255),
+                                  color:
+                                      const Color.fromARGB(100, 255, 255, 255),
                                   child: ListView.separated(
                                       itemBuilder: (context, index) {
-                                        // print(search.snapshot);
                                         String name =
                                             search.snapshot[index]['userName'];
 
@@ -323,7 +339,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                               height: 10.h,
                                               child: InkWell(
                                                 onTap: (() {
-                                                  //print(doctor!.email);
                                                   Navigator.push(
                                                       context,
                                                       MaterialPageRoute(
@@ -333,8 +348,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                                                         .snapshot[
                                                                     index],
                                                               )));
-                                                  // FocusScope.of(context)
-                                                  //     .requestFocus(FocusNode());
                                                 }),
                                                 child: Row(
                                                   children: [
@@ -375,7 +388,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         );
                                       },
                                       separatorBuilder: (context, index) {
-                                        return Divider(
+                                        return const Divider(
                                           height: 0,
                                         );
                                       },
@@ -394,7 +407,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ],
                 );
               } else {
-                return ConnectionLost();
+                return const ConnectionLost();
               }
             }),
       ),

@@ -17,10 +17,9 @@ class DoctorList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           'Doctors',
           style: TextStyle(color: kBlack),
         ),
@@ -30,27 +29,23 @@ class DoctorList extends StatelessWidget {
             onPressed: () {
               Navigator.pop(context);
             },
-            icon: Icon(
+            icon: const Icon(
               Icons.arrow_back,
               color: kBlack,
             )),
-        //automaticallyImplyLeading: true,
-      ),
+       ),
       body: FutureBuilder<List<QueryDocumentSnapshot<Object?>>>(
           future: authC.getdoctorDetails(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              // print('waiting');
-              return SkeletonDoctorList();
+              return const SkeletonDoctorList();
             } else if (snapshot.data == null || snapshot.data!.isEmpty) {
-              return Center(
+              return const Center(
                 child: Text('Sorry no doctor\'s available now'),
               );
             }
 
             List<QueryDocumentSnapshot<Object?>> allvalue = snapshot.data!;
-            // print(allvalue[0]['email']);
-
             return GridView.builder(
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 3,
@@ -67,9 +62,7 @@ class DoctorList extends StatelessWidget {
                       borderRadius: BorderRadius.circular(15.0),
                     ),
                     child: SizedBox(
-                      //height: 200,
-                      // width: 50,
-                      child: InkWell(
+                     child: InkWell(
                         onTap: () {
                           Navigator.push(
                               context,
@@ -79,8 +72,7 @@ class DoctorList extends StatelessWidget {
                                       )));
                         },
                         child: Column(
-                          //crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
+                         children: [
                             ClipRRect(
                               borderRadius: const BorderRadius.vertical(
                                   top: Radius.circular(15)),
@@ -99,27 +91,29 @@ class DoctorList extends StatelessWidget {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
-                                  // SizedBox(
-                                  //   height: 5,
-                                  // ),
-                                  Text(
-                                    'Dr ${allvalue[index]['userName']}',
-                                    style: TextStyle(
-                                      color: kWhite,
+                                  SizedBox(
+                                    width: 100.w,
+                                    child: Center(
+                                      child: Text(
+                                        'Dr ${allvalue[index]['userName']}',
+                                        overflow: TextOverflow.ellipsis,
+                                        style: const TextStyle(
+                                          color: kWhite,
+                                        ),
+                                      ),
                                     ),
                                   ),
-                                  // SizedBox(
-                                  //   height: 2,
-                                  // ),
-                                  Text(
-                                    allvalue[index]['speciality']['name']
-                                        .toString()
-                                        .toUpperCase(),
+                                 Text(
+                                    allvalue[index]['speciality']['name'] ==
+                                            null
+                                        ? 'General'
+                                        : allvalue[index]['speciality']['name']
+                                            .toString()
+                                            .toUpperCase(),
                                     style: const TextStyle(
                                       color: kWhite,
                                       fontSize: 10,
-                                      // fontWeight: FontWeight.bold,
-                                    ),
+                                   ),
                                   ),
                                 ],
                               ),

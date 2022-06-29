@@ -15,7 +15,6 @@ class SkeletonDoctorList extends StatelessWidget {
           mainAxisSpacing: 4.0,
           mainAxisExtent: 21.h,
         ),
-        //controller: scrollController,
         padding: const EdgeInsets.only(left: 20, right: 20, top: 10),
         itemBuilder: (ctx, index) {
           return SkeletonItem(
@@ -29,7 +28,7 @@ class SkeletonDoctorList extends StatelessWidget {
                       width: 16.h,
                       height: 14.h,
                       borderRadius:
-                          BorderRadius.vertical(top: Radius.circular(10))),
+                          const BorderRadius.vertical(top: Radius.circular(10))),
                 ),
                 SkeletonParagraph(
                   style: SkeletonParagraphStyle(

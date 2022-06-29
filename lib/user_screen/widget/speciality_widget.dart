@@ -14,18 +14,16 @@ class SpecialityWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      //color: kBlue,
-      height: 28.h,
+       height: 28.h,
       width: double.infinity,
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(
-          // mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
+         crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               title,
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             kHeight10,
             LimitedBox(
@@ -34,10 +32,10 @@ class SpecialityWidget extends StatelessWidget {
                   future: getSpeciality(),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
-                      return SkeletonSpeciality();
+                      return const SkeletonSpeciality();
                     }
                     if (snapshot.data == null) {
-                      return Center(
+                      return const Center(
                         child: Text('No Data'),
                       );
                     }
@@ -46,6 +44,7 @@ class SpecialityWidget extends StatelessWidget {
                         snapshot.data!;
 
                     return ListView(
+                      physics: const BouncingScrollPhysics(),
                       scrollDirection: Axis.horizontal,
                       children: List.generate(
                         allvalue.length,
@@ -55,21 +54,17 @@ class SpecialityWidget extends StatelessWidget {
                             decoration: BoxDecoration(
                               color: kWhite,
                               borderRadius: BorderRadius.circular(15.0),
-                              boxShadow: [
+                              boxShadow: const[
                                 BoxShadow(
                                   color: Colors.grey,
                                   blurRadius: .2,
-                                  // spreadRadius: .1,
-                                  // blurStyle: BlurStyle.outer
-                                  // offset: Offset(2.0, 2.0), // shadow direction: bottom right
-                                )
+                                 )
                               ],
                             ),
                             height: 13.h,
                             width: 14.h,
                             child: InkWell(
                               child: Column(
-                                //crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
                                   ClipRRect(
                                     borderRadius: const BorderRadius.vertical(
@@ -84,8 +79,7 @@ class SpecialityWidget extends StatelessWidget {
                                       width: 100.h,
                                     ),
                                   ),
-                                  //kWidth20,
-                                  SizedBox(
+                                   SizedBox(
                                     height: 4.h,
                                     child: Column(
                                       mainAxisAlignment:
@@ -93,9 +87,6 @@ class SpecialityWidget extends StatelessWidget {
                                       crossAxisAlignment:
                                           CrossAxisAlignment.center,
                                       children: [
-                                        // SizedBox(
-                                        //   height: 5,
-                                        // ),
                                         Text(
                                           allvalue[index]['name']
                                               .toString()
@@ -112,16 +103,10 @@ class SpecialityWidget extends StatelessWidget {
                                 ],
                               ),
                               onTap: () {
-                                final newInt = allvalue[index]['did'];
                                 final speciality = allvalue[index]['name']
                                     .toString()
                                     .toUpperCase();
-                                //print(newInt.toString().toUpperCase());
-                                // getSpeciality();
-                                // print(newInt);
-                                // getListWise(allvalue[index]['did']);
-                                // print(allvalue[index]['name']);
-                                FocusManager.instance.primaryFocus?.unfocus();
+                                 FocusManager.instance.primaryFocus?.unfocus();
                                 Navigator.push(
                                     context,
                                     MaterialPageRoute(

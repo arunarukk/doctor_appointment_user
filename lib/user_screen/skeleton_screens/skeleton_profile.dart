@@ -8,11 +8,11 @@ class SkeletonProfile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
-      physics: NeverScrollableScrollPhysics(),
+      physics: const NeverScrollableScrollPhysics(),
       itemCount: 8,
       itemBuilder: (context, index) => Container(
         padding: const EdgeInsets.only(left: 20, right: 20, top: 10),
-        decoration: BoxDecoration(color: Colors.white),
+        decoration: const BoxDecoration(color: Colors.white),
         child: SkeletonItem(
             child: Column(
           children: [
@@ -25,7 +25,7 @@ class SkeletonProfile extends StatelessWidget {
                   width: 25.h,
                   height: 25.h,
                   borderRadius:
-                      BorderRadius.horizontal(left: Radius.circular(10))),
+                      const BorderRadius.horizontal(left: Radius.circular(10))),
             ),
             SizedBox(height: 6.h),
             Row(
@@ -47,13 +47,11 @@ class SkeletonProfile extends StatelessWidget {
                     shape: BoxShape.circle,
                     width: 4.h,
                     height: 4.h,
-                    // minHeight: size * .01,
-                    // maxHeight: size * .02,
-                  ),
+                   ),
                 ),
               ],
             ),
-            SizedBox(height: 12),
+            const SizedBox(height: 12),
             SkeletonParagraph(
               style: SkeletonParagraphStyle(
                   lines: 20,

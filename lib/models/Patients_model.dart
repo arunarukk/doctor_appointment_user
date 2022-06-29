@@ -1,3 +1,5 @@
+
+
 import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -22,19 +24,6 @@ class Patients {
     required this.gender,
     required this.fcmToken,
   });
-
-  // static Patients fromSnap(DocumentSnapshot snap) {
-  //   var snapshot = snap.data() as Map<String, dynamic>;
-
-  //   return Patients(
-  //     userName: snapshot["userName"],
-  //     uid: snapshot["uid"],
-  //     email: snapshot["email"],
-  //     photoUrl: snapshot["photoUrl"],
-  //     phoneNumber: snapshot["phoneNumber"],
-  //     age: snapshot["age"],
-  //   );
-  // }
 
   Map<String, dynamic> toJson() {
     return {

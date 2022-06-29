@@ -23,8 +23,7 @@ class TopDoctors extends StatelessWidget {
               future: authC.getdoctorDetails(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  //  print('waiting');
-                  return SkeletonTopDoctors();
+                return const SkeletonTopDoctors();
                 }
                 if (snapshot.data == null) {
                   return const Center(
@@ -33,14 +32,15 @@ class TopDoctors extends StatelessWidget {
                 }
 
                 List<QueryDocumentSnapshot<Object?>> allvalue = snapshot.data!;
-                // print(allvalue[0]['email']);
-
+             
                 return ListView(
+                  physics: const BouncingScrollPhysics(),
                   scrollDirection: Axis.horizontal,
                   children: List.generate(
                       allvalue.length <= 5 ? allvalue.length : 5, (index) {
                     String? drSpeciality;
-                    if (allvalue[index]['speciality'] == null) {
+
+                    if (allvalue[index]['speciality']['name'] == null) {
                       drSpeciality = 'General';
                     } else {
                       drSpeciality = allvalue[index]['speciality']['name']
@@ -48,9 +48,7 @@ class TopDoctors extends StatelessWidget {
                           .toUpperCase();
                     }
                     final name = allvalue[index]['userName'];
-                    //print(allvalue[index]['qualifications']);
                     return Card(
-                      //color: kBlue,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(15.0),
                       ),
@@ -68,8 +66,7 @@ class TopDoctors extends StatelessWidget {
                                         )));
                           },
                           child: Column(
-                            //crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
+                           children: [
                               ClipRRect(
                                 borderRadius: const BorderRadius.vertical(
                                   top: Radius.circular(15),
@@ -83,7 +80,6 @@ class TopDoctors extends StatelessWidget {
                                   width: 100.h,
                                 ),
                               ),
-                              //kWidth20,
                               SizedBox(
                                 height: 5.7.h,
                                 child: Column(
@@ -91,11 +87,17 @@ class TopDoctors extends StatelessWidget {
                                       MainAxisAlignment.spaceAround,
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
-                                    Text(
-                                      'Dr ${name.toString().capitalize}',
-                                      style: TextStyle(
-                                          color: kBlue,
-                                          fontWeight: FontWeight.bold),
+                                    SizedBox(
+                                      width: 100.w,
+                                      child: Center(
+                                        child: Text(
+                                          'Dr ${name.toString().capitalize}',
+                                          overflow: TextOverflow.ellipsis,
+                                          style: TextStyle(
+                                              color: kBlue,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      ),
                                     ),
                                     Container(
                                       height: .4,
@@ -103,7 +105,9 @@ class TopDoctors extends StatelessWidget {
                                       color: kBlue,
                                     ),
                                     Text(
-                                      drSpeciality,
+                                      drSpeciality == null
+                                          ? 'General'
+                                          : drSpeciality,
                                       style:
                                           TextStyle(color: kBlue, fontSize: 12),
                                     ),
